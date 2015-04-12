@@ -14,7 +14,7 @@ import config.SimulationConfig;
  * @author dell
  *
  */
-public class Toma_ROB {
+public class Toma_ROB { 
 
 	// TODO:--- check whether to extend simulation element
 	// TODO:--- check whether we need retireWidth
