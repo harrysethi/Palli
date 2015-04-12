@@ -1,17 +1,18 @@
 package pipeline;
 
+import pipeline.multi_issue_inorder.Toma_ReservationStation;
 
 public class FunctionalUnit {
-	
+
 	FunctionalUnitType FUType;
 	int latency;
 	int reciprocalOfThroughput;
 	long timeWhenFUAvailable;
 	int portNumber;
-	
-	public FunctionalUnit(FunctionalUnitType FUType, int latency,
-			int reciprocalOfThroughput, int portNumber)
-	{
+
+	Toma_ReservationStation reservationStation;
+
+	public FunctionalUnit(FunctionalUnitType FUType, int latency, int reciprocalOfThroughput, int portNumber) {
 		this.FUType = FUType;
 		this.latency = latency;
 		this.reciprocalOfThroughput = reciprocalOfThroughput;
