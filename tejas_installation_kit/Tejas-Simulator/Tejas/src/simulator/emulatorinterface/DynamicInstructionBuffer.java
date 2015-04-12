@@ -161,7 +161,7 @@ public class DynamicInstructionBuffer implements Encoding
 
 	public void printBuffer()
 	{
-		//TODO
+		//TO-DO
 	}
 	
 	public int getMemReadCount()

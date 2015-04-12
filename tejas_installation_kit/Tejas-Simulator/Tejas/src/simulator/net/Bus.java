@@ -17,7 +17,7 @@ public class Bus extends InterConnect {
 	 
 	 public void sendBusMessage(Event event)
 	 {
-		 //TODO : Add code for arbiter here
+		 //TO-DO : Add code for arbiter here
 		 hopCounter++;
 		 event.addEventTime(SystemConfig.busConfig.getLatency());
 		 event.getProcessingElement().getPort().put(event);
@@ -27,7 +27,7 @@ public class Bus extends InterConnect {
 	public EnergyConfig calculateAndPrintEnergy(FileWriter outputFileWriter,
 			String name) {
 		EnergyConfig energyConfig = new EnergyConfig(0, 0);
-		//TODO : Add bus energy
+		//TO-DO : Add bus energy
 		energyConfig.add(calculateEnergy());
 		return energyConfig;
 	}

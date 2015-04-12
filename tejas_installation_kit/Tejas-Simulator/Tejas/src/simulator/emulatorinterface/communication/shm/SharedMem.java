@@ -3,7 +3,7 @@
  * functions declared in IPCBase.java. It declares the native functions which are implemented
  * in JNIShm.c
  * 
- *  TODO: speedup can be achieved by calling a native init function and initialising some variables
+ *  TO-DO: speedup can be achieved by calling a native init function and initialising some variables
  *  in the jni file which are generated again and again. 
  * */
 

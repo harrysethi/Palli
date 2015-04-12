@@ -39,7 +39,7 @@ public class FloatingPointStore implements X86StaticInstructionHandler
 		if(operand1.isMemoryOperand() && 
 				operand2==null	&& operand3==null)
 		{
-			//TODO Pop operation at present requires just a single move operation
+			//TO-DO Pop operation at present requires just a single move operation
 			//may be some more work needs to be done
 			Operand st0 = Registers.getTopFPRegister(); 
 			
@@ -50,7 +50,7 @@ public class FloatingPointStore implements X86StaticInstructionHandler
 		else if(operand1.isFloatRegisterOperand() && 
 				operand2==null	&& operand3==null)
 		{
-			//TODO Pop operation at present requires just a single move operation
+			//TO-DO Pop operation at present requires just a single move operation
 			//may be some more work needs to be done
 			instructionArrayList.appendInstruction(Instruction.getMoveInstruction(
 					operand1, Registers.getTopFPRegister()));

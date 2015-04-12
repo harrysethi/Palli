@@ -17,44 +17,39 @@
 ------------------------------------------------------------------------------------------------------------
 
 	Contributors:  Prathmesh Kallurkar
-*****************************************************************************/
+ *****************************************************************************/
 
 package emulatorinterface.translator.x86.instruction;
-
 
 import emulatorinterface.translator.InvalidInstructionException;
 import emulatorinterface.translator.x86.registers.TempRegisterNum;
 import generic.InstructionList;
 import generic.Operand;
-import misc.Error;;
+import misc.Error;
+
+;
 
 /**
- * Call
- * 1) pushes the program-counter on the stack.
- * 2) Perform an unconditional jump to location stored in operand1.
+ * Call 1) pushes the program-counter on the stack. 2) Perform an unconditional jump to location stored in operand1.
+ * 
  * @author prathmesh
  */
-public class Call implements X86StaticInstructionHandler 
-{
-	public void handle(long instructionPointer, Operand operand1,
-			Operand operand2, Operand operand3, InstructionList instructionArrayList, 
-			TempRegisterNum tempRegisterNum)
-					throws InvalidInstructionException	
-	{
-		//push the next instruction pointer on to the stack
-		//TODO Check if the NEXT_INSTRUCTION can be computed
+public class Call implements X86StaticInstructionHandler {
+	public void handle(long instructionPointer, Operand operand1, Operand operand2, Operand operand3,
+			InstructionList instructionArrayList, TempRegisterNum tempRegisterNum) throws InvalidInstructionException {
+		// push the next instruction pointer on to the stack
+		// TO-DO Check if the NEXT_INSTRUCTION can be computed
 		Operand nextInstruction = Operand.getImmediateOperand();
 		new Push().handle(instructionPointer, nextInstruction, null, null, instructionArrayList, tempRegisterNum);
-		
-		if((operand1.isImmediateOperand() || operand1.isIntegerRegisterOperand() || operand1.isMemoryOperand()) 
-		   &&  operand2==null  &&   operand3==null)
-		{
-			//Unconditional jump to a new location
-			(new UnconditionalJump()).handle(instructionPointer, operand1, null, null, instructionArrayList, tempRegisterNum);
+
+		if ((operand1.isImmediateOperand() || operand1.isIntegerRegisterOperand() || operand1.isMemoryOperand())
+				&& operand2 == null && operand3 == null) {
+			// Unconditional jump to a new location
+			(new UnconditionalJump()).handle(instructionPointer, operand1, null, null, instructionArrayList,
+					tempRegisterNum);
 		}
-		
-		else
-		{
+
+		else {
 			Error.invalidOperation("Call", operand1, operand2, operand3);
 		}
 	}

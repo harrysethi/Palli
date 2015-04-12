@@ -167,7 +167,7 @@ public class Statistics {
 								
 				outputFileWriter.write("instructions executed\t=\t" + cores[i].getNoOfInstructionsExecuted() + "\n");
 				outputFileWriter.write("cycles taken\t=\t" + coreCyclesTaken[i] + " cycles\n");
-				//FIXME will work only if java thread is 1
+				//FIX-ME will work only if java thread is 1
 				if(SimulationConfig.pinpointsSimulation == false)
 				{
 					outputFileWriter.write("IPC\t\t=\t" + formatDouble((double)cores[i].getNoOfInstructionsExecuted()/coreCyclesTaken[i]) + "\t\tin terms of micro-ops\n");
@@ -376,7 +376,7 @@ public class Statistics {
 			{
 				
 				
-				/* TODO anuj
+				/* TO-DO anuj
 				double totalNucaBankPower = (totalNucaBankAccesses*PowerConfig.dcache2Power)/executionTime;
 				outputFileWriter.write("Total Nuca Bank Accesses Power\t=\t" + totalNucaBankPower + "\n");
 				double totalRouterPower = ((hopcount*(PowerConfig.linkEnergy+PowerConfig.totalRouterEnergy))/executionTime);
@@ -388,7 +388,7 @@ public class Statistics {
 					outputFileWriter.write("Total Router Power\t=\t" + totalRouterPower + "\n");
 				}*/
 								
-				/* TODO anuj
+				/* TO-DO anuj
 				double totalBufferPower = (Switch.totalBufferAccesses*PowerConfig.bufferEnergy)/executionTime;
 				outputFileWriter.write("Total Buffer Accesses\t=\t" + Switch.totalBufferAccesses + "\n");
 				if(totalBufferPower!=0)
@@ -846,7 +846,7 @@ public class Statistics {
 
 		Statistics.setExecutable(benchmarkName);
 		
-		//TODO : NUCA stats not being printed !!
+		//TO-DO : NUCA stats not being printed !!
 		//printNucaStats();
 			
 		Statistics.setSimulationTime(endTime - startTime);

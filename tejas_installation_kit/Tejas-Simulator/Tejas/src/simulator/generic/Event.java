@@ -54,7 +54,7 @@ public abstract class Event implements Cloneable
 		this.requestingElement = requestingElement;
 		this.processingElement = processingElement;
 		this.requestType = requestType;
-		this.coreId = 0;	//FIXME!!
+		this.coreId = 0;	//FIX-ME!!
 		
 		this.priority = requestType.ordinal();
 	}
@@ -108,7 +108,7 @@ public abstract class Event implements Cloneable
 	//Converts request-type to priority.
 	private long calculatePriority(RequestType requestType) 
 	{
-		//TODO: switch case for different request types would come here.
+		//TO-DO: switch case for different request types would come here.
 		return 0;
 	}
 
@@ -179,7 +179,7 @@ public abstract class Event implements Cloneable
 	//then the eventPriority and eventTime will be changed and then 
 	//the modified event will be added to the eventQueue which is 
 	//now passed as a paramter to this function.
-	//TODO handleEvent(event)
+	//TO-DO handleEvent(event)
 	public void handleEvent(EventQueue eventQ)
 	{
 			processingElement.handleEvent(eventQ, this);

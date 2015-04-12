@@ -105,7 +105,7 @@ public class NOC extends InterConnect{
 		try {
 			readNocConfig = new BufferedReader(new FileReader(outputFile));
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+			// TO-DO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return readNocConfig;

@@ -13,7 +13,7 @@ public class FloatingPointConditionalMove implements X86StaticInstructionHandler
 			TempRegisterNum tempRegisterNum)
 					throws InvalidInstructionException
 	{
-		//TODO Must do something !!
+		//TO-DO Must do something !!
 		
 		if(operand1.isFloatRegisterOperand() && operand2==null
 				&& operand3==null)

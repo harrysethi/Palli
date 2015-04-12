@@ -162,7 +162,7 @@ public class NucaCache extends Cache
 		if(mapping == Mapping.SET_ASSOCIATIVE) 
 		{
 			long tag = (addr>>>(numSetsBits+blockSizeBits));
-			bankNum = (int) (tag & (getNumOfBanks()-1)); //FIXME: getNumOfBanks() assumes 2^n.. remove that
+			bankNum = (int) (tag & (getNumOfBanks()-1)); //FIX-ME: getNumOfBanks() assumes 2^n.. remove that
 		}
 		else if(mapping == Mapping.ADDRESS)
 		{

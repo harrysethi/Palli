@@ -151,7 +151,7 @@ public class SynchPrimitive implements Encoding {
 		}
 
 		if (!done) {
-			// XXX the only difference between lock/unlock and wait/signal is here.
+			// XX-X the only difference between lock/unlock and wait/signal is here.
 			// as we are not going for a timedWait but original wait.
 			entries.add(new SynchType(thread, time, value));
 			//interactingThread = -2;
@@ -208,7 +208,7 @@ public class SynchPrimitive implements Encoding {
 			//May never get a corresponding lockenter lockexit
 			//so do a timed wait.
 			int otherThreads = putOnTimedWait(thread, time, value);
-			//XXX if (otherThreads==0) interactingThread = -2;// means nobody sleeps/resumes
+			//XX-X if (otherThreads==0) interactingThread = -2;// means nobody sleeps/resumes
 			if (otherThreads!=0) ret.addSleeper(thread);
 
 		} else {
@@ -216,7 +216,7 @@ public class SynchPrimitive implements Encoding {
 			entries.remove(toBeRemoved2);
 		}
 
-		/*XXX if (interactingThread==-1) ret.addSleeper(thread);
+		/*XX-X if (interactingThread==-1) ret.addSleeper(thread);
 		else if (interactingThread==-2) {}
 		else {
 			ret.addResumer(interactingThread);

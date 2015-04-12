@@ -385,7 +385,7 @@ public class Cache extends SimulationElement {
 		if (c != null) {
 			if(c.nucaType != NucaType.NONE)
 			{
-				NucaCache nuca = ArchitecturalComponent.nucaList.get("L2");//FIXME: dont use static L2
+				NucaCache nuca = ArchitecturalComponent.nucaList.get("L2");//FIX-ME: dont use static L2
 				c = nuca.getBank(((NocInterface)this.getComInterface()).getId(),addr);
 			}
 			event = new AddressCarryingEvent(c.getEventQueue(), 0, this, c,

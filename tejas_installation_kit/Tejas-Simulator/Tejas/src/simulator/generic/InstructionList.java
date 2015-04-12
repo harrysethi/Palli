@@ -93,7 +93,7 @@ public class InstructionList
 	
 //	public Instruction pollFirst()
 //	{
-//		// FIXME : Need to decide an laternative for this
+//		// FIX-ME : Need to decide an laternative for this
 //		return instructionLinkedList.pollFirst();
 //	}
 

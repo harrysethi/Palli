@@ -45,7 +45,7 @@ public class Barrier {
 	}
 	
 //	public Barrier() {
-//		// TODO Auto-generated constructor stub
+//		// TO-DO Auto-generated constructor stub
 //		int i;
 //		this.numThreadsArrived = 0;
 //		this.blockedThreads = new Vector<Integer>();
@@ -106,7 +106,7 @@ public class Barrier {
 	}
 
 	public void setAddress(long l, int i) {
-		// TODO Auto-generated method stub
+		// TO-DO Auto-generated method stub
 		this.address = l;
 		this.numThreads = i;
 	}

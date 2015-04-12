@@ -4,7 +4,7 @@ public class BusArbiter {
 	
 	private boolean isSpace;
 	public BusArbiter() {
-		// TODO Auto-generated constructor stub
+		// TO-DO Auto-generated constructor stub
 		isSpace = true;
 	}
 	

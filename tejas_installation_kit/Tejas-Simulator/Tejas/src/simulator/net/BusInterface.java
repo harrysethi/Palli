@@ -45,7 +45,7 @@ public class BusInterface implements CommunicationInterface{
 
 	@Override
 	public MainMemoryController getNearestMemoryController() {
-		// TODO Auto-generated method stub
+		// TO-DO Auto-generated method stub
 		return ArchitecturalComponent.getMainMemoryController(this);
 	}
 }

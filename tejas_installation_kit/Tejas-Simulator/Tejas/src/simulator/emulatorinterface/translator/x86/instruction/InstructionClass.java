@@ -79,7 +79,7 @@ public enum InstructionClass
 	REPEAT,
 	LOCK,
 
-	//TODO SSE Instructions
+	//TO-DO SSE Instructions
 	SSE_MOVE,
 	SSE_ALU,
 	SSE_MULTIPLICATION,

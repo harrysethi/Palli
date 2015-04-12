@@ -56,7 +56,7 @@ public class RunnableThread implements Encoding, Runnable {
 
 	static long[] noOfMicroOps;
 	//long[] numInstructions;
-	//FIXME PipelineInterface should be in IpcBase and not here as pipelines from other RunnableThreads
+	//FIX-ME PipelineInterface should be in IpcBase and not here as pipelines from other RunnableThreads
 	// will need to interact.
 	PipelineInterface[] pipelineInterfaces;
 	long prevTotalInstructions, currentTotalInstructions;
@@ -243,7 +243,7 @@ public class RunnableThread implements Encoding, Runnable {
 			// The second condition handles this situation.
 			// NOTE this ugly state management cannot be avoided unless we use
 			// some kind of a signalling mechanism between the emulator and
-			// simulator(TODO).
+			// simulator(TO-DO).
 			// Although this should handle most of the cases.
 			if (allover || (ipcBase.javaThreadStarted[javaTid]==true && emuThreadsFinished())) {
 				ipcBase.javaThreadTermination[javaTid] = true;
@@ -323,7 +323,7 @@ public class RunnableThread implements Encoding, Runnable {
 			emulatorThreadState[i] = new EmulatorThreadState();
 			threadBlockState[i]=new ThreadBlockState();
 
-			//TODO pipelineinterfaces & inputToPipeline should also be in the IpcBase
+			//TO-DO pipelineinterfaces & inputToPipeline should also be in the IpcBase
 			pipelineInterfaces[i] = cores[i].getPipelineInterface();
 			inputToPipeline[i] = new GenericCircularQueue<Instruction>(
 												Instruction.class, INSTRUCTION_THRESHOLD);
@@ -422,7 +422,7 @@ public class RunnableThread implements Encoding, Runnable {
 				//Why it cant be change into a separate function
 		}
 		
-		//FIXME move inside the writeback stage
+		//FIX-ME move inside the writeback stage
 /*		Core core;
 		for (int tidEmu = 0; tidEmu < currentEMUTHREADS; tidEmu++) {
 			core = pipelineInterfaces[tidEmu].getCore();
@@ -608,7 +608,7 @@ public class RunnableThread implements Encoding, Runnable {
 	}
 
 	private void checkForBlockingPacket(long value,int TidApp) {
-		// TODO Auto-generated method stub
+		// TO-DO Auto-generated method stub
 		int val=(int)value;
 		switch(val)
 		{
@@ -621,7 +621,7 @@ public class RunnableThread implements Encoding, Runnable {
 	}
 	
 	private void checkForUnBlockingPacket(long value,int TidApp) {
-		// TODO Auto-generated method stub
+		// TO-DO Auto-generated method stub
 		int val=(int)value;
 		switch(val)
 		{
@@ -674,13 +674,13 @@ public class RunnableThread implements Encoding, Runnable {
 
 	protected void signalFinish(int tidApp) {
 		//finished pipline
-		// TODO Auto-generated method stub
+		// TO-DO Auto-generated method stub
 //		System.out.println("signalfinish thread " + tidApp + " mapping " + threadCoreMaping.get(tidApp));
 		this.inputToPipeline[tidApp].enqueue(Instruction.getInvalidInstruction());
 		IpcBase.glTable.getStateTable().get((Integer)tidApp).lastTimerseen = Long.MAX_VALUE;//(long)-1>>>1;
 		//					System.out.println(tidApp+" pin thread got -1");
 		
-		//	FIXME threadParams should be on tidApp. Currently it is on tidEmu
+		//	FIX-ME threadParams should be on tidApp. Currently it is on tidEmu
 		emulatorThreadState[tidApp].finished = true;
 
 	}

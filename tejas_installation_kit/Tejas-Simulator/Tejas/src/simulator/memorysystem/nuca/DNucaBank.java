@@ -90,7 +90,7 @@ public class DNucaBank extends NucaCache implements NucaInterface
 				processEventsInMSHR(addr);
 		} else { //Miss in nearest bank
 			mshr.addToMSHR(event);
-			broadcastRequest(addr, requestType, event);//FIXME: If there is only one bank in bankset
+			broadcastRequest(addr, requestType, event);//FIX-ME: If there is only one bank in bankset
 	                                           		   //        then dont broadcast. Go to nextlevel.
 		}
 		parent.currentList.remove(addr);

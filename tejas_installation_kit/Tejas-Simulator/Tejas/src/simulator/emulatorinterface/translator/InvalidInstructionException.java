@@ -4,7 +4,7 @@ public class InvalidInstructionException extends Exception
 {
 	private static final long serialVersionUID = 1L;
 
-	//TODO need an efficient way to figure out
+	//TO-DO need an efficient way to figure out
 	//how to exit on fatal and how to flag an error.
 	String message;
 	boolean fatal;

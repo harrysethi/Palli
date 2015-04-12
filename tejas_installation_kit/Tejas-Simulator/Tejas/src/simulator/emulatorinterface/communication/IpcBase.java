@@ -51,7 +51,7 @@ public abstract class IpcBase {
 		for (int i=0; i<SystemConfig.maxNumJavaThreads; i++) {
 			javaThreadTermination[i]=false;
 			javaThreadStarted[i]=false;
-			//TODO not all cores are assigned to each thread
+			//TO-DO not all cores are assigned to each thread
 			//when the mechanism to tie threads to cores is in place
 			//this has to be changed
 		}

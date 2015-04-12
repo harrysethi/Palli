@@ -119,7 +119,7 @@ public class Core extends SimulationElement{
 	{
 		//set up initial events in the queue
 		eventQueue.addEvent(new PerformDecodeEvent(GlobalClock.getCurrentTime(), this, 0));
-//TODO commented only for perfect pipeline		
+//TO-DO commented only for perfect pipeline		
 		if (perfectPipeline == false)
 			eventQueue.addEvent(new PerformCommitsEvent(GlobalClock.getCurrentTime(), this));
 	}*/

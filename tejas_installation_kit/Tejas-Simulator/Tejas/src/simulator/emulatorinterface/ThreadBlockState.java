@@ -5,7 +5,7 @@ public class ThreadBlockState {
 	blockState BlockState;
 	int encode;
 	public ThreadBlockState() {
-		// TODO Auto-generated constructor stub
+		// TO-DO Auto-generated constructor stub
 		this.BlockState=blockState.INACTIVE;
 		encode=-1;
 	}

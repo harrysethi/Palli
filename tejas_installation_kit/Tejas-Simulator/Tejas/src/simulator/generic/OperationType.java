@@ -21,7 +21,7 @@
 
 package generic;
 
-//TODO needs to renamed
+//TO-DO needs to renamed
 public enum OperationType 
 {
 	inValid,
@@ -39,7 +39,7 @@ public enum OperationType
 	xchg,
 	acceleratedOp,
 	nop,
-	//TODO Software interrupt can also be modelled as a far jump
+	//TO-DO Software interrupt can also be modelled as a far jump
 	interrupt,
 	no_of_types,
 	//sync type for causility check

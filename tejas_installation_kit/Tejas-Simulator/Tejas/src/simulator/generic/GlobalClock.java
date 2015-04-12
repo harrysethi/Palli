@@ -22,7 +22,7 @@ public class GlobalClock {
 		currentTime = 0;
 		stepSize = 1;
 		
-		//TODO setting up of a heterogeneous clock environment
+		//TO-DO setting up of a heterogeneous clock environment
 		
 		//populate time_periods[]
 		int[] time_periods = new int[SystemConfig.NoOfCores];
@@ -58,7 +58,7 @@ public class GlobalClock {
 		}
 				
 		//compute HCF
-		//TODO look for a better algorithm
+		//TO-DO look for a better algorithm
 		int j;
 		boolean flag;
 		int HCF = 1;
@@ -123,7 +123,7 @@ public class GlobalClock {
 		//freq_list[i] = Math.round(MemorySystem.mainMemory.getFrequency()/100);
 		
 		//compute HCF
-		//TODO look for a better algorithm
+		//TO-DO look for a better algorithm
 		int j;
 		boolean flag = false;
 		boolean HCFFound = false;

@@ -40,7 +40,7 @@ public class Directory extends Cache implements Coherence {
 	}
 
 	public void writeHit(long addr, Cache c) {
-//		XXX if(ArchitecturalComponent.getCore(0).getNoOfInstructionsExecuted()>3000000l) {
+//		XX-X if(ArchitecturalComponent.getCore(0).getNoOfInstructionsExecuted()>3000000l) {
 //			System.out.println("Directory WriteHit t : " + GlobalClock.getCurrentTime() + " addr : " + addr + " cache : " + c);
 //		}
 		writeHitAccesses++;
@@ -48,7 +48,7 @@ public class Directory extends Cache implements Coherence {
 	}
 
 	public void readMiss(long addr, Cache c) {
-//		XXX if(ArchitecturalComponent.getCore(0).getNoOfInstructionsExecuted()>3000000l) {
+//		XX-X if(ArchitecturalComponent.getCore(0).getNoOfInstructionsExecuted()>3000000l) {
 //			System.out.println("Directory ReadMiss t : " + GlobalClock.getCurrentTime() + " addr : " + addr + " cache : " + c);
 //		}
 		readMissAccesses++;
@@ -56,7 +56,7 @@ public class Directory extends Cache implements Coherence {
 	}
 
 	public void writeMiss(long addr, Cache c) {
-//		XXX if(ArchitecturalComponent.getCore(0).getNoOfInstructionsExecuted()>3000000l) {
+//		XX-X if(ArchitecturalComponent.getCore(0).getNoOfInstructionsExecuted()>3000000l) {
 //			System.out.println("Directory WriteMiss t : " + GlobalClock.getCurrentTime() + " addr : " + addr + " cache : " + c);
 //		}
 		writeMissAccesses++;
@@ -140,7 +140,7 @@ public class Directory extends Cache implements Coherence {
 	}
 
 	public AddressCarryingEvent evictedFromSharedCache(long addr, Cache c) {
-//		XXX if(ArchitecturalComponent.getCore(0).getNoOfInstructionsExecuted()>3000000l) {
+//		XX-X if(ArchitecturalComponent.getCore(0).getNoOfInstructionsExecuted()>3000000l) {
 //			System.out.println("Directory EvictShared t : " + GlobalClock.getCurrentTime() + " addr : " + addr + " cache : " + c);
 //		}
 		evictedFromSharedCacheAccesses++;
@@ -148,7 +148,7 @@ public class Directory extends Cache implements Coherence {
 	}
 	
 	public AddressCarryingEvent evictedFromCoherentCache(long addr, Cache c) {
-//		XXX if(ArchitecturalComponent.getCore(0).getNoOfInstructionsExecuted()>3000000l) {
+//		XX-X if(ArchitecturalComponent.getCore(0).getNoOfInstructionsExecuted()>3000000l) {
 //			System.out.println("Directory EvictCoherent t : " + GlobalClock.getCurrentTime() + " addr : " + addr + " cache : " + c);
 //		}
 		evictedFromCoherentCacheAccesses++;

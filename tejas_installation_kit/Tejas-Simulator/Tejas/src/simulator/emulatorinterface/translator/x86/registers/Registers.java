@@ -103,7 +103,7 @@ public class Registers
 		integerRegistersHashTable.put("eflags", new Long(26));
 		integerRegistersHashTable.put("rip", new Long(27));
 		
-		//FIXME: Not sure if this goes here
+		//FIX-ME: Not sure if this goes here
 		integerRegistersHashTable.put("FP_CWORD", new Long(28));
 		
 		//Temporary registers
@@ -144,7 +144,7 @@ public class Registers
 		floatRegistersHashTable.put("st(7)", new Long(7));
 		floatRegistersHashTable.put("st7", new Long(7));
 		
-		//FIXME : This register-set can be used to perform integer operations too.
+		//FIX-ME : This register-set can be used to perform integer operations too.
 		//So its exact type - integer or floating point is ambiguous
 		floatRegistersHashTable.put("xmm0",  new Long(9));
 		floatRegistersHashTable.put("xmm1",  new Long(10));

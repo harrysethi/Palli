@@ -138,7 +138,7 @@ public class ArchitecturalComponent {
 					//do nothing
 				} else {
 					Cache c = MemorySystem.createSharedCache(nextElementToken, comInterface);
-					//TODO split and multiple shared caches
+					//TO-DO split and multiple shared caches
 				} 
 			}
 		}
@@ -156,7 +156,7 @@ public class ArchitecturalComponent {
 		interconnect = i;
 	}
 		
-	//TODO read a config file
+	//TO-DO read a config file
 	//create specified number of cores
 	//map threads to cores
 	public static Core[] initCores()
@@ -174,7 +174,7 @@ public class ArchitecturalComponent {
 		
 		GlobalClock.systemTimingSetUp(cores);
 		
-		//TODO wont work in case of multiple runnable threads
+		//TO-DO wont work in case of multiple runnable threads
 //			for(int i = 0; i<IpcBase.getEmuThreadsPerJavaThread(); i++)
 //			{
 //				if (SimulationConfig.isPipelineInorder)
@@ -183,7 +183,7 @@ public class ArchitecturalComponent {
 //				}
 //				else if (SimulationConfig.isPipelineMultiIssueInorder)
 //				{
-//					//TODO
+//					//TO-DO
 //					((InorderExecutionEngine)cores[i].getExecEngine()).setAvailable(true);
 //				}
 //				else if(SimulationConfig.isPipelineOutOfOrder)
@@ -294,7 +294,7 @@ public class ArchitecturalComponent {
 	}
 
 	public static MainMemoryController getMainMemoryController(CommunicationInterface comInterface) {
-		//TODO : return the nearest memory controller based on the location of the communication interface
+		//TO-DO : return the nearest memory controller based on the location of the communication interface
 		return memoryControllers.get(0);
 	}
 	

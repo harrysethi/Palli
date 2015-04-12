@@ -108,7 +108,7 @@ public final class GlobalTable implements Encoding {
 //			ret = s.unlockEnter(thread, time, value);
 			break;
 		case (JOIN):
-			//TODO
+			//TO-DO
 			break;
 		case (CONDWAIT):
 //			ret = s.waitEnter(thread, time, value);
@@ -152,7 +152,7 @@ public final class GlobalTable implements Encoding {
 			}
 			break;
 		case (BCAST + 1):
-			// TODO
+			// TO-DO
 			break;
 		case (SIGNAL + 1):
 			// ignore
@@ -201,7 +201,7 @@ public final class GlobalTable implements Encoding {
 //				int waiter = (Integer)iter.next();
 //				ThreadState waiterThread = stateTable.get(waiter);
 //				if (waiterThread.isOntimedWaitAt(pai.address)) {
-//					//TODO if multiple RunnableThreads then this should be synchronised
+//					//TO-DO if multiple RunnableThreads then this should be synchronised
 //					if (time>=waiterThread.timeSlept(pai.address)) {
 //						//Remove dependencies from both sides.
 //						iter.remove();

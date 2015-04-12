@@ -134,7 +134,7 @@ public class ExecutionCore {
 				
 				if(FUType == FunctionalUnitType.integerALU)
 				{
-					//TODO this is overcounting in case of pipelined FUs
+					//TO-DO this is overcounting in case of pipelined FUs
 					incrementIntALUAccesses(FUs[FUType.ordinal()][i].getLatency());
 				}
 				else if(FUType == FunctionalUnitType.floatALU)

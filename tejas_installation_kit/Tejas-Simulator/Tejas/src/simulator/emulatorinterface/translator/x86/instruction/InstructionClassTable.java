@@ -266,7 +266,7 @@ public class InstructionClassTable {
 		for (int i = 0; i < returnOp.length; i++)
 			instructionClassTable.put(returnOp[i], InstructionClass.RETURN);
 
-		//FIXME : movsx* does a sign-extend + move. Right now, we are doing move only.
+		//FIX-ME : movsx* does a sign-extend + move. Right now, we are doing move only.
 		String move[] = "mov|movsx|movsxd|movzx|movzxd|movsd|movnti".split("\\|");
 		for (int i = 0; i < move.length; i++)
 			instructionClassTable.put(move[i], InstructionClass.MOVE);
@@ -354,7 +354,7 @@ public class InstructionClassTable {
 			instructionClassTable.put(floatingPointALU[i],
 					InstructionClass.FLOATING_POINT_ALU);
 
-		// TODO : look out for floating point operations that require a
+		// TO-DO : look out for floating point operations that require a
 		// single operand which is source as well as destination
 		String floatingPointSingleOperandALU[] = "fabs|fchs|frdint".split("\\|");
 		for (int i = 0; i < floatingPointSingleOperandALU.length; i++)
@@ -391,7 +391,7 @@ public class InstructionClassTable {
 			instructionClassTable.put(stringCompare[i],
 					InstructionClass.STRING_COMPARE);
 
-		// TODO Lock and repeat are not yet handled
+		// TO-DO Lock and repeat are not yet handled
 		String lock[] = "lock".split("\\|");
 		for (int i = 0; i < lock.length; i++)
 			instructionClassTable.put(lock[i], InstructionClass.LOCK);
@@ -400,7 +400,7 @@ public class InstructionClassTable {
 		for (int i = 0; i < repeat.length; i++)
 			instructionClassTable.put(repeat[i], InstructionClass.REPEAT);
 
-		// TODO SSE Instructions
+		// TO-DO SSE Instructions
 		String SSEMove[] = "movaps|movapd|movups|movupd|movhps|movhpd|movhlps|movlpd|movlhps|movlhpd|movlps|movlpd|movmskps|movmskpd|movss|movsd|movdqa|movdqu|movq2dq|movdq2q|movq"
 				.split("\\|");
 		for (int i = 0; i < SSEMove.length; i++)

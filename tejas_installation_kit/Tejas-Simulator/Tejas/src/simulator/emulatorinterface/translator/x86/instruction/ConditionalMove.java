@@ -29,7 +29,7 @@ import generic.InstructionList;
 
 public class ConditionalMove implements X86StaticInstructionHandler 
 {
-	//TODO Must figure out a way to introduce condition in a 
+	//TO-DO Must figure out a way to introduce condition in a 
 	//conditional move. Currently, we are doing a simple move operation.  
 	public void handle(long instructionPointer, 
 			Operand operand1, Operand operand2, Operand operand3,
@@ -61,7 +61,7 @@ public class ConditionalMove implements X86StaticInstructionHandler
 			instructionArrayList.appendInstruction(Instruction.getStoreInstruction(operand2, operand1));
 		}
 		
-		//TODO I doubt if this is a valid instruction !! Anyways found this in an object-code
+		//TO-DO I doubt if this is a valid instruction !! Anyways found this in an object-code
 		//operand1 can be a data-stored in memory and operand2 can be immediate/register.
 		//first, we load the value at location into temporary register
 		//Then we will store op2 to [temporary-register]

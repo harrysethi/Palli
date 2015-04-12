@@ -240,7 +240,7 @@ public class MemorySystem
 //				//Declare the new cache
 //				Cache newCache = null;
 //				if (cacheParameterObj.getNucaType() == NucaType.NONE) {
-//					// XXX : We are already creating such caches in the createSharedCaches function
+//					// XX-X : We are already creating such caches in the createSharedCaches function
 //					//newCache = new Cache(cacheParameterObj, null);
 //					continue;
 //				} else if (cacheParameterObj.getNucaType() == NucaType.S_NUCA)
@@ -267,7 +267,7 @@ public class MemorySystem
 //		}
 //		
 //		//Initialize centralized directory
-////		int numCacheLines=262144;//FIXME 256KB in size. Needs to be fixed.
+////		int numCacheLines=262144;//FIX-ME 256KB in size. Needs to be fixed.
 //		if(SystemConfig.interconnect == SystemConfig.Interconnect.Bus)
 //		{
 //			centralizedDirectory = new CentralizedDirectoryCache("Directory", 0, SystemConfig.directoryConfig, null, cores.length, 

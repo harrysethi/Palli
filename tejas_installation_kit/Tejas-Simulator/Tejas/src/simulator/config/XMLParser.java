@@ -739,7 +739,7 @@ public class XMLParser
 		cache.busOccupancy = Integer.parseInt(getImmediateString("BusOccupancy", CacheType));
 		
 		tempStr = getImmediateString("Nuca", CacheType);
-		cache.nucaType = NucaType.valueOf(tempStr); // TODO : We are not using NUCA right now.
+		cache.nucaType = NucaType.valueOf(tempStr); // TO-DO : We are not using NUCA right now.
 		
 		tempStr = getImmediateString("NucaMapping", CacheType);
 		if (tempStr.equalsIgnoreCase("S"))

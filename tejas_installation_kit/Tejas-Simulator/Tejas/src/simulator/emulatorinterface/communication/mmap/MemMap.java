@@ -16,7 +16,7 @@ import emulatorinterface.communication.*;
 import generic.CircularPacketQueue;
 
 
-/*XXX
+/*XX-X
  * Caution, this code has not been tested.
  * */
 
@@ -43,7 +43,7 @@ public class MemMap extends IpcBase
 			ioFile = new RandomAccessFile (aFile, "rw");
 			ioChannel = ioFile.getChannel ();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+			// TO-DO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -91,13 +91,13 @@ public class MemMap extends IpcBase
 		try {
 			ioFile.close ();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			// TO-DO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	public Packet fetchOnePacket(int tidApp, int index) {
-		 //TODO
+		 //TO-DO
 		//this should return a packet	(ibuf.get( (index) %COUNT ) );
 		return null;
 	}
@@ -114,12 +114,12 @@ public class MemMap extends IpcBase
 					(long) (20) ).load ();
 			ioChannel.close ();
 
-			//FIXME TODO
+			//FIX-ME TO-DO
 			// these should be as packet buffer not int buffers
 			ibuf = buf.asIntBuffer ();
 			lockBuf = lBuf.asIntBuffer ();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			// TO-DO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -129,7 +129,7 @@ public class MemMap extends IpcBase
 			name = "thread"+Integer.toString(i);
 			javaThreadTermination[i]=false;
 			javaThreadStarted[i]=false;
-			//TODO not all cores are assigned to each thread
+			//TO-DO not all cores are assigned to each thread
 			//when the mechanism to tie threads to cores is in place
 			//this has to be changed
 		}
@@ -175,25 +175,25 @@ public class MemMap extends IpcBase
 	public int fetchManyPackets(int tidApp, int index, int numPackets,
 			ArrayList<Packet> fromPIN) {
 				return 0;
-		// TODO Auto-generated method stub
+		// TO-DO Auto-generated method stub
 		
 	}
 
 	public ArrayList<Packet> fetchManyPackets(int tidApp, int readerLocation,
 			int numReads) {
-		// TODO Auto-generated method stub
+		// TO-DO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void errorCheck(int tidApp, long totalReads) {
-		// TODO Auto-generated method stub
+		// TO-DO Auto-generated method stub
 		
 	}
 
 	@Override
 	public int fetchManyPackets(int tidApp, CircularPacketQueue fromEmulator) {
-		// TODO Auto-generated method stub
+		// TO-DO Auto-generated method stub
 		return 0;
 	}
 }

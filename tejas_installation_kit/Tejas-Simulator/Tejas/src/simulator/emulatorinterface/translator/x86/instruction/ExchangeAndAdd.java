@@ -34,7 +34,7 @@ public class ExchangeAndAdd implements X86StaticInstructionHandler
 			TempRegisterNum tempRegisterNum)
 					throws InvalidInstructionException
 	{
-		//TODO Check if the add should be performed before exchange ??
+		//TO-DO Check if the add should be performed before exchange ??
 		Exchange exchange = new Exchange();
 		exchange.handle(instructionPointer, operand1, operand2, operand3, instructionArrayList, tempRegisterNum);
 

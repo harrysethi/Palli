@@ -87,7 +87,7 @@ public class OperandTranslator
 		//If operand is a valid number, then it is an immediate
 		if(Numbers.isValidNumber(operandStr)) 
 		{
-			//FIXME : We do not care about the actual value of the immediate operand 
+			//FIX-ME : We do not care about the actual value of the immediate operand 
 			return Operand.getImmediateOperand();
 		}
 		else if(Registers.isIntegerRegister(operandStr))
@@ -126,7 +126,7 @@ public class OperandTranslator
 			memLocTokenizer.nextToken(); //Skip the segmentDescriptor
 			String memLocation = memLocTokenizer.nextToken();
 
-			// FIXME something seems to be wrong
+			// FIX-ME something seems to be wrong
 			// If the operand contains the keyword PTR, mark it as stored in memory
 			if(operandStr.contains("PTR"))
 			{
@@ -134,7 +134,7 @@ public class OperandTranslator
 			}
 			else
 			{
-				//TODO must check if the immediate address is available from PIN tool
+				//TO-DO must check if the immediate address is available from PIN tool
 				return Operand.getMemoryOperand(Operand.getImmediateOperand(), null);
 			}
 		}
@@ -227,7 +227,7 @@ public class OperandTranslator
 			scaledIndex = index;
 		}
 						
-		//TODO : Once xml file is ready, we have to read this boolean from the configuration parameters
+		//TO-DO : Once xml file is ready, we have to read this boolean from the configuration parameters
 		//Default value is true.
 		boolean pureRisc;
 		pureRisc=false;

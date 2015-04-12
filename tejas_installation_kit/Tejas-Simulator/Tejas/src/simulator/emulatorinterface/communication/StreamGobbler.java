@@ -2,7 +2,7 @@
  * is being run through process.runtime. Just prints whatever it reads.
  * NOTE currently inputstream for pintool(and outputstream for java)
  * has not been constructed as we never needed it.
- * TODO should ideally implement a StreamWriter as well which can be used to pass
+ * TO-DO should ideally implement a StreamWriter as well which can be used to pass
  * arguments to the executable or the PIN tool.
  */
 

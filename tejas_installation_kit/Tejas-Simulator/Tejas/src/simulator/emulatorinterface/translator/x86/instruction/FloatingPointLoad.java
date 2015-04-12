@@ -40,7 +40,7 @@ public class FloatingPointLoad implements X86StaticInstructionHandler
 		if(operand1.isMemoryOperand() && 
 				operand2==null	&& operand3==null)
 		{
-			//TODO Push operation at present requires just a single move operation
+			//TO-DO Push operation at present requires just a single move operation
 			//may be some more work needs to be done
 			instructionArrayList.appendInstruction(Instruction.getLoadInstruction(operand1, 
 					Registers.getTopFPRegister()));
@@ -49,7 +49,7 @@ public class FloatingPointLoad implements X86StaticInstructionHandler
 		else if(operand1.isFloatRegisterOperand() && 
 				operand2==null	&& operand3==null)
 		{
-			//TODO Push operation at present requires just a single move operation
+			//TO-DO Push operation at present requires just a single move operation
 			//may be some more work needs to be done
 			instructionArrayList.appendInstruction(Instruction.getMoveInstruction(
 					Registers.getTopFPRegister(), operand1));

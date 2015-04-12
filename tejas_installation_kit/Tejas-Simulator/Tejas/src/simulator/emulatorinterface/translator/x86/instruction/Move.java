@@ -64,7 +64,7 @@ public class Move implements X86StaticInstructionHandler
 			instructionArrayList.appendInstruction(Instruction.getStoreInstruction(operand1, operand2));
 		}
 		
-		//TODO I doubt if this is a valid instruction !! Anyways found this in an object-code
+		//TO-DO I doubt if this is a valid instruction !! Anyways found this in an object-code
 		//operand1 can be a data-stored in memory and operand2 can be immediate/register.
 		//first, we load the value at location into temporary register
 		//Then we will store op2 to [temporary-register]
