@@ -2,6 +2,8 @@ package pipeline.multi_issue_inorder;
 
 import java.io.FileWriter;
 import java.io.IOException;
+
+import config.CoreConfig;
 import config.EnergyConfig;
 import config.SimulationConfig;
 import memorysystem.CoreMemorySystem;
@@ -26,6 +28,8 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 
 	// ------Toma Change Start-------------
 	private Toma_ROB toma_ROB;
+	private Toma_RegisterFile toma_RegisterFile_integer;
+
 	// ------Toma Change End-------------
 
 	private boolean executionComplete;
@@ -48,8 +52,7 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	long valueReadyInteger[];
 	long valueReadyFloat[];
 
-	private int mispredStall; // to simulate pipeline flush during branch
-								// misprediction
+	private int mispredStall; // to simulate pipeline flush during branch misprediction
 	StageLatch_MII ifIdLatch, idExLatch, exMemLatch, memWbLatch, wbDoneLatch;
 
 	public int noOfOutstandingLoads = 0;
@@ -75,7 +78,11 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 		this.setWriteBackUnitIn(new WriteBackUnitIn_MII(core, this));
 
 		// ------Toma Change Start-------------
-		this.toma_ROB = new Toma_ROB(this, core);// TODO:---shall need a parametrized constructor
+
+		this.toma_ROB = new Toma_ROB(this, core);
+		this.toma_RegisterFile_integer = new Toma_RegisterFile(core.getIntegerRegisterFileSize());
+		// TODO: check whether we need a floatregsterfile
+
 		// ------Toma Change End-------------
 
 		this.executionComplete = false;
@@ -94,6 +101,8 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 		valueReadyFloat = new long[core.getNFloatingPointArchitecturalRegisters()];
 	}
 
+	// ------Toma Change Start-------------
+
 	public Toma_ROB getToma_ROB() {
 		return toma_ROB;
 	}
@@ -101,6 +110,16 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	public void setToma_ROB(Toma_ROB toma_ROB) {
 		this.toma_ROB = toma_ROB;
 	}
+
+	public Toma_RegisterFile getToma_RegisterFile_integer() {
+		return toma_RegisterFile_integer;
+	}
+
+	public void setToma_RegisterFile_integer(Toma_RegisterFile toma_RegisterFile_integer) {
+		this.toma_RegisterFile_integer = toma_RegisterFile_integer;
+	}
+
+	// ------Toma Change End-------------
 
 	public int getNumPipelines() {
 		return numPipelines;
