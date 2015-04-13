@@ -7,50 +7,44 @@ import generic.GlobalClock;
 import generic.Instruction;
 
 public class OutOfOrderPipeline implements pipeline.PipelineInterface {
-	
+
 	Core core;
 	EventQueue eventQ;
 	int coreStepSize;
-	
-	public OutOfOrderPipeline(Core core, EventQueue eventQ)
-	{
+
+	public OutOfOrderPipeline(Core core, EventQueue eventQ) {
 		this.core = core;
 		this.eventQ = eventQ;
 	}
 
 	@Override
 	public void oneCycleOperation() {
-		
+
 		coreStepSize = core.getStepSize();
-		
+
 		OutOrderExecutionEngine execEngine;
-		
+
 		execEngine = (OutOrderExecutionEngine) core.getExecEngine();
-		
+
 		long currentTime = GlobalClock.getCurrentTime();
-		if(currentTime % coreStepSize == 0
-				&& execEngine.isExecutionBegun() == true
-				&& execEngine.isExecutionComplete() == false)
-		{
+		if (currentTime % coreStepSize == 0 && execEngine.isExecutionBegun() == true && execEngine.isExecutionComplete() == false) {
 			execEngine.getReorderBuffer().performCommits();
 			execEngine.getWriteBackLogic().performWriteBack();
 			execEngine.getSelector().performSelect();
 		}
-		
-		//handle events
+
+		// handle events
 		eventQ.processEvents();
-		
-		if(currentTime % coreStepSize == 0
-				&& execEngine.isExecutionBegun() == true
-				&& execEngine.isExecutionComplete() == false)
-		{
+
+		if (currentTime % coreStepSize == 0 && execEngine.isExecutionBegun() == true && execEngine.isExecutionComplete() == false) {
 			execEngine.getIWPusher().performIWPush();
 			execEngine.getRenamer().performRename();
 			execEngine.getDecoder().performDecode();
 			execEngine.getFetcher().performFetch();
 		}
-		
+
 	}
+
 	public Core getCore() {
 		return core;
 	}
@@ -68,65 +62,60 @@ public class OutOfOrderPipeline implements pipeline.PipelineInterface {
 	}
 
 	@Override
-	public boolean isExecutionComplete() {		
-		return core.getExecEngine().isExecutionComplete();		
+	public boolean isExecutionComplete() {
+		return core.getExecEngine().isExecutionComplete();
 	}
-	
-	public void setcoreStepSize(int stepSize)
-	{
+
+	public void setcoreStepSize(int stepSize) {
 		this.coreStepSize = stepSize;
 	}
-	
-	public int getCoreStepSize()
-	{
+
+	public int getCoreStepSize() {
 		return coreStepSize;
 	}
 
 	@Override
 	public void resumePipeline() {
-		((OutOrderExecutionEngine)core.getExecEngine()).getFetcher().setSleep(false);
+		((OutOrderExecutionEngine) core.getExecEngine()).getFetcher().setSleep(false);
 	}
 
 	@Override
 	public boolean isSleeping() {
-		return ((OutOrderExecutionEngine)core.getExecEngine()).getFetcher().isSleep();
+		return ((OutOrderExecutionEngine) core.getExecEngine()).getFetcher().isSleep();
 	}
 
 	@Override
 	public void setTimingStatistics() {
-		
+
 		OutOrderExecutionEngine execEngine = (OutOrderExecutionEngine) core.getExecEngine();
 		execEngine.getReorderBuffer().setTimingStatistics();
-		
+
 	}
 
 	@Override
 	public void setPerCoreMemorySystemStatistics() {
-		
+
 		OutOrderExecutionEngine execEngine = (OutOrderExecutionEngine) core.getExecEngine();
 		execEngine.getReorderBuffer().setPerCoreMemorySystemStatistics();
-		
-	}
 
+	}
 
 	@Override
 	public void setExecutionComplete(boolean status) {
-				
-	}
 
+	}
 
 	@Override
 	public void adjustRunningThreads(int adjval) {
 		// TO-DO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public void setInputToPipeline(
-			GenericCircularQueue<Instruction>[] inputToPipeline) {
-		
+	public void setInputToPipeline(GenericCircularQueue<Instruction>[] inputToPipeline) {
+
 		this.core.getExecEngine().setInputToPipeline(inputToPipeline);
-		
-	}	
+
+	}
 
 }

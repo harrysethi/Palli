@@ -1,18 +1,18 @@
 package pipeline.multi_issue_inorder;
 
-import java.io.FileWriter;
-import java.io.IOException;
-
-import config.CoreConfig;
-import config.EnergyConfig;
-import config.SimulationConfig;
-import memorysystem.CoreMemorySystem;
-import pipeline.ExecutionEngine;
 import generic.Core;
 import generic.GenericCircularQueue;
 import generic.GlobalClock;
 import generic.Instruction;
 import generic.Statistics;
+
+import java.io.FileWriter;
+import java.io.IOException;
+
+import memorysystem.CoreMemorySystem;
+import pipeline.ExecutionEngine;
+import config.EnergyConfig;
+import config.SimulationConfig;
 
 public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 
@@ -24,9 +24,15 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	private DecodeUnit_MII decodeUnitIn;
 	private ExecUnitIn_MII execUnitIn;
 	private MemUnitIn_MII memUnitIn;
+
 	private WriteBackUnitIn_MII writeBackUnitIn;
 
 	// ------Toma Change Start-------------
+	private Toma_Issue toma_issue; // TODO: making new files..check this shall be fine
+	// TODO: since we have made new files, check if prev files are referenced somewhere
+	private Toma_Execute toma_execute;
+	private Toma_WriteBack toma_writeBack;
+
 	private Toma_ROB toma_ROB;
 	private Toma_RegisterFile toma_RegisterFile_integer;
 	// TODO: check whether we need floating registerFile
@@ -80,7 +86,12 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 
 		// ------Toma Change Start-------------
 
+		this.toma_issue = new Toma_Issue(core);
+		this.toma_execute = new Toma_Execute();// TODO: we shall need parametrized
+		this.toma_writeBack = new Toma_WriteBack();// TODO: we shall need parametrized
+
 		this.toma_ROB = new Toma_ROB(this, core);
+
 		this.toma_RegisterFile_integer = new Toma_RegisterFile(core.getIntegerRegisterFileSize());
 		// TODO: check whether we need a floatregsterfile
 
@@ -118,6 +129,51 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 
 	public void setToma_RegisterFile_integer(Toma_RegisterFile toma_RegisterFile_integer) {
 		this.toma_RegisterFile_integer = toma_RegisterFile_integer;
+	}
+
+	/**
+	 * @return the toma_issue
+	 */
+	public Toma_Issue getToma_issue() {
+		return toma_issue;
+	}
+
+	/**
+	 * @param toma_issue
+	 *            the toma_issue to set
+	 */
+	public void setToma_issue(Toma_Issue toma_issue) {
+		this.toma_issue = toma_issue;
+	}
+
+	/**
+	 * @return the toma_execute
+	 */
+	public Toma_Execute getToma_execute() {
+		return toma_execute;
+	}
+
+	/**
+	 * @param toma_execute
+	 *            the toma_execute to set
+	 */
+	public void setToma_execute(Toma_Execute toma_execute) {
+		this.toma_execute = toma_execute;
+	}
+
+	/**
+	 * @return the toma_writeBack
+	 */
+	public Toma_WriteBack getToma_writeBack() {
+		return toma_writeBack;
+	}
+
+	/**
+	 * @param toma_writeBack
+	 *            the toma_writeBack to set
+	 */
+	public void setToma_writeBack(Toma_WriteBack toma_writeBack) {
+		this.toma_writeBack = toma_writeBack;
 	}
 
 	// ------Toma Change End-------------

@@ -8,9 +8,9 @@ package pipeline.multi_issue_inorder;
  *
  */
 public class Toma_ReservationStation {
-	
-	int maxReservationStationSize;
-	Toma_ReservationStationEntry[] reservationStationEntries;
+
+	private int maxReservationStationSize;
+	private Toma_ReservationStationEntry[] reservationStationEntries;
 
 	public Toma_ReservationStation() {
 
@@ -18,6 +18,23 @@ public class Toma_ReservationStation {
 		for (int i = 0; i < maxReservationStationSize; i++) {
 			reservationStationEntries[i] = new Toma_ReservationStationEntry();
 		}
+	}
+
+	/**
+	 * @return the reservationStationEntries
+	 */
+	public Toma_ReservationStationEntry[] getReservationStationEntries() {
+		return reservationStationEntries;
+	}
+
+	// returns null if no freeEntry found
+	public Toma_ReservationStationEntry isFreeEntryIn_RS() {
+		for (Toma_ReservationStationEntry toma_ReservationStationEntry : reservationStationEntries) {
+			if (!toma_ReservationStationEntry.isBusy) {
+				return toma_ReservationStationEntry;
+			}
+		}
+		return null;
 	}
 
 }

@@ -34,25 +34,51 @@ public class MultiIssueInorderPipeline implements PipelineInterface {
 		// ------Toma Change Start-------------
 		long currentTime = GlobalClock.getCurrentTime();
 
-		if (currentTime % coreStepSize == 0 && containingExecutionEngine.isExecutionBegun() == true
-				&& containingExecutionEngine.isExecutionComplete() == false) {
-			
+		if (currentTime % coreStepSize == 0 && containingExecutionEngine.isExecutionBegun() == true && containingExecutionEngine.isExecutionComplete() == false) {
+			toma_commit();
+			toma_writeback();
+		}
 
+		drainEventQueue(); // Process Memory Requests
+
+		if (currentTime % getCoreStepSize() == 0 && containingExecutionEngine.isExecutionBegun() == true && !containingExecutionEngine.getExecutionComplete()) {
+			toma_execute();
+			toma_issue();
 		}
 
 		// ------Toma Change End-------------
 
+		// Toma:: below is commented as part of Toma Changes
 		/*
-		 * long currentTime = GlobalClock.getCurrentTime(); if (currentTime % getCoreStepSize() == 0 && containingExecutionEngine.isExecutionBegun() == true && !containingExecutionEngine.getExecutionComplete()) { writeback(); } drainEventQueue(); // Process Memory Requests if (currentTime % getCoreStepSize() == 0 && containingExecutionEngine.isExecutionBegun() == true &&
-		 * !containingExecutionEngine.getExecutionComplete()) { mem(); exec(); decode(); fetch();
+		 * if (currentTime % getCoreStepSize() == 0 && containingExecutionEngine.isExecutionBegun() == true && !containingExecutionEngine.getExecutionComplete()) { writeback(); }
 		 * 
-		 * }
+		 * drainEventQueue(); // Process Memory Requests if (currentTime % getCoreStepSize() == 0 && containingExecutionEngine.isExecutionBegun() == true &&
+		 * !containingExecutionEngine.getExecutionComplete()) { mem(); exec(); decode(); fetch(); }
 		 */
 	}
 
 	private void drainEventQueue() {
 		eventQ.processEvents();
 	}
+
+	// ------Toma Change Start-------------
+	public void toma_issue() {
+		containingExecutionEngine.getToma_issue().performIssue();// TODO: check may need to pass "this" :D..OOO mein naa kiya baai :O :O
+	}
+
+	public void toma_execute() {
+		containingExecutionEngine.getToma_execute().performExecute();// TODO: check may need to pass "this" :D..OOO mein naa kiya baai :O :O
+	}
+
+	public void toma_writeback() {
+		containingExecutionEngine.getToma_writeBack();// TODO: check may need to pass "this" :D..OOO mein naa kiya baai :O :O
+	}
+
+	public void toma_commit() {
+		containingExecutionEngine.getToma_ROB().performCommits();// TODO: check may need to pass "this" :D..OOO mein naa kiya baai :O :O
+	}
+
+	// ------Toma Change End-------------
 
 	public void writeback() {
 		containingExecutionEngine.getWriteBackUnitIn().performWriteBack(this);
