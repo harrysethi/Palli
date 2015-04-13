@@ -114,7 +114,7 @@ public class Toma_ROB {
 		 * if(anyMispredictedBranch) { handleBranchMisprediction(); }
 		 */
 
-	}
+	} 
 
 	private void handleInstructionRetirement(Toma_ROBentry firstRobEntry, Instruction firstInst) {
 		firstRobEntry.setBusy(false);
