@@ -15,7 +15,7 @@ public class Toma_ROBentry {
 	// TODO:---- humein poore instruction ki zaroorat hai kya.. ya fer operationType shall work
 	private boolean isBusy;
 	private boolean isReady;
-	private int resultValue; // Val
+	private Object resultValue; // Val
 	private int destinationRegNumber; // Dst
 
 	// TODO:----..check here using regNum may be incorrect
@@ -44,14 +44,6 @@ public class Toma_ROBentry {
 		this.isReady = isReady;
 	}
 
-	public int getResultValue() {
-		return resultValue;
-	}
-
-	public void setResultValue(int resultValue) {
-		this.resultValue = resultValue;
-	}
-
 	/**
 	 * @return the destinationRegNumber
 	 */
@@ -65,6 +57,21 @@ public class Toma_ROBentry {
 	 */
 	public void setDestinationRegNumber(int destinationRegNumber) {
 		this.destinationRegNumber = destinationRegNumber;
+	}
+
+	/**
+	 * @return the resultValue
+	 */
+	public Object getResultValue() {
+		return resultValue;
+	}
+
+	/**
+	 * @param resultValue
+	 *            the resultValue to set
+	 */
+	public void setResultValue(Object resultValue) {
+		this.resultValue = resultValue;
 	}
 
 }

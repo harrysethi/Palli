@@ -16,15 +16,14 @@ public class Toma_Issue {
 	// TODO: --- check do we need latch
 
 	MultiIssueInorderExecutionEngine executionEngine;
-	Core core;
+	Core core;// TODO: core ko hatao agar ni chiye to
 
 	public GenericCircularQueue<Instruction> inputToPipeline;
 
 	// TODO: check this is a single queue rather a array as in OOO
 
 	public Toma_Issue(Core core, MultiIssueInorderExecutionEngine executionEngine) {
-		// TODO: check do we need
-		// "super(PortType.Unlimited, -1, -1, -1, -1);"... i think hona chahiye
+		// TODO: check do we need "super(PortType.Unlimited, -1, -1, -1, -1);"... i think hona chahiye
 		this.core = core;
 		this.executionEngine = executionEngine;
 	}

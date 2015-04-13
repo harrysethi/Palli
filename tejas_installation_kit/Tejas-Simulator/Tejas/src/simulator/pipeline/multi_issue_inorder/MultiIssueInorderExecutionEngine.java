@@ -31,7 +31,7 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	private Toma_Issue toma_issue; // TODO: making new files..check this shall be fine
 	// TODO: since we have made new files, check if prev files are referenced somewhere
 	private Toma_Execute toma_execute;
-	private Toma_WriteBack toma_writeBack;
+	private Toma_WriteResult toma_writeBack;
 
 	private Toma_ROB toma_ROB;
 	private Toma_ReservationStation toma_ReservationStation;
@@ -90,8 +90,8 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 		// ------Toma Change Start-------------
 
 		this.toma_issue = new Toma_Issue(core, this);
-		this.toma_execute = new Toma_Execute();// TODO: we shall need parametrized
-		this.toma_writeBack = new Toma_WriteBack();// TODO: we shall need parametrized
+		this.toma_execute = new Toma_Execute(this);
+		this.toma_writeBack = new Toma_WriteResult(this);
 
 		this.toma_ROB = new Toma_ROB(this, core);
 
@@ -167,7 +167,7 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	/**
 	 * @return the toma_writeBack
 	 */
-	public Toma_WriteBack getToma_writeBack() {
+	public Toma_WriteResult getToma_writeBack() {
 		return toma_writeBack;
 	}
 
@@ -175,7 +175,7 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	 * @param toma_writeBack
 	 *            the toma_writeBack to set
 	 */
-	public void setToma_writeBack(Toma_WriteBack toma_writeBack) {
+	public void setToma_writeBack(Toma_WriteResult toma_writeBack) {
 		this.toma_writeBack = toma_writeBack;
 	}
 

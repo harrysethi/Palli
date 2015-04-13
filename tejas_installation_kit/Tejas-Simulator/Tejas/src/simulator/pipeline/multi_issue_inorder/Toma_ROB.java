@@ -34,7 +34,7 @@ public class Toma_ROB {
 	private long lastValidIPSeen;
 
 	public Toma_ROB(MultiIssueInorderExecutionEngine containingExecutionEngine, Core core) {
-
+		// TODO: check do we need "super(PortType.Unlimited, -1, -1, -1, -1);"... i think hona chahiye
 		head = -1;
 		tail = -1;
 
@@ -176,7 +176,7 @@ public class Toma_ROB {
 	private void commitNonBranch(Toma_ROBentry firstRobEntry, Instruction firstInst, int head) {
 
 		int destinationRegNum = firstRobEntry.getDestinationRegNumber();
-		int robHead_value = firstRobEntry.getResultValue();
+		Object robHead_value = firstRobEntry.getResultValue();
 
 		Toma_RegisterFile toma_registerFile_integer = containingExecutionEngine.getToma_RegisterFile_integer();
 		toma_registerFile_integer.setValue(robHead_value, destinationRegNum);
