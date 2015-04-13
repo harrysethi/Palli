@@ -3,8 +3,6 @@
  */
 package pipeline.multi_issue_inorder;
 
-import pipeline.outoforder.ReorderBufferEntry;
-
 /**
  * @author dell
  *
@@ -13,7 +11,8 @@ public class Toma_RegisterFile {
 
 	// TODO:--- check whether to extend simulation element
 
-	private Toma_ROBentry[] toma_ROBentry;// Qi[]
+	// private Toma_ROBentry[] toma_ROBentry;// Qi[] //TODO: we are using index rather than this (though this is what is there in OOO)
+	private int[] toma_ROBentry;// Qi[]
 	private boolean isBusy[];// Busy[]
 	private Object values[];// Val[]
 
@@ -23,7 +22,7 @@ public class Toma_RegisterFile {
 		this.registerFileSize = registerFileSize;
 		values = new Object[registerFileSize];
 		isBusy = new boolean[registerFileSize];
-		toma_ROBentry = new Toma_ROBentry[registerFileSize];
+		toma_ROBentry = new int[registerFileSize];
 
 		/*
 		 * for (int i = 0; i < registerFileSize; i++) { isBusy[i] = false; toma_ROBentry[i] = null; }
@@ -51,11 +50,11 @@ public class Toma_RegisterFile {
 		 */
 	}
 
-	public Toma_ROBentry getToma_ROBEntry(int index) {
+	public int getToma_ROBEntry(int index) {
 		return toma_ROBentry[index];
 	}
 
-	public void setToma_ROBEntry(Toma_ROBentry toma_ROBentry, int index) {
+	public void setToma_ROBEntry(int toma_ROBentry, int index) {
 		this.toma_ROBentry[index] = toma_ROBentry;
 	}
 }

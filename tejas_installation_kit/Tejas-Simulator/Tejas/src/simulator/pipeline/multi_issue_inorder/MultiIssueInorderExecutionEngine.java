@@ -29,6 +29,7 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	// ------Toma Change Start-------------
 	private Toma_ROB toma_ROB;
 	private Toma_RegisterFile toma_RegisterFile_integer;
+	// TODO: check whether we need floating registerFile
 
 	// ------Toma Change End-------------
 

@@ -33,8 +33,6 @@ public class Toma_ROB {
 
 	private long lastValidIPSeen;
 
-	// TODO:----compare with ROB in OOO & check initializing head,tail & how to get size
-
 	public Toma_ROB(MultiIssueInorderExecutionEngine containingExecutionEngine, Core core) {
 
 		head = -1;
@@ -87,11 +85,11 @@ public class Toma_ROB {
 				 */
 
 				if (operationType == OperationType.branch) {
-					commitBranch(firstRobEntry, firstInst);
+					commitBranch(firstRobEntry, firstInst, head);
 				}
 
 				else { // not a branch instruction
-					commitNotBranch(firstRobEntry, firstInst);
+					commitNonBranch(firstRobEntry, firstInst, head);
 				}
 
 				// TODO: check if this is required
@@ -116,7 +114,7 @@ public class Toma_ROB {
 
 	}
 
-	private void handleInstructionRetirement(Toma_ROBentry firstRobEntry, Instruction firstInst) {
+	private void handleInstructionRetirement(Toma_ROBentry firstRobEntry, Instruction firstInst, int destinationRegNum, int head) {
 		firstRobEntry.setBusy(false);
 		returnInstructionToPool(firstInst);
 
@@ -131,7 +129,10 @@ public class Toma_ROB {
 			System.out.println("committed : " + GlobalClock.getCurrentTime() / core.getStepSize() + " : " + firstInst);
 		}
 
-		// TODO:---one line left...check algo
+		Toma_RegisterFile toma_registerFile_integer = containingExecutionEngine.getToma_RegisterFile_integer();
+		if (toma_registerFile_integer.getToma_ROBEntry(destinationRegNum) == head) {
+			toma_registerFile_integer.setBusy(false, destinationRegNum);
+		}
 	}
 
 	private boolean performPredictionNtrain(Instruction firstInst) {
@@ -151,10 +152,11 @@ public class Toma_ROB {
 		return prediction;
 	}
 
-	private void commitBranch(Toma_ROBentry firstRobEntry, Instruction firstInst) {
+	private void commitBranch(Toma_ROBentry firstRobEntry, Instruction firstInst, int head) {
 		boolean prediction = performPredictionNtrain(firstInst);
 
 		branchCount++;
+		int destinationRegNum = firstRobEntry.getDestinationRegNumber();
 
 		if (prediction != firstInst.isBranchTaken()) { // branch mispredicted
 			head = -1;
@@ -167,17 +169,19 @@ public class Toma_ROB {
 		}
 
 		else { // branch is not mis-predicted
-			handleInstructionRetirement(firstRobEntry, firstInst);
+			handleInstructionRetirement(firstRobEntry, firstInst, destinationRegNum, head);
 		}
 	}
 
-	private void commitNotBranch(Toma_ROBentry firstRobEntry, Instruction firstInst) {
+	private void commitNonBranch(Toma_ROBentry firstRobEntry, Instruction firstInst, int head) {
 
 		int destinationRegNum = firstRobEntry.getDestinationRegNumber();
-		int robEntry_value = firstRobEntry.getResultValue();
-		// TODO:---register file mein daalo value
+		int robHead_value = firstRobEntry.getResultValue();
 
-		handleInstructionRetirement(firstRobEntry, firstInst);
+		Toma_RegisterFile toma_registerFile_integer = containingExecutionEngine.getToma_RegisterFile_integer();
+		toma_registerFile_integer.setValue(robHead_value, destinationRegNum);
+
+		handleInstructionRetirement(firstRobEntry, firstInst, destinationRegNum, head);
 	}
 
 	private void returnInstructionToPool(Instruction instruction) {
