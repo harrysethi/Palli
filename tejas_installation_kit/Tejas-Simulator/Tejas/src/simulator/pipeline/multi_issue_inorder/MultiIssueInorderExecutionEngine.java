@@ -48,7 +48,8 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	long valueReadyInteger[];
 	long valueReadyFloat[];
 
-	private int mispredStall; // to simulate pipeline flush during branch misprediction
+	private int mispredStall; // to simulate pipeline flush during branch
+								// misprediction
 	StageLatch_MII ifIdLatch, idExLatch, exMemLatch, memWbLatch, wbDoneLatch;
 
 	public int noOfOutstandingLoads = 0;
@@ -74,7 +75,7 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 		this.setWriteBackUnitIn(new WriteBackUnitIn_MII(core, this));
 
 		// ------Toma Change Start-------------
-		this.toma_ROB = new Toma_ROB(this);// TODO:---shall need a parametrized constructor
+		this.toma_ROB = new Toma_ROB(this, core);// TODO:---shall need a parametrized constructor
 		// ------Toma Change End-------------
 
 		this.executionComplete = false;
@@ -174,13 +175,19 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	}
 
 	public void setPerCoreMemorySystemStatistics() {
-		// Statistics.setNoOfTLBRequests(multiIssueInorderCoreMemorySystem.getTLBuffer().getTlbRequests(), core.getCore_number());
-		// Statistics.setNoOfTLBHits(multiIssueInorderCoreMemorySystem.getTLBuffer().getTlbHits(), core.getCore_number());
-		// Statistics.setNoOfTLBMisses(multiIssueInorderCoreMemorySystem.getTLBuffer().getTlbMisses(), core.getCore_number());
+		// Statistics.setNoOfTLBRequests(multiIssueInorderCoreMemorySystem.getTLBuffer().getTlbRequests(),
+		// core.getCore_number());
+		// Statistics.setNoOfTLBHits(multiIssueInorderCoreMemorySystem.getTLBuffer().getTlbHits(),
+		// core.getCore_number());
+		// Statistics.setNoOfTLBMisses(multiIssueInorderCoreMemorySystem.getTLBuffer().getTlbMisses(),
+		// core.getCore_number());
 
-		// Statistics.setNoOfIRequests(multiIssueInorderCoreMemorySystem.getiCache().noOfRequests, core.getCore_number());
-		// Statistics.setNoOfIHits(multiIssueInorderCoreMemorySystem.getiCache().hits, core.getCore_number());
-		// Statistics.setNoOfIMisses(multiIssueInorderCoreMemorySystem.getiCache().misses, core.getCore_number());
+		// Statistics.setNoOfIRequests(multiIssueInorderCoreMemorySystem.getiCache().noOfRequests,
+		// core.getCore_number());
+		// Statistics.setNoOfIHits(multiIssueInorderCoreMemorySystem.getiCache().hits,
+		// core.getCore_number());
+		// Statistics.setNoOfIMisses(multiIssueInorderCoreMemorySystem.getiCache().misses,
+		// core.getCore_number());
 
 		if (SimulationConfig.collectInsnWorkingSetInfo == true) {
 			setInsWorkingSetStats();
@@ -192,33 +199,21 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	}
 
 	private void setInsWorkingSetStats() {
-		Statistics.setMinInsWorkingSetSize(multiIssueInorderCoreMemorySystem.getiCache().minWorkingSetSize,
-				core.getCore_number());
-		Statistics.setMaxInsWorkingSetSize(multiIssueInorderCoreMemorySystem.getiCache().maxWorkingSetSize,
-				core.getCore_number());
-		Statistics.setTotalInsWorkingSetSize(multiIssueInorderCoreMemorySystem.getiCache().totalWorkingSetSize,
-				core.getCore_number());
-		Statistics.setNumInsWorkingSetNoted(multiIssueInorderCoreMemorySystem.getiCache().numFlushesInWorkingSet,
-				core.getCore_number());
-		Statistics.setNumInsWorkingSetHits(multiIssueInorderCoreMemorySystem.getiCache().numWorkingSetHits,
-				core.getCore_number());
-		Statistics.setNumInsWorkingSetMisses(multiIssueInorderCoreMemorySystem.getiCache().numWorkingSetMisses,
-				core.getCore_number());
+		Statistics.setMinInsWorkingSetSize(multiIssueInorderCoreMemorySystem.getiCache().minWorkingSetSize, core.getCore_number());
+		Statistics.setMaxInsWorkingSetSize(multiIssueInorderCoreMemorySystem.getiCache().maxWorkingSetSize, core.getCore_number());
+		Statistics.setTotalInsWorkingSetSize(multiIssueInorderCoreMemorySystem.getiCache().totalWorkingSetSize, core.getCore_number());
+		Statistics.setNumInsWorkingSetNoted(multiIssueInorderCoreMemorySystem.getiCache().numFlushesInWorkingSet, core.getCore_number());
+		Statistics.setNumInsWorkingSetHits(multiIssueInorderCoreMemorySystem.getiCache().numWorkingSetHits, core.getCore_number());
+		Statistics.setNumInsWorkingSetMisses(multiIssueInorderCoreMemorySystem.getiCache().numWorkingSetMisses, core.getCore_number());
 	}
 
 	private void setDataWorkingSetStats() {
-		Statistics.setMinDataWorkingSetSize(multiIssueInorderCoreMemorySystem.getL1Cache().minWorkingSetSize,
-				core.getCore_number());
-		Statistics.setMaxDataWorkingSetSize(multiIssueInorderCoreMemorySystem.getL1Cache().maxWorkingSetSize,
-				core.getCore_number());
-		Statistics.setTotalDataWorkingSetSize(multiIssueInorderCoreMemorySystem.getL1Cache().totalWorkingSetSize,
-				core.getCore_number());
-		Statistics.setNumDataWorkingSetNoted(multiIssueInorderCoreMemorySystem.getL1Cache().numFlushesInWorkingSet,
-				core.getCore_number());
-		Statistics.setNumDataWorkingSetHits(multiIssueInorderCoreMemorySystem.getL1Cache().numWorkingSetHits,
-				core.getCore_number());
-		Statistics.setNumDataWorkingSetMisses(multiIssueInorderCoreMemorySystem.getL1Cache().numWorkingSetMisses,
-				core.getCore_number());
+		Statistics.setMinDataWorkingSetSize(multiIssueInorderCoreMemorySystem.getL1Cache().minWorkingSetSize, core.getCore_number());
+		Statistics.setMaxDataWorkingSetSize(multiIssueInorderCoreMemorySystem.getL1Cache().maxWorkingSetSize, core.getCore_number());
+		Statistics.setTotalDataWorkingSetSize(multiIssueInorderCoreMemorySystem.getL1Cache().totalWorkingSetSize, core.getCore_number());
+		Statistics.setNumDataWorkingSetNoted(multiIssueInorderCoreMemorySystem.getL1Cache().numFlushesInWorkingSet, core.getCore_number());
+		Statistics.setNumDataWorkingSetHits(multiIssueInorderCoreMemorySystem.getL1Cache().numWorkingSetHits, core.getCore_number());
+		Statistics.setNumDataWorkingSetMisses(multiIssueInorderCoreMemorySystem.getL1Cache().numWorkingSetMisses, core.getCore_number());
 	}
 
 	public void updateNoOfLd(int i) {
@@ -329,24 +324,19 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	public EnergyConfig calculateAndPrintEnergy(FileWriter outputFileWriter, String componentName) throws IOException {
 		EnergyConfig totalPower = new EnergyConfig(0, 0);
 
-		EnergyConfig bPredPower = getBranchPredictor().calculateAndPrintEnergy(outputFileWriter,
-				componentName + ".bPred");
+		EnergyConfig bPredPower = getBranchPredictor().calculateAndPrintEnergy(outputFileWriter, componentName + ".bPred");
 		totalPower.add(totalPower, bPredPower);
 
-		EnergyConfig decodePower = getDecodeUnitIn().calculateAndPrintEnergy(outputFileWriter,
-				componentName + ".decode");
+		EnergyConfig decodePower = getDecodeUnitIn().calculateAndPrintEnergy(outputFileWriter, componentName + ".decode");
 		totalPower.add(totalPower, decodePower);
 
-		EnergyConfig regFilePower = getWriteBackUnitIn().calculateAndPrintEnergy(outputFileWriter,
-				componentName + ".regFile");
+		EnergyConfig regFilePower = getWriteBackUnitIn().calculateAndPrintEnergy(outputFileWriter, componentName + ".regFile");
 		totalPower.add(totalPower, regFilePower);
 
-		EnergyConfig fuPower = getExecutionCore()
-				.calculateAndPrintEnergy(outputFileWriter, componentName + ".FuncUnit");
+		EnergyConfig fuPower = getExecutionCore().calculateAndPrintEnergy(outputFileWriter, componentName + ".FuncUnit");
 		totalPower.add(totalPower, fuPower);
 
-		EnergyConfig resultsBroadcastBusPower = getExecUnitIn().calculateAndPrintEnergy(outputFileWriter,
-				componentName + ".resultsBroadcastBus");
+		EnergyConfig resultsBroadcastBusPower = getExecUnitIn().calculateAndPrintEnergy(outputFileWriter, componentName + ".resultsBroadcastBus");
 		totalPower.add(totalPower, resultsBroadcastBusPower);
 
 		totalPower.printEnergyStats(outputFileWriter, componentName + ".total");

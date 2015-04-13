@@ -14,7 +14,7 @@ import config.SimulationConfig;
  * @author dell
  *
  */
-public class Toma_ROB { 
+public class Toma_ROB {
 
 	// TODO:--- check whether to extend simulation element
 	// TODO:--- check whether we need retireWidth
@@ -22,7 +22,7 @@ public class Toma_ROB {
 	private MultiIssueInorderExecutionEngine containingExecutionEngine;
 	private Core core;
 
-	private Toma_ROBEntry[] robEntries;
+	private Toma_ROBentry[] robEntries;
 	private int head;
 	private int tail;
 	// int size; //TODO:---check if this required
@@ -35,14 +35,14 @@ public class Toma_ROB {
 
 	// TODO:----compare with ROB in OOO & check initializing head,tail & how to get size
 
-	public Toma_ROB(MultiIssueInorderExecutionEngine containingExecutionEngine) {
+	public Toma_ROB(MultiIssueInorderExecutionEngine containingExecutionEngine, Core core) {
 
 		head = -1;
 		tail = -1;
 
-		robEntries = new Toma_ROBEntry[maxROBSize];
+		robEntries = new Toma_ROBentry[maxROBSize];
 		for (int i = 0; i < maxROBSize; i++) {
-			robEntries[i] = new Toma_ROBEntry();
+			robEntries[i] = new Toma_ROBentry();
 		}
 
 		lastValidIPSeen = -1;
@@ -50,6 +50,7 @@ public class Toma_ROB {
 		branchCount = 0;
 
 		this.containingExecutionEngine = containingExecutionEngine;
+		this.core = core;
 	}
 
 	public void performCommits() {
@@ -61,12 +62,13 @@ public class Toma_ROB {
 				return;
 			}
 
-			Toma_ROBEntry firstRobEntry = robEntries[head];
+			Toma_ROBentry firstRobEntry = robEntries[head];
 
 			Instruction firstInst = firstRobEntry.getInstruction();
 			OperationType operationType = firstInst.getOperationType();
 
-			// TODO:---chk if this requires some change "wait until instruction reaches head of ROB"
+			// TODO:---chk if this requires some change
+			// "wait until instruction reaches head of ROB"
 			if (firstRobEntry.isReady()) {
 
 				// update last valid IP seen
@@ -94,7 +96,8 @@ public class Toma_ROB {
 
 				// TODO: check if this is required
 				/*
-				 * //Signal LSQ for committing the Instruction at the queue head if(firstOpType == OperationType.load || firstOpType == OperationType.store) { if (!first.getLsqEntry().isValid()) { misc.Error.showErrorAndExit("The committed entry is not valid"); }
+				 * //Signal LSQ for committing the Instruction at the queue head if(firstOpType == OperationType.load || firstOpType == OperationType.store) { if
+				 * (!first.getLsqEntry().isValid()) { misc .Error.showErrorAndExit("The committed entry is not valid"); }
 				 * 
 				 * execEngine.getCoreMemorySystem().issueLSQCommit(first); }
 				 */
@@ -113,15 +116,14 @@ public class Toma_ROB {
 
 	}
 
-	private void handleInstructionRetirement(Toma_ROBEntry firstRobEntry, Instruction firstInst) {
+	private void handleInstructionRetirement(Toma_ROBentry firstRobEntry, Instruction firstInst) {
 		firstRobEntry.setBusy(false);
 		returnInstructionToPool(firstInst);
 
 		// increment number of instructions executed
 		core.incrementNoOfInstructionsExecuted();
 		if (core.getNoOfInstructionsExecuted() % 1000000 == 0) {
-			System.out.println(core.getNoOfInstructionsExecuted() / 1000000 + " million done on "
-					+ core.getCore_number());
+			System.out.println(core.getNoOfInstructionsExecuted() / 1000000 + " million done on " + core.getCore_number());
 		}
 
 		// debug print
@@ -139,19 +141,17 @@ public class Toma_ROB {
 	}
 
 	private void trainPredictor(Instruction firstInst, boolean prediction) {
-		this.containingExecutionEngine.getBranchPredictor().Train(lastValidIPSeen, firstInst.isBranchTaken(),
-				prediction);
+		this.containingExecutionEngine.getBranchPredictor().Train(lastValidIPSeen, firstInst.isBranchTaken(), prediction);
 		this.containingExecutionEngine.getBranchPredictor().incrementNumAccesses(1);
 	}
 
 	private boolean performPrediction(Instruction firstInst) {
-		boolean prediction = this.containingExecutionEngine.getBranchPredictor().predict(lastValidIPSeen,
-				firstInst.isBranchTaken());
+		boolean prediction = this.containingExecutionEngine.getBranchPredictor().predict(lastValidIPSeen, firstInst.isBranchTaken());
 		this.containingExecutionEngine.getBranchPredictor().incrementNumAccesses(1);
 		return prediction;
 	}
 
-	private void commitBranch(Toma_ROBEntry firstRobEntry, Instruction firstInst) {
+	private void commitBranch(Toma_ROBentry firstRobEntry, Instruction firstInst) {
 		boolean prediction = performPredictionNtrain(firstInst);
 
 		branchCount++;
@@ -171,7 +171,7 @@ public class Toma_ROB {
 		}
 	}
 
-	private void commitNotBranch(Toma_ROBEntry firstRobEntry, Instruction firstInst) {
+	private void commitNotBranch(Toma_ROBentry firstRobEntry, Instruction firstInst) {
 
 		int destinationRegNum = firstRobEntry.getDestinationRegNumber();
 		int robEntry_value = firstRobEntry.getResultValue();
