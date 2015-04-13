@@ -3,8 +3,6 @@
  */
 package pipeline.multi_issue_inorder;
 
-import pipeline.FunctionalUnitType;
-import pipeline.OpTypeToFUTypeMapping;
 import generic.Core;
 import generic.GenericCircularQueue;
 import generic.Instruction;
@@ -17,15 +15,18 @@ public class Toma_Issue {
 	// TODO:--- check whether to extend simulation element
 	// TODO: --- check do we need latch
 
+	MultiIssueInorderExecutionEngine executionEngine;
 	Core core;
 
 	public GenericCircularQueue<Instruction> inputToPipeline;
 
 	// TODO: check this is a single queue rather a array as in OOO
 
-	public Toma_Issue(Core core) {
-		// TODO: check do we need "super(PortType.Unlimited, -1, -1, -1, -1);"... i think hona chahiye
+	public Toma_Issue(Core core, MultiIssueInorderExecutionEngine executionEngine) {
+		// TODO: check do we need
+		// "super(PortType.Unlimited, -1, -1, -1, -1);"... i think hona chahiye
 		this.core = core;
+		this.executionEngine = executionEngine;
 	}
 
 	public void performIssue() {
@@ -42,13 +43,82 @@ public class Toma_Issue {
 
 		// TODO: shall be some logic if instr is invalid
 
-		long fURequest = 0;
-		if (OpTypeToFUTypeMapping.getFUType(ins.getOperationType()) != FunctionalUnitType.inValid) {
-			fURequest = containingExecutionEngine.getExecutionCore().requestFU(OpTypeToFUTypeMapping.getFUType(ins.getOperationType()));
+		// TODO: neeche vaala code..abi mein aise hi rakh rha hoon..delete later if required..I liked the code
+		/*
+		 * long fURequest = 0; if (OpTypeToFUTypeMapping.getFUType(ins.getOperationType()) != FunctionalUnitType.inValid) { fURequest = containingExecutionEngine.getExecutionCore
+		 * ().requestFU(OpTypeToFUTypeMapping .getFUType(ins.getOperationType()));
+		 * 
+		 * if (fURequest > 0) { break; } }
+		 */
 
-			if (fURequest > 0) {
-				break;
-			}
+		Toma_ReservationStation rs = executionEngine.getToma_ReservationStation();
+		Toma_ROB rob = executionEngine.getToma_ROB();
+		Toma_RegisterFile rf = executionEngine.getToma_RegisterFile_integer();// TODO: using abi integer registerFile
+
+		Toma_ReservationStationEntry rs_freeEntry = rs.getFreeEntryIn_RS();
+		if (rs_freeEntry == null) {
+			return;
 		}
+
+		int rob_freeTail = rob.getROB_freeTail(); // b
+		if (rob_freeTail == -1) {
+			return;
+		}
+
+		long register_source1 = ins.getSourceOperand1().getValue(); // rs
+		long register_source2 = ins.getSourceOperand2().getValue(); // rt
+		long register_dest = ins.getDestinationOperand().getValue(); // rd
+
+		if (rf.isBusy((int) register_source1)) {
+			int h = rf.getToma_ROBEntry((int) register_source1);
+
+			Toma_ROBentry rob_h = rob.getRobEntries()[h];
+
+			if (rob_h.isReady()) {
+				rs_freeEntry.setSourceOperand1_value(rob_h.getResultValue());
+				rs_freeEntry.setSourceOperand1_avaliability(0);
+			}
+
+			else {
+				rs_freeEntry.setSourceOperand1_avaliability(h);
+			}
+
+		} else {
+			rs_freeEntry.setSourceOperand1_value(rf.getValue((int) register_source1));
+			rs_freeEntry.setSourceOperand1_avaliability(0);
+		}
+
+		if (rf.isBusy((int) register_source2)) {
+			int h = rf.getToma_ROBEntry((int) register_source2);
+
+			Toma_ROBentry rob_h = rob.getRobEntries()[h];
+
+			if (rob_h.isReady()) {
+				rs_freeEntry.setSourceOperand2_value(rob_h.getResultValue());
+				rs_freeEntry.setSourceOperand2_avaliability(0);
+			}
+
+			else {
+				rs_freeEntry.setSourceOperand2_avaliability(h);
+			}
+
+		} else {
+			rs_freeEntry.setSourceOperand2_value(rf.getValue((int) register_source2));
+			rs_freeEntry.setSourceOperand2_avaliability(0);
+		}
+
+		rs_freeEntry.setOperationType(ins.getOperationType());
+		rs_freeEntry.setBusy(true);
+		rs_freeEntry.setInst_entryNumber_ROB(rob_freeTail);
+
+		rf.setToma_ROBEntry(rob_freeTail, (int) register_dest);
+		rf.setBusy(true, (int) register_dest);
+
+		Toma_ROBentry rob_freeTail_entry = rob.getRobEntries()[rob_freeTail];
+
+		rob_freeTail_entry.setBusy(true);
+		rob_freeTail_entry.getInstruction().setOperationType(ins.getOperationType());
+		rob_freeTail_entry.setDestinationRegNumber(register_dest);
+		rob_freeTail_entry.setReady(false);
 	}
 }

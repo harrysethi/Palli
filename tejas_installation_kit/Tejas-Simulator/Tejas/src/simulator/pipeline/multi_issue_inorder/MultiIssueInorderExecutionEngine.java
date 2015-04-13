@@ -34,6 +34,9 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	private Toma_WriteBack toma_writeBack;
 
 	private Toma_ROB toma_ROB;
+	private Toma_ReservationStation toma_ReservationStation;
+	// TODO: check toma_ReservationStation yahaan pe rakhne se works??? or need for every FU
+
 	private Toma_RegisterFile toma_RegisterFile_integer;
 	// TODO: check whether we need floating registerFile
 
@@ -86,7 +89,7 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 
 		// ------Toma Change Start-------------
 
-		this.toma_issue = new Toma_Issue(core);
+		this.toma_issue = new Toma_Issue(core, this);
 		this.toma_execute = new Toma_Execute();// TODO: we shall need parametrized
 		this.toma_writeBack = new Toma_WriteBack();// TODO: we shall need parametrized
 
@@ -174,6 +177,21 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	 */
 	public void setToma_writeBack(Toma_WriteBack toma_writeBack) {
 		this.toma_writeBack = toma_writeBack;
+	}
+
+	/**
+	 * @return the toma_ReservationStation
+	 */
+	public Toma_ReservationStation getToma_ReservationStation() {
+		return toma_ReservationStation;
+	}
+
+	/**
+	 * @param toma_ReservationStation
+	 *            the toma_ReservationStation to set
+	 */
+	public void setToma_ReservationStation(Toma_ReservationStation toma_ReservationStation) {
+		this.toma_ReservationStation = toma_ReservationStation;
 	}
 
 	// ------Toma Change End-------------

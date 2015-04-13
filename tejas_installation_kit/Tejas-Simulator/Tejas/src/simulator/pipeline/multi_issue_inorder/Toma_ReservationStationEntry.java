@@ -11,16 +11,16 @@ import generic.OperationType;
  */
 public class Toma_ReservationStationEntry {
 
-	OperationType operationType; // Op
-	boolean isBusy;
-	int inst_entryNumber_ROB; // Qi
+	private OperationType operationType; // Op
+	private boolean isBusy;
+	private int inst_entryNumber_ROB; // Qi
 
-	int sourceOperand1_avaliability;// Qj
-	int sourceOperand2_avaliability;// Qk
+	private int sourceOperand1_avaliability;// Qj
+	private int sourceOperand2_avaliability;// Qk
 
 	// TODO:-------check if value actually required ;)
-	int sourceOperand1_value;// Vj
-	int sourceOperand2_value;// Vk
+	private Object sourceOperand1_value;// Vj
+	private Object sourceOperand2_value;// Vk
 
 	public Toma_ReservationStationEntry() {
 		isBusy = false;
@@ -104,7 +104,7 @@ public class Toma_ReservationStationEntry {
 	/**
 	 * @return the sourceOperand1_value
 	 */
-	public int getSourceOperand1_value() {
+	public Object getSourceOperand1_value() {
 		return sourceOperand1_value;
 	}
 
@@ -112,14 +112,14 @@ public class Toma_ReservationStationEntry {
 	 * @param sourceOperand1_value
 	 *            the sourceOperand1_value to set
 	 */
-	public void setSourceOperand1_value(int sourceOperand1_value) {
+	public void setSourceOperand1_value(Object sourceOperand1_value) {
 		this.sourceOperand1_value = sourceOperand1_value;
 	}
 
 	/**
 	 * @return the sourceOperand2_value
 	 */
-	public int getSourceOperand2_value() {
+	public Object getSourceOperand2_value() {
 		return sourceOperand2_value;
 	}
 
@@ -127,7 +127,7 @@ public class Toma_ReservationStationEntry {
 	 * @param sourceOperand2_value
 	 *            the sourceOperand2_value to set
 	 */
-	public void setSourceOperand2_value(int sourceOperand2_value) {
+	public void setSourceOperand2_value(Object sourceOperand2_value) {
 		this.sourceOperand2_value = sourceOperand2_value;
 	}
 

@@ -28,9 +28,9 @@ public class Toma_ReservationStation {
 	}
 
 	// returns null if no freeEntry found
-	public Toma_ReservationStationEntry isFreeEntryIn_RS() {
+	public Toma_ReservationStationEntry getFreeEntryIn_RS() {
 		for (Toma_ReservationStationEntry toma_ReservationStationEntry : reservationStationEntries) {
-			if (!toma_ReservationStationEntry.isBusy) {
+			if (!toma_ReservationStationEntry.isBusy()) {
 				return toma_ReservationStationEntry;
 			}
 		}

@@ -191,4 +191,21 @@ public class Toma_ROB {
 			e.printStackTrace();
 		}
 	}
+
+	// returns -1 if rob tail is not free
+	public int getROB_freeTail() {
+		if (!robEntries[tail].isBusy()) {
+			return tail;
+		}
+
+		return -1;
+	}
+
+	/**
+	 * @return the robEntries
+	 */
+	public Toma_ROBentry[] getRobEntries() {
+		return robEntries;
+	}
+
 }
