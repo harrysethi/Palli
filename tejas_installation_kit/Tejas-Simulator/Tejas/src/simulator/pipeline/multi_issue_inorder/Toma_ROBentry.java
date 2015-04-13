@@ -16,7 +16,7 @@ public class Toma_ROBentry {
 	private boolean isBusy;
 	private boolean isReady;
 	private int resultValue; // Val
-	private long destinationRegNumber; // Dst
+	private int destinationRegNumber; // Dst
 
 	// TODO:----..check here using regNum may be incorrect
 
@@ -55,7 +55,7 @@ public class Toma_ROBentry {
 	/**
 	 * @return the destinationRegNumber
 	 */
-	public long getDestinationRegNumber() {
+	public int getDestinationRegNumber() {
 		return destinationRegNumber;
 	}
 
@@ -63,7 +63,7 @@ public class Toma_ROBentry {
 	 * @param destinationRegNumber
 	 *            the destinationRegNumber to set
 	 */
-	public void setDestinationRegNumber(long destinationRegNumber) {
+	public void setDestinationRegNumber(int destinationRegNumber) {
 		this.destinationRegNumber = destinationRegNumber;
 	}
 
