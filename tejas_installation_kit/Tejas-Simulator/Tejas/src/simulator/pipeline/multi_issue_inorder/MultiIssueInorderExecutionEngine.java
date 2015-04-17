@@ -31,11 +31,10 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	private Toma_Issue toma_issue; // TODO: making new files..check this shall be fine
 	// TODO: since we have made new files, check if prev files are referenced somewhere
 	private Toma_Execute toma_execute;
-	private Toma_WriteResult toma_writeBack;
+	private Toma_WriteResult toma_writeResult;
 
 	private Toma_ROB toma_ROB;
 	private Toma_ReservationStation toma_ReservationStation;
-	// TODO: check toma_ReservationStation yahaan pe rakhne se works??? or need for every FU
 
 	private Toma_RegisterFile toma_RegisterFile_integer;
 	// TODO: check whether we need floating registerFile
@@ -91,12 +90,14 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 
 		this.toma_issue = new Toma_Issue(core, this);
 		this.toma_execute = new Toma_Execute(this);
-		this.toma_writeBack = new Toma_WriteResult(this);
+		this.toma_writeResult = new Toma_WriteResult(this);
 
 		this.toma_ROB = new Toma_ROB(this, core);
 
 		this.toma_RegisterFile_integer = new Toma_RegisterFile(core.getIntegerRegisterFileSize());
 		// TODO: check whether we need a floatregsterfile
+
+		this.toma_ReservationStation = new Toma_ReservationStation();
 
 		// ------Toma Change End-------------
 
@@ -117,6 +118,21 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	}
 
 	// ------Toma Change Start-------------
+
+	/**
+	 * @return the toma_writeResult
+	 */
+	public Toma_WriteResult getToma_writeResult() {
+		return toma_writeResult;
+	}
+
+	/**
+	 * @param toma_writeResult
+	 *            the toma_writeResult to set
+	 */
+	public void setToma_writeResult(Toma_WriteResult toma_writeResult) {
+		this.toma_writeResult = toma_writeResult;
+	}
 
 	public Toma_ROB getToma_ROB() {
 		return toma_ROB;
@@ -162,21 +178,6 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	 */
 	public void setToma_execute(Toma_Execute toma_execute) {
 		this.toma_execute = toma_execute;
-	}
-
-	/**
-	 * @return the toma_writeBack
-	 */
-	public Toma_WriteResult getToma_writeBack() {
-		return toma_writeBack;
-	}
-
-	/**
-	 * @param toma_writeBack
-	 *            the toma_writeBack to set
-	 */
-	public void setToma_writeBack(Toma_WriteResult toma_writeBack) {
-		this.toma_writeBack = toma_writeBack;
 	}
 
 	/**
@@ -391,6 +392,9 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	public void setInputToPipeline(GenericCircularQueue<Instruction>[] inpList) {
 
 		fetchUnitIn.setInputToPipeline(inpList[0]);
+		// ------Toma Change Start-------------
+		toma_issue.setInputToPipeline(inpList[0]);
+		// ------Toma Change End-------------
 
 	}
 

@@ -71,7 +71,7 @@ public class MultiIssueInorderPipeline implements PipelineInterface {
 	}
 
 	public void toma_writeback() {
-		containingExecutionEngine.getToma_writeBack();// TODO: check may need to pass "this" :D..OOO mein naa kiya baai :O :O
+		containingExecutionEngine.getToma_writeResult().performWriteResult();;// TODO: check may need to pass "this" :D..OOO mein naa kiya baai :O :O
 	}
 
 	public void toma_commit() {

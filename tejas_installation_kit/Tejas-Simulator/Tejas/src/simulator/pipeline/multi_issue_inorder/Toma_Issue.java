@@ -120,4 +120,13 @@ public class Toma_Issue {
 		rob_freeTail_entry.setDestinationRegNumber(register_dest);
 		rob_freeTail_entry.setReady(false);
 	}
+
+	/**
+	 * @param inputToPipeline
+	 *            the inputToPipeline to set
+	 */
+	public void setInputToPipeline(GenericCircularQueue<Instruction> inputToPipeline) {
+		this.inputToPipeline = inputToPipeline;
+	}
+
 }
