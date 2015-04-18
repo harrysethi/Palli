@@ -29,7 +29,7 @@
 		<EmuCores>0</EmuCores>
 		<JavaCores>1</JavaCores>
 		<DebugMode>false</DebugMode>
-		<DetachMemSysData>false</DetachMemSysData>
+		<DetachMemSysData>true</DetachMemSysData>
 		<DetachMemSysInsn>false</DetachMemSysInsn>
 		<PrintPowerStats>true</PrintPowerStats>
 		<Broadcast>false</Broadcast>
@@ -160,6 +160,13 @@
 				<rob_buffersize>10</rob_buffersize>
 			</Toma_params>
 
+			<Toma_CDB>
+				<CDBLatency>4</CDBLatency>
+				<CDBPortType>UL</CDBPortType>
+				<CDBAccessPorts>-1</CDBAccessPorts>
+				<CDBPortOccupancy>1</CDBPortOccupancy>
+			</Toma_CDB>
+
 			<!-- Toma Change End -->
 
 			<RegisterFile>
@@ -264,25 +271,6 @@
 			<TreeBarrier>false</TreeBarrier>
 			<BarrierLatency>2</BarrierLatency>
 			<BarrierUnit>Distributed</BarrierUnit>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 			<Cache firstLevel="true" name="I1" nextLevel="L2" type="ICache_32K_8" />
 			<Cache firstLevel="true" name="L1" nextLevel="L2" type="L1Cache_32K_8" />

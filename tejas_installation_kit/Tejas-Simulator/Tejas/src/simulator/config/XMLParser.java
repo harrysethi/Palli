@@ -23,6 +23,7 @@ package config;
 import generic.PortType;
 
 import java.io.File;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -30,7 +31,6 @@ import main.Emulator;
 import main.Main;
 import memorysystem.nuca.NucaCache.Mapping;
 import memorysystem.nuca.NucaCache.NucaType;
-import net.NOC;
 import net.NOC.CONNECTIONTYPE;
 import net.NOC.TOPOLOGY;
 import net.RoutingAlgo;
@@ -409,6 +409,12 @@ public class XMLParser {
 			Element toma_Elmnt = (Element) (coreElmnt.getElementsByTagName("Toma_params")).item(0);
 			core.toma_RS_size = Integer.parseInt(getImmediateString("rs_buffersize", toma_Elmnt));
 			core.toma_ROB_size = Integer.parseInt(getImmediateString("rob_buffersize", toma_Elmnt));
+
+			Element toma_CDB_Elmnt = (Element) (coreElmnt.getElementsByTagName("Toma_CDB")).item(0);
+			core.toma_CDB_latency = Integer.parseInt(getImmediateString("CDBLatency", toma_CDB_Elmnt));
+			core.toma_CDB_portType = setPortType(getImmediateString("CDBPortType", toma_CDB_Elmnt));
+			core.toma_CDB_accessPorts = Integer.parseInt(getImmediateString("CDBAccessPorts", toma_CDB_Elmnt));
+			core.toma_CDB_portOccupancy = Integer.parseInt(getImmediateString("CDBPortOccupancy", toma_CDB_Elmnt));
 
 			// ------Toma Change End-------------
 

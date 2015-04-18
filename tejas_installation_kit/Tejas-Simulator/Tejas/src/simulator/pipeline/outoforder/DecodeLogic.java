@@ -105,7 +105,7 @@ public class DecodeLogic extends SimulationElement {
 											.addInstructionToROB(
 													newInstruction,
 													newInstruction.getThreadID());
-			
+
 			//if load or store, make entry in LSQ
 			if(newInstruction.getOperationType() == OperationType.load ||
 					newInstruction.getOperationType() == OperationType.store)
@@ -115,7 +115,7 @@ public class DecodeLogic extends SimulationElement {
 					isLoad = true;
 				else
 					isLoad = false;
-					
+
 				containingExecutionEngine.getCoreMemorySystem().allocateLSQEntry(isLoad, 
 						newROBEntry.getInstruction().getSourceOperand1MemValue(),
 						newROBEntry);

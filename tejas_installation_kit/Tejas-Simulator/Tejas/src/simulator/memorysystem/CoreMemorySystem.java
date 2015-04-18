@@ -17,11 +17,12 @@
 ------------------------------------------------------------------------------------------------------------
 
 	Contributors:  Moksh Upadhyay
-*****************************************************************************/
+ *****************************************************************************/
 package memorysystem;
 
 import java.util.Hashtable;
 import java.util.Vector;
+
 import generic.PortType;
 import generic.SimulationElement;
 import generic.Core;
@@ -30,8 +31,7 @@ import config.CacheDataType;
 import config.SystemConfig;
 import config.CacheConfig;
 
-public abstract class CoreMemorySystem extends SimulationElement
-{
+public abstract class CoreMemorySystem extends SimulationElement {
 	protected int coreID;
 	protected Core core;
 	protected Cache iCache;
@@ -39,169 +39,167 @@ public abstract class CoreMemorySystem extends SimulationElement
 	protected TLB iTLB;
 	protected TLB dTLB;
 	protected LSQ lsqueue;
-	
+
+	// ------Toma Change Start-------------
+	protected Toma_CDB toma_CDB;
+	// ------Toma Change End-------------
+
 	protected long numInstructionSetChunksNoted = 0;
 	protected long numDataSetChunksNoted = 0;
-	
+
 	// All the private caches of the core are maintained in a list
 	// coreCacheList contains a vector of caches
 	// cacheNameList contains a vector of cache names
 	// Elements in both the lists have a one to one mapping
-	private Hashtable<String,Cache> cacheNameToCacheMapping = new Hashtable<String,Cache>();
+	private Hashtable<String, Cache> cacheNameToCacheMapping = new Hashtable<String, Cache>();
 	private Vector<Cache> coreCacheList = new Vector<Cache>();
-	
+
 	public Vector<Cache> getCoreCacheList() {
 		return coreCacheList;
 	}
-	
+
 	public void addToCoreCacheList(Cache c) {
 		coreCacheList.add(c);
 	}
-	
+
 	public Hashtable<String, Cache> getCacheList() {
 		return cacheNameToCacheMapping;
 	}
-	
+
 	private String tagNameWithCoreId(String name) {
 		return (name + "[" + this.coreID + "]");
 	}
-	
+
 	public Cache getCache(String cacheName) {
 		return cacheNameToCacheMapping.get(cacheName);
 	}
-	
-	protected CoreMemorySystem(Core core)
-	{
+
+	protected CoreMemorySystem(Core core) {
 		super(PortType.Unlimited, -1, -1, 0, -1);
-		
+
 		this.setCore(core);
 		this.coreID = core.getCore_number();
-		
+
 		createCoreCaches();
 		maintainDataAndInstructionCacheAsFirstLevelCache();
 		createLinksBetweenCoreCaches();
-		
-		//Initialise the TLB
+
+		// Initialise the TLB
 		int numPageLevels = 1;
-		iTLB = new TLB(SystemConfig.core[coreID].ITLBPortType,
-				SystemConfig.core[coreID].ITLBAccessPorts, 
-				SystemConfig.core[coreID].ITLBPortOccupancy, 
-				SystemConfig.core[coreID].ITLBLatency,
-				this,
-				SystemConfig.core[coreID].ITLBSize,
-				SystemConfig.mainMemoryLatency * numPageLevels,
+		iTLB = new TLB(SystemConfig.core[coreID].ITLBPortType, SystemConfig.core[coreID].ITLBAccessPorts, SystemConfig.core[coreID].ITLBPortOccupancy,
+				SystemConfig.core[coreID].ITLBLatency, this, SystemConfig.core[coreID].ITLBSize, SystemConfig.mainMemoryLatency * numPageLevels,
 				SystemConfig.core[coreID].iTLBPower);
-		
-		dTLB = new TLB(SystemConfig.core[coreID].DTLBPortType,
-				SystemConfig.core[coreID].DTLBAccessPorts, 
-				SystemConfig.core[coreID].DTLBPortOccupancy, 
-				SystemConfig.core[coreID].DTLBLatency,
-				this,
-				SystemConfig.core[coreID].DTLBSize,
-				SystemConfig.mainMemoryLatency * numPageLevels,
+
+		dTLB = new TLB(SystemConfig.core[coreID].DTLBPortType, SystemConfig.core[coreID].DTLBAccessPorts, SystemConfig.core[coreID].DTLBPortOccupancy,
+				SystemConfig.core[coreID].DTLBLatency, this, SystemConfig.core[coreID].DTLBSize, SystemConfig.mainMemoryLatency * numPageLevels,
 				SystemConfig.core[coreID].dTLBPower);
-		
-		//Initialise the LSQ
-		lsqueue = new LSQ(SystemConfig.core[coreID].LSQPortType,
-		                    SystemConfig.core[coreID].LSQAccessPorts, 
-							SystemConfig.core[coreID].LSQPortOccupancy, 
-							SystemConfig.core[coreID].LSQLatency,
-							this, 
-							SystemConfig.core[coreID].LSQSize);
-	//	lsqueue.setMultiPortType(SystemConfig.core[coreID].LSQMultiportType);
+
+		// Initialise the LSQ
+		lsqueue = new LSQ(SystemConfig.core[coreID].LSQPortType, SystemConfig.core[coreID].LSQAccessPorts, SystemConfig.core[coreID].LSQPortOccupancy,
+				SystemConfig.core[coreID].LSQLatency, this, SystemConfig.core[coreID].LSQSize);
+		// lsqueue.setMultiPortType(SystemConfig.core[coreID].LSQMultiportType);
+
+		// ------Toma Change Start-------------
+		toma_CDB = new Toma_CDB(SystemConfig.core[coreID].toma_CDB_portType, SystemConfig.core[coreID].toma_CDB_accessPorts, SystemConfig.core[coreID].toma_CDB_portOccupancy,
+				SystemConfig.core[coreID].toma_CDB_latency, this);
+		// ------Toma Change End-------------
 	}
-	
+
 	private void createLinksBetweenCoreCaches() {
-		for(int i=0; i<SystemConfig.core[coreID].coreCacheList.size(); i++) {
+		for (int i = 0; i < SystemConfig.core[coreID].coreCacheList.size(); i++) {
 			CacheConfig cacheConfig = SystemConfig.core[coreID].coreCacheList.elementAt(i);
 			String nextLevelName = tagNameWithCoreId(cacheConfig.nextLevel);
-			Cache nextLevelCache = this.getCache(nextLevelName); 
-			if(nextLevelCache!=null) {
+			Cache nextLevelCache = this.getCache(nextLevelName);
+			if (nextLevelCache != null) {
 				this.coreCacheList.get(i).createLinkToNextLevelCache(nextLevelCache);
 			}
 		}
 	}
 
 	private void maintainDataAndInstructionCacheAsFirstLevelCache() {
-		if(iCache!=null && l1Cache==null) {
+		if (iCache != null && l1Cache == null) {
 			misc.Error.showErrorAndExit("Instruction cache set but data cache has not been set !!");
 		}
-		
-		if(iCache==null && l1Cache!=null) {
+
+		if (iCache == null && l1Cache != null) {
 			misc.Error.showErrorAndExit("Data cache set but instruction cache has not been set !!");
 		}
-		
-		// If both instruction and data cache are set to null, 
+
+		// If both instruction and data cache are set to null,
 		// then use a unified first level cache
-		if(iCache==null && l1Cache==null) {
-			for(int i=0; i<SystemConfig.core[coreID].coreCacheList.size(); i++) {
+		if (iCache == null && l1Cache == null) {
+			for (int i = 0; i < SystemConfig.core[coreID].coreCacheList.size(); i++) {
 				CacheConfig cacheConfig = SystemConfig.core[coreID].coreCacheList.elementAt(i);
-				
-				if(cacheConfig.firstLevel==true) {
-					if(iCache==null && l1Cache==null) {
+
+				if (cacheConfig.firstLevel == true) {
+					if (iCache == null && l1Cache == null) {
 						iCache = coreCacheList.get(i);
 						l1Cache = coreCacheList.get(i);
 					} else {
-						misc.Error.showErrorAndExit("Core cannot have more than one first level " +
-							"unified cache !!");
+						misc.Error.showErrorAndExit("Core cannot have more than one first level " + "unified cache !!");
 					}
 				}
 			}
 		}
-		
-		if(iCache==null && l1Cache==null) {
-			if(SystemConfig.core[coreID].coreCacheList.size()==0) {
+
+		if (iCache == null && l1Cache == null) {
+			if (SystemConfig.core[coreID].coreCacheList.size() == 0) {
 				misc.Error.showErrorAndExit("No private cache for this core !!");
 			} else {
-				misc.Error.showErrorAndExit("There are " + coreCacheList.size() + " private caches " +
-					"but none of them is a first level cache. " +
-					"Set the firstLevel attribute to true in the " +
-					"cache tag of the configuration file");
+				misc.Error.showErrorAndExit("There are " + coreCacheList.size() + " private caches " + "but none of them is a first level cache. "
+						+ "Set the firstLevel attribute to true in the " + "cache tag of the configuration file");
 			}
-		}		
+		}
 	}
 
 	private void createCoreCaches() {
-		for(int i=0; i<SystemConfig.core[coreID].coreCacheList.size(); i++) {
+		for (int i = 0; i < SystemConfig.core[coreID].coreCacheList.size(); i++) {
 			CacheConfig cacheConfig = SystemConfig.core[coreID].coreCacheList.elementAt(i);
-			Cache cache = new Cache(tagNameWithCoreId(cacheConfig.cacheName), 
-					core.getCore_number(), cacheConfig, this);
-			
+			Cache cache = new Cache(tagNameWithCoreId(cacheConfig.cacheName), core.getCore_number(), cacheConfig, this);
+
 			cacheNameToCacheMapping.put(tagNameWithCoreId(cacheConfig.cacheName), cache);
 			addToCoreCacheList(cache);
-						
-			if(cacheConfig.cacheDataType==CacheDataType.Instruction) {
-				if(iCache==null && cacheConfig.firstLevel==true) {
+
+			if (cacheConfig.cacheDataType == CacheDataType.Instruction) {
+				if (iCache == null && cacheConfig.firstLevel == true) {
 					iCache = cache;
-				} else if (iCache!=null) {
+				} else if (iCache != null) {
 					misc.Error.showErrorAndExit("Core cannot have two instruction caches !!");
-				} else if(cacheConfig.firstLevel==false) {
-					misc.Error.showErrorAndExit("Instruction cache must be a first level cache\n" + 
-						"Set the firstLevel attribute field of the cache to true");
+				} else if (cacheConfig.firstLevel == false) {
+					misc.Error.showErrorAndExit("Instruction cache must be a first level cache\n" + "Set the firstLevel attribute field of the cache to true");
 				}
 			}
-			
-			if(cacheConfig.cacheDataType==CacheDataType.Data) {
-				if(l1Cache==null && cacheConfig.firstLevel==true) {
+
+			if (cacheConfig.cacheDataType == CacheDataType.Data) {
+				if (l1Cache == null && cacheConfig.firstLevel == true) {
 					l1Cache = cache;
-				} else if (l1Cache!=null) {
+				} else if (l1Cache != null) {
 					misc.Error.showErrorAndExit("Core cannot have two data caches !!");
-				} else if(cacheConfig.firstLevel==false) {
-					misc.Error.showErrorAndExit("Data cache must be a first level cache\n" + 
-						"Set the firstLevel attribute field of the cache to true");
+				} else if (cacheConfig.firstLevel == false) {
+					misc.Error.showErrorAndExit("Data cache must be a first level cache\n" + "Set the firstLevel attribute field of the cache to true");
 				}
 			}
 		}
 	}
 
 	public abstract void issueRequestToInstrCache(long address);
-	
+
 	public abstract boolean issueRequestToL1Cache(RequestType requestType, long address);
-	
+
 	public LSQ getLsqueue() {
 		return lsqueue;
 	}
-	
+
+	// ------Toma Change Start-------------
+	/**
+	 * @return the toma_CDB
+	 */
+	public Toma_CDB getToma_CDB() {
+		return toma_CDB;
+	}
+
+	// ------Toma Change End-------------
+
 	public Cache getL1Cache() {
 		return l1Cache;
 	}
@@ -209,7 +207,7 @@ public abstract class CoreMemorySystem extends SimulationElement
 	public TLB getiTLB() {
 		return iTLB;
 	}
-	
+
 	public TLB getdTLB() {
 		return dTLB;
 	}
@@ -225,13 +223,20 @@ public abstract class CoreMemorySystem extends SimulationElement
 	public Core getCore() {
 		return core;
 	}
-	
-	public abstract long getNumberOfMemoryRequests();	
-	public abstract long getNumberOfLoads();	
-	public abstract long getNumberOfStores();	
+
+	public abstract long getNumberOfMemoryRequests();
+
+	public abstract long getNumberOfLoads();
+
+	public abstract long getNumberOfStores();
+
 	public abstract long getNumberOfValueForwardings();
-	public abstract void setNumberOfMemoryRequests(long numMemoryRequests);	
-	public abstract void setNumberOfLoads(long numLoads);	
-	public abstract void setNumberOfStores(long numStores);	
+
+	public abstract void setNumberOfMemoryRequests(long numMemoryRequests);
+
+	public abstract void setNumberOfLoads(long numLoads);
+
+	public abstract void setNumberOfStores(long numStores);
+
 	public abstract void setNumberOfValueForwardings(long numValueForwardings);
 }

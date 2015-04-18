@@ -8,10 +8,14 @@ package pipeline.multi_issue_inorder;
  *
  */
 public class Toma_LSB {
-	// TODO:-----na pta...kuch to karo :P
-	// contains:
-	// pending load & store instructions
-	// memory address
-	// values
+	// TODO: check whether need to extend simulation element
+
+	private Toma_LSBEntry[] toma_lsb;
+	protected int tail;
+	protected int head;
+	public int lsbSize;
+
+	public Toma_LSB() {
+	}
 
 }

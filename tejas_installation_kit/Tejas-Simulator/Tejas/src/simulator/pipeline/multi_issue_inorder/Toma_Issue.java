@@ -3,6 +3,8 @@
  */
 package pipeline.multi_issue_inorder;
 
+import main.CustomObjectPool;
+import config.SimulationConfig;
 import generic.Core;
 import generic.GenericCircularQueue;
 import generic.Instruction;
@@ -43,10 +45,17 @@ public class Toma_Issue {
 
 		if (ins.getOperationType() == OperationType.inValid) {
 			executionEngine.setExecutionComplete(true);
+			CustomObjectPool.getInstructionPool().returnObject(ins);
 			return;
 		}
 
-		// TODO: shall be some logic if instr is invalid
+		// drop memory operations if specified in configuration file
+		if (ins.getOperationType() == OperationType.load || ins.getOperationType() == OperationType.store) {
+			if (SimulationConfig.detachMemSysData == true) {
+				CustomObjectPool.getInstructionPool().returnObject(ins);
+				return;
+			}
+		}
 
 		// TODO: neeche vaala code..abi mein aise hi rakh rha hoon..delete later if required..I liked the code
 		/*

@@ -1,11 +1,5 @@
 package pipeline.multi_issue_inorder;
 
-import main.ArchitecturalComponent;
-import memorysystem.AddressCarryingEvent;
-import memorysystem.MemorySystem;
-import config.CoreConfig;
-import config.SimulationConfig;
-import config.SystemConfig;
 import generic.Barrier;
 import generic.BarrierTable;
 import generic.Core;
@@ -18,6 +12,10 @@ import generic.OperationType;
 import generic.PortType;
 import generic.RequestType;
 import generic.SimulationElement;
+import main.ArchitecturalComponent;
+import memorysystem.AddressCarryingEvent;
+import config.SimulationConfig;
+import config.SystemConfig;
 
 public class FetchUnitIn_MII extends SimulationElement {
 	Core core;

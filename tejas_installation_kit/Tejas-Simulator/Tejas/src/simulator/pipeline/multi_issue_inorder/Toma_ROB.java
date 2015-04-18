@@ -196,7 +196,16 @@ public class Toma_ROB {
 
 	// returns -1 if rob tail is not free
 	public int getROB_freeTail() {
-		if (!robEntries[tail].isBusy()) {
+		// TODO: below logic modified apne se...ensure it's fine
+		if (tail == -1) {
+			head = 0;
+			tail = 0;
+			return tail;
+		}
+
+		int nextTail = (tail + 1) % maxROBSize;
+		if (!robEntries[nextTail].isBusy()) {
+			tail = nextTail;
 			return tail;
 		}
 

@@ -17,31 +17,30 @@
 ------------------------------------------------------------------------------------------------------------
 
 	Contributors:  Moksh Upadhyay
-*****************************************************************************/
+ *****************************************************************************/
 package config;
 
 import java.util.Vector;
 import generic.PortType;
 
-public class CoreConfig 
-{
+public class CoreConfig {
 	public long frequency;
-	
+
 	public int LSQSize;
 	public int LSQLatency;
 	public PortType LSQPortType;
 	public int LSQAccessPorts;
 	public int LSQPortOccupancy;
-		
+
 	public PipelineType pipelineType;
-		
+
 	public int ITLBSize;
 	public int ITLBLatency;
 	public int ITLBMissPenalty;
 	public PortType ITLBPortType;
 	public int ITLBAccessPorts;
 	public int ITLBPortOccupancy;
-	
+
 	public int DTLBSize;
 	public int DTLBLatency;
 	public int DTLBMissPenalty;
@@ -58,11 +57,11 @@ public class CoreConfig
 	public int FloatRegFileSize;
 	public int IntArchRegNum;
 	public int FloatArchRegNum;
-	
+
 	public int BranchMispredPenalty;
-	
+
 	public int ExecutionCoreNumPorts;
-	
+
 	public int IntALUNum;
 	public int IntMulNum;
 	public int IntDivNum;
@@ -71,7 +70,7 @@ public class CoreConfig
 	public int FloatDivNum;
 	public int JumpNum;
 	public int MemoryNum;
-	
+
 	public int IntALULatency;
 	public int IntMulLatency;
 	public int IntDivLatency;
@@ -80,7 +79,7 @@ public class CoreConfig
 	public int FloatDivLatency;
 	public int JumpLatency;
 	public int MemoryLatency;
-	
+
 	public int IntALUReciprocalOfThroughput;
 	public int IntMulReciprocalOfThroughput;
 	public int IntDivReciprocalOfThroughput;
@@ -89,7 +88,7 @@ public class CoreConfig
 	public int FloatDivReciprocalOfThroughput;
 	public int JumpReciprocalOfThroughput;
 	public int MemoryReciprocalOfThroughput;
-	
+
 	public int[] IntALUPortNumbers;
 	public int[] IntMulPortNumbers;
 	public int[] IntDivPortNumbers;
@@ -98,16 +97,16 @@ public class CoreConfig
 	public int[] FloatDivPortNumbers;
 	public int[] JumpPortNumbers;
 	public int[] MemoryPortNumbers;
-	
+
 	public Vector<CacheConfig> coreCacheList = new Vector<CacheConfig>();
 
 	public BranchPredictorConfig branchPredictor;
-	
+
 	public boolean TreeBarrier;
 
 	public int barrierLatency;
 	public int barrierUnit;
-	
+
 	public EnergyConfig bPredPower;
 	public EnergyConfig decodePower;
 	public EnergyConfig intRATPower;
@@ -125,27 +124,30 @@ public class CoreConfig
 	public EnergyConfig resultsBroadcastBusPower;
 	public EnergyConfig iTLBPower;
 	public EnergyConfig dTLBPower;
-	
-	
+
 	// ------Toma Change Start-------------
-	
+
 	public int toma_RS_size;
 	public int toma_ROB_size;
-	
+
+	public int toma_CDB_latency;
+	public PortType toma_CDB_portType;
+	public int toma_CDB_accessPorts;
+	public int toma_CDB_portOccupancy;
+
 	// ------Toma Change End-------------
-	
+
 	public int getICacheLatency() {
 		int latency = 0;
-		
-		for(CacheConfig config : coreCacheList) {
-			if(config.firstLevel) {
-				if(config.cacheDataType==CacheDataType.Instruction ||
-					config.cacheDataType==CacheDataType.Unified) {
+
+		for (CacheConfig config : coreCacheList) {
+			if (config.firstLevel) {
+				if (config.cacheDataType == CacheDataType.Instruction || config.cacheDataType == CacheDataType.Unified) {
 					return config.latency;
 				}
 			}
 		}
-		
+
 		misc.Error.showErrorAndExit("Could not locate instruction cache config !!");
 		return latency;
 	}

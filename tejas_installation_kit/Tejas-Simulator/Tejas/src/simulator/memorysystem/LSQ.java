@@ -17,7 +17,7 @@
 ------------------------------------------------------------------------------------------------------------
 
 	Contributors:  Moksh Upadhyay, Smruti R. Sarangi 
-*****************************************************************************/
+ *****************************************************************************/
 package memorysystem;
 
 import java.io.FileWriter;
@@ -31,24 +31,22 @@ import pipeline.outoforder.ReorderBufferEntry;
 
 import generic.*;
 
-public class LSQ extends SimulationElement
-{
+public class LSQ extends SimulationElement {
 	CoreMemorySystem containingMemSys;
 	protected LSQEntry[] lsqueue;
 	protected int tail; // points to last valid entry
 	protected int head; // points to first valid entry
 	public int lsqSize;
 	protected int curSize;
-		
+
 	public long noOfMemRequests = 0;
 	public long NoOfLd = 0;
 	public long NoOfSt = 0;
 	public long NoOfForwards = 0; // Total number of forwards made by the LSQ
-	
+
 	long numAccesses;
-	
-	public LSQ(PortType portType, int noOfPorts, long occupancy, long latency, CoreMemorySystem containingMemSys, int lsqSize) 
-	{
+
+	public LSQ(PortType portType, int noOfPorts, long occupancy, long latency, CoreMemorySystem containingMemSys, int lsqSize) {
 		super(portType, noOfPorts, occupancy, latency, containingMemSys.getCore().getFrequency());
 		this.containingMemSys = containingMemSys;
 		this.lsqSize = lsqSize;
@@ -56,8 +54,7 @@ public class LSQ extends SimulationElement
 		tail = -1;
 		curSize = 0;
 		lsqueue = new LSQEntry[lsqSize];
-		for(int i = 0; i < lsqSize; i++)
-		{
+		for (int i = 0; i < lsqSize; i++) {
 			LSQEntry entry = new LSQEntry(LSQEntryType.LOAD, null);
 			entry.setAddr(-1);
 			entry.setIndexInQ(i);
@@ -65,93 +62,80 @@ public class LSQ extends SimulationElement
 		}
 	}
 
-	public LSQEntry addEntry(boolean isLoad, long address, ReorderBufferEntry robEntry) //To be accessed at the time of allocating the entry
+	public LSQEntry addEntry(boolean isLoad, long address, ReorderBufferEntry robEntry) // To be accessed at the time of allocating the entry
 	{
 		noOfMemRequests++;
-		LSQEntry.LSQEntryType type = (isLoad) ? LSQEntry.LSQEntryType.LOAD 
-				: LSQEntry.LSQEntryType.STORE;
-		
+		LSQEntry.LSQEntryType type = (isLoad) ? LSQEntry.LSQEntryType.LOAD : LSQEntry.LSQEntryType.STORE;
+
 		if (isLoad)
 			NoOfLd++;
 		else
 			NoOfSt++;
-		
-		if(head == -1)
-		{
+
+		if (head == -1) {
 			head = tail = 0;
+		} else {
+			tail = (tail + 1) % lsqSize;
 		}
-		else
-		{
-			tail = (tail + 1)%lsqSize;
-		}
-		
+
 		LSQEntry entry = lsqueue[tail];
-		if(!entry.isRemoved())
+		if (!entry.isRemoved())
 			misc.Error.showErrorAndExit("entry currently in use being re-allocated");
 		entry.recycle();
 		entry.setType(type);
 		entry.setRobEntry(robEntry);
 		entry.setAddr(address);
 		this.curSize++;
-		
+
 		incrementNumAccesses(1);
-		
+
 		return entry;
 	}
 
-	public boolean loadValidate(LSQEntry entry)
-	{
-		//Test check
+	public boolean loadValidate(LSQEntry entry) {
+		// Test check
 		if (lsqueue[entry.getIndexInQ()] != entry)
 			misc.Error.showErrorAndExit(" Entry index and actual entry dont match : LOAD" + entry.getIndexInQ());
-		
+
 		entry.setValid(true);
 		boolean couldForward = loadResolve(entry.getIndexInQ(), entry);
-		if(couldForward) 
-		{
+		if (couldForward) {
 			NoOfForwards++;
 		}
-		//Otherwise the cache access is done through LSQValidateEvent
-		
+		// Otherwise the cache access is done through LSQValidateEvent
+
 		return couldForward;
 	}
 
-	protected boolean loadResolve(int index, LSQEntry entry)
-	{
+	protected boolean loadResolve(int index, LSQEntry entry) {
 		int tmpIndex;
 		int ctr = 2;
-		
+
 		if (entry.getIndexInQ() == head)
 			return false;
 		else
 			tmpIndex = decrementQ(index);
 
-		while(true)
-		{
-			if(ctr > curSize)
-			{
+		while (true) {
+			if (ctr > curSize) {
 				break;
 			}
 			ctr++;
-			
+
 			LSQEntry tmpEntry = lsqueue[tmpIndex];
-			if (tmpEntry.getType() == LSQEntry.LSQEntryType.STORE)
-			{
-				if (tmpEntry.isValid())
-				{
-					if (tmpEntry.getAddr() == entry.getAddr())
-					{
+			if (tmpEntry.getType() == LSQEntry.LSQEntryType.STORE) {
+				if (tmpEntry.isValid()) {
+					if (tmpEntry.getAddr() == entry.getAddr()) {
 						if (!entry.isValid())
 							misc.Error.showErrorAndExit(" 01 Invalid entry forwarded");
-						
+
 						// Successfully forwarded the value
 						entry.setForwarded(true);
 						if (entry.getRobEntry() != null && !entry.getRobEntry().getExecuted())
-							((OutOrderCoreMemorySystem)containingMemSys).sendExecComplete(entry.getRobEntry());
+							((OutOrderCoreMemorySystem) containingMemSys).sendExecComplete(entry.getRobEntry());
 						return true;
 					}
-				}
-				else
+				} else
 					break;
 			}
 			tmpIndex = decrementQ(tmpIndex);
@@ -159,354 +143,273 @@ public class LSQ extends SimulationElement
 		return false;
 	}
 
-	public void storeValidate(LSQEntry entry)
-	{
-		//Test check
+	public void storeValidate(LSQEntry entry) {
+		// Test check
 		if (lsqueue[entry.getIndexInQ()] != entry)
 			misc.Error.showErrorAndExit(" Entry index and actual entry dont match : STORE" + entry.getIndexInQ());
-		
+
 		entry.setValid(true);
 		storeResolve(entry.getIndexInQ(), entry);
 	}
 
-	protected void storeResolve(int index, LSQEntry entry)
-	{
+	protected void storeResolve(int index, LSQEntry entry) {
 		int sindex = incrementQ(index);
 		int ctr = 2;
-		
-		while (true)
-		{
+
+		while (true) {
 			LSQEntry tmpEntry = lsqueue[sindex];
-			
-			if(ctr > curSize)
-			{
+
+			if (ctr > curSize) {
 				break;
 			}
 			ctr++;
-			
-			if (tmpEntry.getType() == LSQEntry.LSQEntryType.LOAD)
-			{
-				if(tmpEntry.getAddr() == entry.getAddr()) 
-				{
-					if (tmpEntry.isValid() && !tmpEntry.isForwarded())
-					{
+
+			if (tmpEntry.getType() == LSQEntry.LSQEntryType.LOAD) {
+				if (tmpEntry.getAddr() == entry.getAddr()) {
+					if (tmpEntry.isValid() && !tmpEntry.isForwarded()) {
 						if (!tmpEntry.isValid())
 							misc.Error.showErrorAndExit(" 02 Invalid entry forwarded");
-						
+
 						tmpEntry.setForwarded(true);
 						if (tmpEntry.getRobEntry() != null && !tmpEntry.getRobEntry().getExecuted())
-							((OutOrderCoreMemorySystem)containingMemSys).sendExecComplete(tmpEntry.getRobEntry());
-						
+							((OutOrderCoreMemorySystem) containingMemSys).sendExecComplete(tmpEntry.getRobEntry());
+
 						NoOfForwards++;
 					}
 				}
-			}
-			else //It is a STORE
+			} else // It is a STORE
 			{
-				if((tmpEntry.getAddr() == entry.getAddr()) || !(tmpEntry.isValid()))
+				if ((tmpEntry.getAddr() == entry.getAddr()) || !(tmpEntry.isValid()))
 					break;
 			}
-			
+
 			// increment
 			sindex = incrementQ(sindex);
 		}
 	}
 
-	
-	//Only used by the statistical pipeline
-	public void processROBCommitForStatisticalPipeline(EventQueue eventQueue)
-	{
-		while (curSize > 0 && ((lsqueue[head].getType() == LSQEntryType.STORE && lsqueue[head].isValid())||
-				(lsqueue[head].getType() == LSQEntryType.LOAD && lsqueue[head].isForwarded() == true)))
-		{
+	// Only used by the statistical pipeline
+	public void processROBCommitForStatisticalPipeline(EventQueue eventQueue) {
+		while (curSize > 0
+				&& ((lsqueue[head].getType() == LSQEntryType.STORE && lsqueue[head].isValid()) || (lsqueue[head].getType() == LSQEntryType.LOAD && lsqueue[head].isForwarded() == true))) {
 			LSQEntry entry = lsqueue[head];
-			
+
 			// if it is a store, send the request to the cache
-			if(entry.getType() == LSQEntry.LSQEntryType.STORE) 
-			{
+			if (entry.getType() == LSQEntry.LSQEntryType.STORE) {
 				this.containingMemSys.l1Cache.getPort().put(
-						new LSQEntryContainingEvent(
-								eventQueue,
-								this.containingMemSys.l1Cache.getLatencyDelay(),
-								this,
-								this.containingMemSys.l1Cache,
-								RequestType.Cache_Write,
-								entry,
-								this.containingMemSys.coreID));
+						new LSQEntryContainingEvent(eventQueue, this.containingMemSys.l1Cache.getLatencyDelay(), this, this.containingMemSys.l1Cache, RequestType.Cache_Write,
+								entry, this.containingMemSys.coreID));
 			}
-	
-			if(head == tail)
-			{
+
+			if (head == tail) {
 				head = tail = -1;
-			}
-			else
-			{
+			} else {
 				this.head = this.incrementQ(this.head);
 			}
 			this.curSize--;
 		}
 	}
 
-	
-	protected int incrementQ(int value)
-	{
-		value = (value+1)%lsqSize;
+	protected int incrementQ(int value) {
+		value = (value + 1) % lsqSize;
 		return value;
 	}
-	protected int decrementQ(int value)
-	{
+
+	protected int decrementQ(int value) {
 		if (value > 0)
 			value--;
 		else if (value == 0)
 			value = lsqSize - 1;
 		return value;
 	}
-	
-	public boolean isEmpty()
-	{
+
+	public boolean isEmpty() {
 		if (curSize == 0)
 			return true;
-		else 
+		else
 			return false;
 	}
-	
-	public boolean isFull()
-	{
+
+	public boolean isFull() {
 		if (curSize >= lsqSize)
 			return true;
-		else 
+		else
 			return false;
 	}
 
 	public int getLsqSize() {
 		return lsqSize;
 	}
-	
-	public void setRemoved(int index)
-	{
+
+	public void setRemoved(int index) {
 		lsqueue[index].setRemoved(true);
 	}
-	
-	public void handleEvent(EventQueue eventQ, Event event)
-	{
-		if (event.getRequestType() == RequestType.Tell_LSQ_Addr_Ready)
-		{
+
+	public void handleEvent(EventQueue eventQ, Event event) {
+		if (event.getRequestType() == RequestType.Tell_LSQ_Addr_Ready) {
 			handleAddressReady(eventQ, event);
-		}
-		else if (event.getRequestType() == RequestType.Validate_LSQ_Addr)
-		{
+		} else if (event.getRequestType() == RequestType.Validate_LSQ_Addr) {
 			handleAddrValidate(eventQ, event);
-		}
-		else if (event.getRequestType() == RequestType.LSQ_Commit)
-		{
+		} else if (event.getRequestType() == RequestType.LSQ_Commit) {
 			handleCommitsFromROB(eventQ, event);
-		}
-		else if (event.getRequestType() == RequestType.Attempt_L1_Issue)
-		{
+		} else if (event.getRequestType() == RequestType.Attempt_L1_Issue) {
 			handleAttemptL1Issue(event);
 		}
 	}
-	
-	public void handleAddressReady(EventQueue eventQ, Event event)
-	{
-		LSQEntry lsqEntry = ((LSQEntryContainingEvent)(event)).getLsqEntry();
+
+	public void handleAddressReady(EventQueue eventQ, Event event) {
+		LSQEntry lsqEntry = ((LSQEntryContainingEvent) (event)).getLsqEntry();
 		long virtualAddr = lsqEntry.getAddr();
-		
-		if (this.containingMemSys.dTLB.searchTLBForPhyAddr(virtualAddr))
-		{
+
+		if (this.containingMemSys.dTLB.searchTLBForPhyAddr(virtualAddr)) {
 			this.handleAddrValidate(eventQ, event);
-		}
-		else
-		{
-			//Fetch the physical address from from Page table
-			//Now, we directly check TLB as a function and schedule a validate event 
+		} else {
+			// Fetch the physical address from from Page table
+			// Now, we directly check TLB as a function and schedule a validate event
 			// assuming a constant delay equal to TLB miss penalty
-			this.getPort().put(
-					event.update(
-							eventQ,
-							this.containingMemSys.dTLB.getMemoryPenalty(),
-							null,
-							this,
-							RequestType.Validate_LSQ_Addr));
+			this.getPort().put(event.update(eventQ, this.containingMemSys.dTLB.getMemoryPenalty(), null, this, RequestType.Validate_LSQ_Addr));
 		}
-		
-		//incrementNumAccesses(1);
+
+		// incrementNumAccesses(1);
 	}
-	
-	public void handleAddrValidate(EventQueue eventQ, Event event)
-	{
-		LSQEntry lsqEntry = ((LSQEntryContainingEvent)(event)).getLsqEntry();
-		
-		//If the LSQ entry is a load
-		if (lsqEntry.getType() == LSQEntryType.LOAD)
-		{
-			
-			if (!(this.loadValidate(lsqEntry)))
-			{
+
+	public void handleAddrValidate(EventQueue eventQ, Event event) {
+		LSQEntry lsqEntry = ((LSQEntryContainingEvent) (event)).getLsqEntry();
+
+		// If the LSQ entry is a load
+		if (lsqEntry.getType() == LSQEntryType.LOAD) {
+
+			if (!(this.loadValidate(lsqEntry))) {
 				handleAttemptL1Issue(event);
 			}
-		}
-		else //If the LSQ entry is a store
+		} else // If the LSQ entry is a store
 		{
 			this.storeValidate(lsqEntry);
 		}
 	}
-	
-	public void handleAttemptL1Issue(Event event)
-	{
-		LSQEntry lsqEntry = ((LSQEntryContainingEvent)(event)).getLsqEntry();
-		
-		if(lsqEntry.isForwarded() == true)
-		{
+
+	public void handleAttemptL1Issue(Event event) {
+		LSQEntry lsqEntry = ((LSQEntryContainingEvent) (event)).getLsqEntry();
+
+		if (lsqEntry.isForwarded() == true) {
 			// its possible that while waiting for the L1 cache to get free,
-			//this LSQ entry gets its value through forwarding
-			//as a result of an earlier store getting its address validated
+			// this LSQ entry gets its value through forwarding
+			// as a result of an earlier store getting its address validated
 			return;
 		}
-		
+
 		boolean requestIssued = this.containingMemSys.issueRequestToL1Cache(RequestType.Cache_Read, lsqEntry.getAddr());
-		
-		if(requestIssued == false)
-		{
+
+		if (requestIssued == false) {
 			event.addEventTime(1);
 			event.setRequestType(RequestType.Attempt_L1_Issue);
 			event.getEventQ().addEvent(event);
-		}
-		else
-		{
+		} else {
 			lsqEntry.setIssued(true);
 		}
 	}
-	
-	public void handleMemResponse(long address)
-	{
+
+	public void handleMemResponse(long address) {
 		LSQEntry lsqEntry = null;
-		
+
 		int index = head;
-		for(int i = 0; i < curSize; i++)
-		{
+		for (int i = 0; i < curSize; i++) {
 			lsqEntry = lsqueue[index];
-			
-			if ((lsqEntry.getType() == LSQEntryType.LOAD) &&
-					!lsqEntry.isRemoved() &&
-					!lsqEntry.isForwarded() &&
-					lsqEntry.getAddr() == address)
-			{
-				if (!lsqEntry.isValid())
-				{
-					index = (index+1)%lsqSize;
+
+			if ((lsqEntry.getType() == LSQEntryType.LOAD) && !lsqEntry.isRemoved() && !lsqEntry.isForwarded() && lsqEntry.getAddr() == address) {
+				if (!lsqEntry.isValid()) {
+					index = (index + 1) % lsqSize;
 					continue;
 				}
-				
+
 				lsqEntry.setForwarded(true);
-				
-				//inform pipeline that the load has completed
-				if (lsqEntry.getRobEntry() != null && !lsqEntry.getRobEntry().getExecuted())
-				{
-					((OutOrderCoreMemorySystem)containingMemSys).sendExecComplete(lsqEntry.getRobEntry());
+
+				// inform pipeline that the load has completed
+				if (lsqEntry.getRobEntry() != null && !lsqEntry.getRobEntry().getExecuted()) {
+					((OutOrderCoreMemorySystem) containingMemSys).sendExecComplete(lsqEntry.getRobEntry());
 				}
 			}
-			
-			index = (index+1)%lsqSize;
-		}	
-		
-		//incrementNumAccesses(1);
+
+			index = (index + 1) % lsqSize;
+		}
+
+		// incrementNumAccesses(1);
 	}
-	
-	public void handleCommitsFromROB(EventQueue eventQ, Event event)
-	{
-		LSQEntry lsqEntry = ((LSQEntryContainingEvent)(event)).getLsqEntry();
-		
+
+	public void handleCommitsFromROB(EventQueue eventQ, Event event) {
+		LSQEntry lsqEntry = ((LSQEntryContainingEvent) (event)).getLsqEntry();
+
 		/*
-		 * a wide OOO pipeline may send multiple commits to the LSQ in one cycle;
-		 * these commits need not come in the same order as they were inserted;
-		 * (this is due to the priority queue implementation in the event queue)
-		 * to handle this, all memory operations from 'head' to the one in the event are committed
+		 * a wide OOO pipeline may send multiple commits to the LSQ in one cycle; these commits need not come in the same order as they were inserted; (this is due to the priority
+		 * queue implementation in the event queue) to handle this, all memory operations from 'head' to the one in the event are committed
 		 */
-		
+
 		int commitUpto = lsqEntry.getIndexInQ();
-		
-		if(lsqueue[commitUpto].isRemoved() == true)
-		{
+
+		if (lsqueue[commitUpto].isRemoved() == true) {
 			return;
 		}
-		
+
 		int i = head;
-		
-		for(; ; i = (i+1)%lsqSize)
-		{
+
+		for (;; i = (i + 1) % lsqSize) {
 			LSQEntry tmpEntry = lsqueue[i];
-			
+
 			// if it is a store, send the request to the cache
-			if(tmpEntry.getType() == LSQEntry.LSQEntryType.STORE) 
-			{
-				if(tmpEntry.isValid() == false)
-				{
+			if (tmpEntry.getType() == LSQEntry.LSQEntryType.STORE) {
+				if (tmpEntry.isValid() == false) {
 					misc.Error.showErrorAndExit("store not ready to be committed");
 				}
-				
+
 				boolean requestIssued = containingMemSys.issueRequestToL1Cache(RequestType.Cache_Write, tmpEntry.getAddr());
-				
-				if(requestIssued == false)
-				{
+
+				if (requestIssued == false) {
 					event.addEventTime(1);
 					event.getEventQ().addEvent(event);
-					break; //removals must be in-order : if u can't commit the operation at the head, u can't commit the ones that follow it
+					break; // removals must be in-order : if u can't commit the operation at the head, u can't commit the ones that follow it
 				}
 
-				else
-				{
-					if(head == tail)
-					{
+				else {
+					if (head == tail) {
 						head = tail = -1;
-					}
-					else
-					{
+					} else {
 						this.head = this.incrementQ(this.head);
 					}
 					this.curSize--;
 					tmpEntry.setRemoved(true);
 				}
 			}
-			
-			//If it is a LOAD which has received its value
-			else if (tmpEntry.isForwarded())
-			{
-				if(head == tail)
-				{
+
+			// If it is a LOAD which has received its value
+			else if (tmpEntry.isForwarded()) {
+				if (head == tail) {
 					head = tail = -1;
-				}
-				else
-				{
+				} else {
 					this.head = this.incrementQ(this.head);
 				}
 				this.curSize--;
 				tmpEntry.setRemoved(true);
 			}
-			
-			//If it is a LOAD which has not yet received its value
-			else
-			{
-				System.err.println("Error in LSQ " +this.containingMemSys.coreID+ " :  ROB sent commit for a load which has not received its value");
+
+			// If it is a LOAD which has not yet received its value
+			else {
+				System.err.println("Error in LSQ " + this.containingMemSys.coreID + " :  ROB sent commit for a load which has not received its value");
 				misc.Error.showErrorAndExit(tmpEntry.getIndexInQ() + " : load : " + tmpEntry.getAddr());
 			}
-			
-			if(i == commitUpto)
-			{
+
+			if (i == commitUpto) {
 				break;
 			}
 		}
-		
-		//incrementNumAccesses(1);
+
+		// incrementNumAccesses(1);
 	}
-	
-	void incrementNumAccesses(int incrementBy)
-	{
+
+	void incrementNumAccesses(int incrementBy) {
 		numAccesses += incrementBy;
 	}
-	
-	public EnergyConfig calculateAndPrintEnergy(FileWriter outputFileWriter, String componentName) throws IOException
-	{
+
+	public EnergyConfig calculateAndPrintEnergy(FileWriter outputFileWriter, String componentName) throws IOException {
 		EnergyConfig power = new EnergyConfig(containingMemSys.core.getLsqPower(), numAccesses);
 		power.printEnergyStats(outputFileWriter, componentName);
 		return power;

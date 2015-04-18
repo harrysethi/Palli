@@ -7,11 +7,9 @@ import generic.ExecCompleteEvent;
 import generic.GlobalClock;
 import generic.RequestType;
 import generic.SimulationElement;
-import main.ArchitecturalComponent;
 import memorysystem.AddressCarryingEvent;
 import memorysystem.CoreMemorySystem;
 import memorysystem.LSQEntryContainingEvent;
-import memorysystem.coherence.Directory;
 
 public class OutOrderCoreMemorySystem extends CoreMemorySystem {
 	
