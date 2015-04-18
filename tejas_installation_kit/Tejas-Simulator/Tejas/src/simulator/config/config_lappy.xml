@@ -2,38 +2,18 @@
 <Configuration>
 	<Emulator>
 
-
-
-
 		<EmulatorType>pin</EmulatorType>
 
-
-
-
 		<CommunicationType>sharedMemory</CommunicationType>
-
-
-
-
-
 		<StoreExecutionTraceInAFile>false</StoreExecutionTraceInAFile>
-
-
-
-
 		<BasenameForTraceFiles>/mnt/srishtistr0/home/raj/workspace/Tejas/Traces/ls
 		</BasenameForTraceFiles>
 
-		<PinTool>/home/dell/Desktop/IITD_CurrentSem/CSL718/Workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/PIN/pin-2.14-67254-gcc.4.4.7-linux
-		</PinTool>
-		<PinInstrumentor>/home/dell/Desktop/IITD_CurrentSem/CSL718/Workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/Tejas/src/emulator/pin/obj-pin/causalityTool.so
-		</PinInstrumentor>
-		<QemuTool>/home/prathmesh/workspace/qemu/x86_64-linux-user/qemu-x86_64
-			/home/prathmesh/tmp/testQemu.o</QemuTool>
-		<ShmLibDirectory>/home/dell/Desktop/IITD_CurrentSem/CSL718/Workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/Tejas/src/emulator/pin/obj-comm
-		</ShmLibDirectory>
-		<KillEmulatorScript>/home/dell/Desktop/IITD_CurrentSem/CSL718/Workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/Tejas/src/simulator/main/killAllDescendents.sh
-		</KillEmulatorScript>
+		<PinTool>/home/harinder/Documents/Dropbox/IITD_CurrentSem/CSL718/workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/PIN/pin-2.14-67254-gcc.4.4.7-linux</PinTool>
+		<PinInstrumentor>/home/harinder/Documents/Dropbox/IITD_CurrentSem/CSL718/workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/Tejas/src/emulator/pin/obj-pin/causalityTool.so</PinInstrumentor>
+		<QemuTool>/home/prathmesh/workspace/qemu/x86_64-linux-user/qemu-x86_64/home/prathmesh/tmp/testQemu.o</QemuTool>
+		<ShmLibDirectory>/home/harinder/Documents/Dropbox/IITD_CurrentSem/CSL718/workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/Tejas/src/emulator/pin/obj-comm</ShmLibDirectory>
+		<KillEmulatorScript>/home/harinder/Documents/Dropbox/IITD_CurrentSem/CSL718/workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/Tejas/src/simulator/main/killAllDescendents.sh</KillEmulatorScript>
 	</Emulator>
 
 
@@ -54,8 +34,7 @@
 		<PrintPowerStats>true</PrintPowerStats>
 		<Broadcast>false</Broadcast>
 		<pinpointsSim>false</pinpointsSim>
-		<pinpointsFile>/mnt/srishtistr0/scratch/rajshekar/tejas/PinPoints_working_directory/soplex.test.Data/t.sorted
-		</pinpointsFile>
+		<pinpointsFile>/mnt/srishtistr0/scratch/rajshekar/tejas/PinPoints_working_directory/soplex.test.Data/t.sorted</pinpointsFile>
 		<NumInsToIgnore>0000000</NumInsToIgnore>
 		<subsetSim>false</subsetSim>
 		<subsetSimSize>10000000</subsetSimSize>
@@ -87,7 +66,7 @@
 
 		<Core>
 			<CoreFrequency>3400</CoreFrequency>
-			<PipelineType>outOfOrder</PipelineType>
+			<PipelineType>inOrder</PipelineType>
 
 			<BranchPredictor>
 				<Predictor_Mode>GShare</Predictor_Mode>
@@ -173,6 +152,15 @@
 				<LeakageEnergy>0.0058</LeakageEnergy>
 				<DynamicEnergy>0.0304</DynamicEnergy>
 			</ROB>
+
+			<!-- Toma Change Start -->
+
+			<Toma_params>
+				<rs_buffersize>10</rs_buffersize>
+				<rob_buffersize>10</rob_buffersize>
+			</Toma_params>
+
+			<!-- Toma Change End -->
 
 			<RegisterFile>
 				<Integer>
@@ -309,8 +297,7 @@
 		<Interconnect>NOC</Interconnect>
 
 		<NOC>
-			<NocConfigFile>/home/dell/Desktop/IITD_CurrentSem/CSL718/Workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/Tejas/src/simulator/config/NocConfig.txt
-			</NocConfigFile>
+			<NocConfigFile>/home/harinder/Documents/Dropbox/IITD_CurrentSem/CSL718/workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/Tejas/src/simulator/config/NocConfig.txt</NocConfigFile>
 			<NocSelScheme>STATIC</NocSelScheme>
 			<NocNumberOfBuffers>4</NocNumberOfBuffers>
 			<NocPortType>UL</NocPortType>

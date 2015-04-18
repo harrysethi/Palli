@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/Tejas/src/simulator/main/Main.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.debug.ui.ATTR_CAPTURE_IN_FILE" value="/home/harinder/Documents/Dropbox/IITD_CurrentSem/CSL718/workspace/Asgn3/Palli/Tejas_Output/Tejas_output_test1_SIT.txt"/>
+<booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="main.Main"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="/home/harinder/Documents/Dropbox/IITD_CurrentSem/CSL718/workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/Tejas/src/simulator/config/config_lappy.xml /home/harinder/Documents/Dropbox/IITD_CurrentSem/CSL718/Workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/outputs/test1_output /home/harinder/Documents/Dropbox/IITD_CurrentSem/CSL718/workspace/Asgn3/Palli/Test_inputs/test1"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="Tejas"/>
+</launchConfiguration>
