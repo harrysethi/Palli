@@ -6,6 +6,7 @@ package pipeline.multi_issue_inorder;
 import generic.Core;
 import generic.GenericCircularQueue;
 import generic.Instruction;
+import generic.OperationType;
 
 /**
  * @author dell
@@ -39,6 +40,11 @@ public class Toma_Issue {
 
 		if (ins == null)
 			return;
+
+		if (ins.getOperationType() == OperationType.inValid) {
+			executionEngine.setExecutionComplete(true);
+			return;
+		}
 
 		// TODO: shall be some logic if instr is invalid
 
