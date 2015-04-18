@@ -18,12 +18,16 @@ public class Toma_ReservationStationEntry {
 	private int sourceOperand1_avaliability;// Qj
 	private int sourceOperand2_avaliability;// Qk
 
-	// TODO:-------check if value actually required ;)
+	// TODO:-------check if value actually required ;)..aaye haaye..akhiyon se goli maare
 	private Object sourceOperand1_value;// Vj
 	private Object sourceOperand2_value;// Vk
 
 	public Toma_ReservationStationEntry() {
 		isBusy = false;
+
+		this.sourceOperand1_avaliability = -1;
+		this.sourceOperand2_avaliability = -1;
+		this.inst_entryNumber_ROB = -1;// TODO: check initializing here with -1 is fine
 	}
 
 	/**

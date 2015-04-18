@@ -3,17 +3,21 @@
  */
 package pipeline.multi_issue_inorder;
 
+import generic.Core;
+
 /**
  * @author dell
  *
  */
 public class Toma_ReservationStation {
 
+	// TODO:--- check whether to extend simulation element
+
 	private int maxReservationStationSize;
 	private Toma_ReservationStationEntry[] reservationStationEntries;
 
-	public Toma_ReservationStation() {
-
+	public Toma_ReservationStation(Core core) {
+		this.maxReservationStationSize = core.getToma_rsBufferSize();
 		reservationStationEntries = new Toma_ReservationStationEntry[maxReservationStationSize];
 		for (int i = 0; i < maxReservationStationSize; i++) {
 			reservationStationEntries[i] = new Toma_ReservationStationEntry();

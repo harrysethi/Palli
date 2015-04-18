@@ -20,6 +20,10 @@ public class Toma_ROBentry {
 
 	// TODO:----..check here using regNum may be incorrect
 
+	public Toma_ROBentry() {
+		this.destinationRegNumber = -1;// TODO: check here initializing with -1 is fine
+	}
+
 	public Instruction getInstruction() {
 		return instruction;
 	}

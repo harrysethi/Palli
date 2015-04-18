@@ -23,153 +23,134 @@ import config.PipelineType;
 import config.SystemConfig;
 
 /**
- * represents a single core
- * has it's own clock, and comprises of an execution engine and an event queue
- * all core parameters are defined here
+ * represents a single core has it's own clock, and comprises of an execution engine and an event queue all core parameters are defined here
  */
 
-public class Core extends SimulationElement{
-	
-	//long clock;
+public class Core extends SimulationElement {
+
+	// long clock;
 	CoreConfig coreConfig;
 	Port port;
 	int stepSize;
 	long frequency;
 	ExecutionEngine execEngine;
 	public EventQueue eventQueue;
-	public int currentThreads;	
+	public int currentThreads;
 	private int core_number;
 	private int no_of_input_pipes;
 	private int no_of_threads;
 	private long coreCyclesTaken;
-	
+
 	private int[] threadIDs;
-	
+
 	private long noOfInstructionsExecuted;
-	
+
 	private pipeline.PipelineInterface pipelineInterface;
 	public int numReturns;
 	private int numInorderPipelines;
-	
+
 	public int barrier_latency;
 	public boolean TreeBarrier;
-	public int barrierUnit; //0=>central 1=>distributed
+	public int barrierUnit; // 0=>central 1=>distributed
 
-//	private InorderPipeline inorderPipeline;
+	// private InorderPipeline inorderPipeline;
 
-	
-	public Core(int core_number,
-			int no_of_input_pipes,
-			int no_of_threads,
-			InstructionLinkedList[] incomingInstructionLists,
-			int[] threadIDs)
-	{
-		super(PortType.Unlimited, -1, -1, -1, SystemConfig.core[core_number].frequency);	
+	public Core(int core_number, int no_of_input_pipes, int no_of_threads, InstructionLinkedList[] incomingInstructionLists, int[] threadIDs) {
+		super(PortType.Unlimited, -1, -1, -1, SystemConfig.core[core_number].frequency);
 
 		coreConfig = SystemConfig.core[core_number];
-		
+
 		this.eventQueue = new EventQueue();
 		this.frequency = coreConfig.frequency;
-				
+
 		this.core_number = core_number;
 		this.no_of_input_pipes = no_of_input_pipes;
 		this.no_of_threads = no_of_threads;
 		this.threadIDs = threadIDs;
-		this.currentThreads =0;
+		this.currentThreads = 0;
 
 		this.noOfInstructionsExecuted = 0;
-		this.numReturns=0;
+		this.numReturns = 0;
 
 		// Create execution engine
-		if(this.isPipelineInOrder()) {
+		if (this.isPipelineInOrder()) {
 			this.execEngine = new MultiIssueInorderExecutionEngine(this, coreConfig.IssueWidth);
-		} else if (isPipelineOutOfOrder()){
+		} else if (isPipelineOutOfOrder()) {
 			this.execEngine = new OutOrderExecutionEngine(this);
 		} else {
-			misc.Error.showErrorAndExit("pipeline type not identified : " + 
-				SystemConfig.core[core_number].pipelineType);
+			misc.Error.showErrorAndExit("pipeline type not identified : " + SystemConfig.core[core_number].pipelineType);
 		}
-		
+
 		// Create pipeline interface
-		if(isPipelineInOrder()) {
+		if (isPipelineInOrder()) {
 			this.pipelineInterface = new MultiIssueInorderPipeline(this, eventQueue);
 		} else if (isPipelineOutOfOrder()) {
 			this.pipelineInterface = new OutOfOrderPipeline(this, eventQueue);
 		} else {
-			misc.Error.showErrorAndExit("pipeline type not identified : " + 
-				SystemConfig.core[core_number].pipelineType);
+			misc.Error.showErrorAndExit("pipeline type not identified : " + SystemConfig.core[core_number].pipelineType);
 		}
-		
+
 		// Create core memory interface
 		CoreMemorySystem coreMemSys = null;
-		if(isPipelineInOrder()) {
+		if (isPipelineInOrder()) {
 			coreMemSys = new InorderCoreMemorySystem_MII(this);
 		} else if (isPipelineOutOfOrder()) {
-			coreMemSys = new  OutOrderCoreMemorySystem(this);
+			coreMemSys = new OutOrderCoreMemorySystem(this);
 		} else {
-			misc.Error.showErrorAndExit("pipeline type not identified : " + 
-				SystemConfig.core[core_number].pipelineType);
+			misc.Error.showErrorAndExit("pipeline type not identified : " + SystemConfig.core[core_number].pipelineType);
 		}
-		
+
 		this.execEngine.setCoreMemorySystem(coreMemSys);
 		ArchitecturalComponent.coreMemSysArray.add(coreMemSys);
 	}
-	
-	/*public void boot()
-	{
-		//set up initial events in the queue
-		eventQueue.addEvent(new PerformDecodeEvent(GlobalClock.getCurrentTime(), this, 0));
-//TO-DO commented only for perfect pipeline		
-		if (perfectPipeline == false)
-			eventQueue.addEvent(new PerformCommitsEvent(GlobalClock.getCurrentTime(), this));
-	}*/
-	
-	/*public void work()
-	{
-		execEngine.work();
-	}*/
 
-	/*public long getClock() {
-		return clock;
-	}
+	/*
+	 * public void boot() { //set up initial events in the queue eventQueue.addEvent(new PerformDecodeEvent(GlobalClock.getCurrentTime(), this, 0)); //TO-DO commented only for
+	 * perfect pipeline if (perfectPipeline == false) eventQueue.addEvent(new PerformCommitsEvent(GlobalClock.getCurrentTime(), this)); }
+	 */
 
-	public void setClock(long clock) {
-		this.clock = clock;
-	}
-	
-	public void incrementClock()
-	{
-		this.clock++;
-	}*/
-	
+	/*
+	 * public void work() { execEngine.work(); }
+	 */
+
+	/*
+	 * public long getClock() { return clock; }
+	 * 
+	 * public void setClock(long clock) { this.clock = clock; }
+	 * 
+	 * public void incrementClock() { this.clock++; }
+	 */
+
 	public boolean isPipelineInOrder() {
-		return (SystemConfig.core[this.core_number].pipelineType==PipelineType.inOrder);
+		return (SystemConfig.core[this.core_number].pipelineType == PipelineType.inOrder);
 	}
-	
+
 	public boolean isPipelineOutOfOrder() {
-		return (SystemConfig.core[this.core_number].pipelineType==PipelineType.outOfOrder);
+		return (SystemConfig.core[this.core_number].pipelineType == PipelineType.outOfOrder);
 	}
-	
+
 	private void setBarrierLatency(int barrierLatency) {
 		this.barrier_latency = barrierLatency;
-		
-	}
-	private void setBarrierUnit(int barrierUnit){
-		this.barrierUnit = barrierUnit;
-	}
-	public void activatePipeline(){
-		this.pipelineInterface.resumePipeline();
-	}
-	public void sleepPipeline(){
-		
-		((MultiIssueInorderExecutionEngine)this.getExecEngine()).getFetchUnitIn().inputToPipeline.enqueue(Instruction.getSyncInstruction());
+
 	}
 
-	public void setTreeBarrier(boolean bar)
-	{
+	private void setBarrierUnit(int barrierUnit) {
+		this.barrierUnit = barrierUnit;
+	}
+
+	public void activatePipeline() {
+		this.pipelineInterface.resumePipeline();
+	}
+
+	public void sleepPipeline() {
+
+		((MultiIssueInorderExecutionEngine) this.getExecEngine()).getFetchUnitIn().inputToPipeline.enqueue(Instruction.getSyncInstruction());
+	}
+
+	public void setTreeBarrier(boolean bar) {
 		TreeBarrier = bar;
 	}
-	
+
 	public int getIssueWidth() {
 		return coreConfig.IssueWidth;
 	}
@@ -189,7 +170,7 @@ public class Core extends SimulationElement{
 	public EventQueue getEventQueue() {
 		return eventQueue;
 	}
-	
+
 	public void setEventQueue(EventQueue _eventQueue) {
 		eventQueue = _eventQueue;
 	}
@@ -226,10 +207,21 @@ public class Core extends SimulationElement{
 		return coreConfig.ROBSize;
 	}
 
+	// ------Toma Change Start-------------
+	public int getToma_rsBufferSize() {
+		return coreConfig.toma_RS_size;
+	}
+
+	public int getToma_robBufferSize() {
+		return coreConfig.toma_ROB_size;
+	}
+
+	// ------Toma Change End-------------
+
 	public int getIWSize() {
 		return coreConfig.IWSize;
 	}
-	
+
 	public int[] getThreadIDs() {
 		return threadIDs;
 	}
@@ -237,15 +229,15 @@ public class Core extends SimulationElement{
 	public int getNo_of_input_pipes() {
 		return no_of_input_pipes;
 	}
-	
+
 	public int getNo_of_threads() {
 		return no_of_threads;
 	}
-	
+
 	public int getCore_number() {
 		return core_number;
 	}
-	
+
 	public long getNoOfInstructionsExecuted() {
 		return noOfInstructionsExecuted;
 	}
@@ -253,27 +245,24 @@ public class Core extends SimulationElement{
 	public void setNoOfInstructionsExecuted(long noOfInstructionsExecuted) {
 		this.noOfInstructionsExecuted = noOfInstructionsExecuted;
 	}
-	
-	public void incrementNoOfInstructionsExecuted()
-	{
+
+	public void incrementNoOfInstructionsExecuted() {
 		this.noOfInstructionsExecuted++;
 	}
-	
+
 	public pipeline.PipelineInterface getPipelineInterface() {
 		return pipelineInterface;
 	}
-	
+
 	public void setPipelineInterface(OutOfOrderPipeline pipelineInterface) {
 		this.pipelineInterface = pipelineInterface;
 	}
-	
-	public void setInputToPipeline(GenericCircularQueue<Instruction>[] inputsToPipeline)
-	{
+
+	public void setInputToPipeline(GenericCircularQueue<Instruction>[] inputsToPipeline) {
 		this.getExecEngine().setInputToPipeline(inputsToPipeline);
 	}
-	
-	public void setStepSize(int stepSize)
-	{
+
+	public void setStepSize(int stepSize) {
 		this.stepSize = stepSize;
 		this.pipelineInterface.setcoreStepSize(stepSize);
 	}
@@ -285,27 +274,23 @@ public class Core extends SimulationElement{
 	public void setCoreCyclesTaken(long coreCyclesTaken) {
 		this.coreCyclesTaken = coreCyclesTaken;
 	}
-	
-	public long getFrequency()
-	{
+
+	public long getFrequency() {
 		return this.frequency;
 	}
-	
-	public void setFrequency(long frequency)
-	{
+
+	public void setFrequency(long frequency) {
 		this.frequency = frequency;
 	}
-	
-	public int getStepSize()
-	{
+
+	public int getStepSize() {
 		return stepSize;
 	}
-	
+
 	@Override
-	public void handleEvent(EventQueue eventQ, Event event) 
-	{
+	public void handleEvent(EventQueue eventQ, Event event) {
 	}
-	
+
 	public EnergyConfig getbPredPower() {
 		return coreConfig.bPredPower;
 	}
@@ -377,40 +362,38 @@ public class Core extends SimulationElement{
 	public void setComInterface(CommunicationInterface comInterface) {
 		this.comInterface = comInterface;
 		this.getExecEngine().getCoreMemorySystem().setComInterface(comInterface);
-		for(Cache cache : getExecEngine().getCoreMemorySystem().getCoreCacheList()) {
+		for (Cache cache : getExecEngine().getCoreMemorySystem().getCoreCacheList()) {
 			cache.setComInterface(comInterface);
 		}
 	}
 
-	public EnergyConfig calculateAndPrintEnergy(FileWriter outputFileWriter, String componentName) throws IOException
-	{
+	public EnergyConfig calculateAndPrintEnergy(FileWriter outputFileWriter, String componentName) throws IOException {
 		EnergyConfig totalPower = new EnergyConfig(0, 0);
-		
-		if(coreCyclesTaken == 0)
-		{
+
+		if (coreCyclesTaken == 0) {
 			return totalPower;
 		}
-		
+
 		outputFileWriter.write("\n\n");
-		
+
 		// --------- Core Memory System -------------------------
-		EnergyConfig iCachePower =  this.execEngine.getCoreMemorySystem().getiCache().calculateAndPrintEnergy(outputFileWriter, componentName + ".iCache");
+		EnergyConfig iCachePower = this.execEngine.getCoreMemorySystem().getiCache().calculateAndPrintEnergy(outputFileWriter, componentName + ".iCache");
 		totalPower.add(totalPower, iCachePower);
-		EnergyConfig iTLBPower =  this.execEngine.getCoreMemorySystem().getiTLB().calculateAndPrintEnergy(outputFileWriter, componentName + ".iTLB");
+		EnergyConfig iTLBPower = this.execEngine.getCoreMemorySystem().getiTLB().calculateAndPrintEnergy(outputFileWriter, componentName + ".iTLB");
 		totalPower.add(totalPower, iTLBPower);
-		
-		EnergyConfig dCachePower =  this.execEngine.getCoreMemorySystem().getL1Cache().calculateAndPrintEnergy(outputFileWriter, componentName + ".dCache");
+
+		EnergyConfig dCachePower = this.execEngine.getCoreMemorySystem().getL1Cache().calculateAndPrintEnergy(outputFileWriter, componentName + ".dCache");
 		totalPower.add(totalPower, dCachePower);
-		
-		EnergyConfig dTLBPower =  this.execEngine.getCoreMemorySystem().getdTLB().calculateAndPrintEnergy(outputFileWriter, componentName + ".dTLB");
+
+		EnergyConfig dTLBPower = this.execEngine.getCoreMemorySystem().getdTLB().calculateAndPrintEnergy(outputFileWriter, componentName + ".dTLB");
 		totalPower.add(totalPower, dTLBPower);
-		
+
 		// -------- Pipeline -----------------------------------
-		EnergyConfig pipelinePower =  this.execEngine.calculateAndPrintEnergy(outputFileWriter, componentName + ".pipeline");
+		EnergyConfig pipelinePower = this.execEngine.calculateAndPrintEnergy(outputFileWriter, componentName + ".pipeline");
 		totalPower.add(totalPower, pipelinePower);
-		
+
 		totalPower.printEnergyStats(outputFileWriter, componentName + ".total");
-		
+
 		return totalPower;
 	}
 }

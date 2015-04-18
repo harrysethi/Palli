@@ -2,25 +2,10 @@
 <Configuration>
 	<Emulator>
 
-
-
-
 		<EmulatorType>pin</EmulatorType>
 
-
-
-
 		<CommunicationType>sharedMemory</CommunicationType>
-
-
-
-
-
 		<StoreExecutionTraceInAFile>false</StoreExecutionTraceInAFile>
-
-
-
-
 		<BasenameForTraceFiles>/mnt/srishtistr0/home/raj/workspace/Tejas/Traces/ls</BasenameForTraceFiles>
 
 		<PinTool>/home/dell/Dropbox/IITD_CurrentSem/CSL718/Workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/PIN/pin-2.14-67254-gcc.4.4.7-linux</PinTool>
@@ -166,6 +151,16 @@
 				<LeakageEnergy>0.0058</LeakageEnergy>
 				<DynamicEnergy>0.0304</DynamicEnergy>
 			</ROB>
+			
+			
+			<!-- Toma Change Start -->
+			
+			<Toma_params>
+				<rs_buffersize>10</rs_buffersize>
+				<rob_buffersize>10</rob_buffersize>
+			</Toma_params>
+			
+			<!-- Toma Change End -->
 
 			<RegisterFile>
 				<Integer>

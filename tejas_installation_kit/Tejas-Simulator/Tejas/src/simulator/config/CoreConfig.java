@@ -126,6 +126,14 @@ public class CoreConfig
 	public EnergyConfig iTLBPower;
 	public EnergyConfig dTLBPower;
 	
+	
+	// ------Toma Change Start-------------
+	
+	public int toma_RS_size;
+	public int toma_ROB_size;
+	
+	// ------Toma Change End-------------
+	
 	public int getICacheLatency() {
 		int latency = 0;
 		

@@ -18,15 +18,16 @@ public class Toma_RegisterFile {
 
 	private int registerFileSize;
 
-	public Toma_RegisterFile(int registerFileSize) {
-		this.registerFileSize = registerFileSize;
+	public Toma_RegisterFile(int _registerFileSize) {
+		registerFileSize = _registerFileSize;
 		values = new Object[registerFileSize];
 		isBusy = new boolean[registerFileSize];
 		toma_ROBentry = new int[registerFileSize];
 
-		/*
-		 * for (int i = 0; i < registerFileSize; i++) { isBusy[i] = false; toma_ROBentry[i] = null; }
-		 */
+		for (int i = 0; i < _registerFileSize; i++) {
+			isBusy[i] = false;
+			toma_ROBentry[i] = -1;// TODO: check initializing here with -1 is fine
+		}
 	}
 
 	public Object getValue(int index) {

@@ -97,7 +97,7 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 		this.toma_RegisterFile_integer = new Toma_RegisterFile(core.getIntegerRegisterFileSize());
 		// TODO: check whether we need a floatregsterfile
 
-		this.toma_ReservationStation = new Toma_ReservationStation();
+		this.toma_ReservationStation = new Toma_ReservationStation(core);
 
 		// ------Toma Change End-------------
 

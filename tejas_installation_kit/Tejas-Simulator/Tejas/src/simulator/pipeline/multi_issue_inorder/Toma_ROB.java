@@ -35,6 +35,7 @@ public class Toma_ROB {
 
 	public Toma_ROB(MultiIssueInorderExecutionEngine containingExecutionEngine, Core core) {
 		// TODO: check do we need "super(PortType.Unlimited, -1, -1, -1, -1);"... i think hona chahiye
+		this.maxROBSize = core.getToma_robBufferSize();
 		head = -1;
 		tail = -1;
 
@@ -49,6 +50,7 @@ public class Toma_ROB {
 
 		this.containingExecutionEngine = containingExecutionEngine;
 		this.core = core;
+
 	}
 
 	public void performCommits() {
