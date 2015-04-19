@@ -6,14 +6,13 @@
 
 		<CommunicationType>sharedMemory</CommunicationType>
 		<StoreExecutionTraceInAFile>false</StoreExecutionTraceInAFile>
-		<BasenameForTraceFiles>/mnt/srishtistr0/home/raj/workspace/Tejas/Traces/ls
-		</BasenameForTraceFiles>
+		<BasenameForTraceFiles>/mnt/srishtistr0/home/raj/workspace/Tejas/Traces/ls</BasenameForTraceFiles>
 
-		<PinTool>/home/harinder/Documents/Dropbox/IITD_CurrentSem/CSL718/workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/PIN/pin-2.14-67254-gcc.4.4.7-linux</PinTool>
-		<PinInstrumentor>/home/harinder/Documents/Dropbox/IITD_CurrentSem/CSL718/workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/Tejas/src/emulator/pin/obj-pin/causalityTool.so</PinInstrumentor>
+		<PinTool>/home/dell/Dropbox/IITD_CurrentSem/CSL718/Workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/PIN/pin-2.14-67254-gcc.4.4.7-linux</PinTool>
+		<PinInstrumentor>/home/dell/Dropbox/IITD_CurrentSem/CSL718/Workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/Tejas/src/emulator/pin/obj-pin/causalityTool.so</PinInstrumentor>
 		<QemuTool>/home/prathmesh/workspace/qemu/x86_64-linux-user/qemu-x86_64/home/prathmesh/tmp/testQemu.o</QemuTool>
-		<ShmLibDirectory>/home/harinder/Documents/Dropbox/IITD_CurrentSem/CSL718/workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/Tejas/src/emulator/pin/obj-comm</ShmLibDirectory>
-		<KillEmulatorScript>/home/harinder/Documents/Dropbox/IITD_CurrentSem/CSL718/workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/Tejas/src/simulator/main/killAllDescendents.sh</KillEmulatorScript>
+		<ShmLibDirectory>/home/dell/Dropbox/IITD_CurrentSem/CSL718/Workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/Tejas/src/emulator/pin/obj-comm</ShmLibDirectory>
+		<KillEmulatorScript>/home/dell/Dropbox/IITD_CurrentSem/CSL718/Workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/Tejas/src/simulator/main/killAllDescendents.sh</KillEmulatorScript>
 	</Emulator>
 
 
@@ -29,7 +28,7 @@
 		<EmuCores>0</EmuCores>
 		<JavaCores>1</JavaCores>
 		<DebugMode>false</DebugMode>
-		<DetachMemSysData>true</DetachMemSysData>
+		<DetachMemSysData>false</DetachMemSysData>
 		<DetachMemSysInsn>false</DetachMemSysInsn>
 		<PrintPowerStats>true</PrintPowerStats>
 		<Broadcast>false</Broadcast>
@@ -38,9 +37,9 @@
 		<NumInsToIgnore>0000000</NumInsToIgnore>
 		<subsetSim>false</subsetSim>
 		<subsetSimSize>10000000</subsetSimSize>
-		<markerFunctions>false</markerFunctions>
-		<startSimMarker>XXX_startInstrumentation</startSimMarker>
-		<endSimMarker>XXX_endInstrumentation</endSimMarker>
+		<markerFunctions>true</markerFunctions>
+		<startSimMarker>foo</startSimMarker>
+		<endSimMarker>bar</endSimMarker>
 		<NumCores>32</NumCores>
 	</Simulation>
 
@@ -152,7 +151,8 @@
 				<LeakageEnergy>0.0058</LeakageEnergy>
 				<DynamicEnergy>0.0304</DynamicEnergy>
 			</ROB>
-
+			
+			
 			<!-- Toma Change Start -->
 
 			<Toma_params>
@@ -161,21 +161,11 @@
 			</Toma_params>
 
 			<Toma_CDB>
-				<Toma_CDBLatency>4</Toma_CDBLatency>
-				<Toma_CDBPortType>UL</Toma_CDBPortType>
-				<Toma_CDBAccessPorts>-1</Toma_CDBAccessPorts>
-				<Toma_CDBPortOccupancy>1</Toma_CDBPortOccupancy>
+				<CDBLatency>4</CDBLatency>
+				<CDBPortType>UL</CDBPortType>
+				<CDBAccessPorts>-1</CDBAccessPorts>
+				<CDBPortOccupancy>1</CDBPortOccupancy>
 			</Toma_CDB>
-			
-			<Toma_LSQ>
-				<Toma_LSQSize>64</Toma_LSQSize>
-				<Toma_LSQLatency>0</Toma_LSQLatency>
-				<Toma_LSQPortType>UL</Toma_LSQPortType>
-				<Toma_LSQAccessPorts>-1</Toma_LSQAccessPorts>
-				<Toma_LSQPortOccupancy>-1</Toma_LSQPortOccupancy>
-				<!--<LeakageEnergy>0.0318</LeakageEnergy>-->
-				<!--<DynamicEnergy>0.1725</DynamicEnergy>-->
-			</Toma_LSQ>
 
 			<!-- Toma Change End -->
 
@@ -295,7 +285,7 @@
 		<Interconnect>NOC</Interconnect>
 
 		<NOC>
-			<NocConfigFile>/home/harinder/Documents/Dropbox/IITD_CurrentSem/CSL718/workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/Tejas/src/simulator/config/NocConfig.txt</NocConfigFile>
+			<NocConfigFile>/home/dell/Dropbox/IITD_CurrentSem/CSL718/Workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/Tejas/src/simulator/config/NocConfig.txt</NocConfigFile>
 			<NocSelScheme>STATIC</NocSelScheme>
 			<NocNumberOfBuffers>4</NocNumberOfBuffers>
 			<NocPortType>UL</NocPortType>

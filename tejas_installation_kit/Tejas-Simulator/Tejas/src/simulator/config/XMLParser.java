@@ -411,10 +411,17 @@ public class XMLParser {
 			core.toma_ROB_size = Integer.parseInt(getImmediateString("rob_buffersize", toma_Elmnt));
 
 			Element toma_CDB_Elmnt = (Element) (coreElmnt.getElementsByTagName("Toma_CDB")).item(0);
-			core.toma_CDB_latency = Integer.parseInt(getImmediateString("CDBLatency", toma_CDB_Elmnt));
-			core.toma_CDB_portType = setPortType(getImmediateString("CDBPortType", toma_CDB_Elmnt));
-			core.toma_CDB_accessPorts = Integer.parseInt(getImmediateString("CDBAccessPorts", toma_CDB_Elmnt));
-			core.toma_CDB_portOccupancy = Integer.parseInt(getImmediateString("CDBPortOccupancy", toma_CDB_Elmnt));
+			core.toma_CDB_latency = Integer.parseInt(getImmediateString("Toma_CDBLatency", toma_CDB_Elmnt));
+			core.toma_CDB_portType = setPortType(getImmediateString("Toma_CDBPortType", toma_CDB_Elmnt));
+			core.toma_CDB_accessPorts = Integer.parseInt(getImmediateString("Toma_CDBAccessPorts", toma_CDB_Elmnt));
+			core.toma_CDB_portOccupancy = Integer.parseInt(getImmediateString("Toma_CDBPortOccupancy", toma_CDB_Elmnt));
+
+			Element toma_LSQ_Elmnt = (Element) (coreElmnt.getElementsByTagName("Toma_LSQ")).item(0);
+			core.toma_LSQ_size = Integer.parseInt(getImmediateString("Toma_LSQSize", toma_LSQ_Elmnt));
+			core.toma_LSQ_latency = Integer.parseInt(getImmediateString("Toma_LSQLatency", toma_LSQ_Elmnt));
+			core.toma_LSQ_portType = setPortType(getImmediateString("Toma_LSQPortType", toma_LSQ_Elmnt));
+			core.toma_LSQ_accessPorts = Integer.parseInt(getImmediateString("Toma_LSQAccessPorts", toma_LSQ_Elmnt));
+			core.toma_LSQ_portOccupancy = Integer.parseInt(getImmediateString("Toma_LSQPortOccupancy", toma_LSQ_Elmnt));
 
 			// ------Toma Change End-------------
 

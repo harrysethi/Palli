@@ -135,6 +135,12 @@ public class CoreConfig {
 	public int toma_CDB_accessPorts;
 	public int toma_CDB_portOccupancy;
 
+	public int toma_LSQ_size;
+	public int toma_LSQ_latency;
+	public PortType toma_LSQ_portType;
+	public int toma_LSQ_accessPorts;
+	public int toma_LSQ_portOccupancy;
+
 	// ------Toma Change End-------------
 
 	public int getICacheLatency() {

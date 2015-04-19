@@ -1,6 +1,5 @@
 package generic;
 
-import memorysystem.MemorySystem;
 
 /*
  * Event class contains the bare-minimum that every event must contain.

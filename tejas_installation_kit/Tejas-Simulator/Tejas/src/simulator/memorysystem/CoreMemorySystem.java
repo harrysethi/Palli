@@ -42,6 +42,7 @@ public abstract class CoreMemorySystem extends SimulationElement {
 
 	// ------Toma Change Start-------------
 	protected Toma_CDB toma_CDB;
+	protected Toma_LSQ toma_LSQ;
 	// ------Toma Change End-------------
 
 	protected long numInstructionSetChunksNoted = 0;
@@ -102,6 +103,9 @@ public abstract class CoreMemorySystem extends SimulationElement {
 		// ------Toma Change Start-------------
 		toma_CDB = new Toma_CDB(SystemConfig.core[coreID].toma_CDB_portType, SystemConfig.core[coreID].toma_CDB_accessPorts, SystemConfig.core[coreID].toma_CDB_portOccupancy,
 				SystemConfig.core[coreID].toma_CDB_latency, this);
+
+		toma_LSQ = new Toma_LSQ(SystemConfig.core[coreID].LSQPortType, SystemConfig.core[coreID].LSQAccessPorts, SystemConfig.core[coreID].LSQPortOccupancy,
+				SystemConfig.core[coreID].LSQLatency, this, SystemConfig.core[coreID].LSQSize);
 		// ------Toma Change End-------------
 	}
 
