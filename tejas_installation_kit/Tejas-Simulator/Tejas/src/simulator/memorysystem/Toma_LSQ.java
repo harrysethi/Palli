@@ -17,9 +17,11 @@ public class Toma_LSQ extends SimulationElement {
 	CoreMemorySystem containingMemSys;
 
 	private Toma_LSQEntry[] toma_lsqueue;
-	protected int tail;
-	protected int head;
-	public int lsqSize;
+	private int tail;
+	private int head;
+
+	private int lsqSize;
+	private int curSize;
 
 	public Toma_LSQ(PortType portType, int noOfPorts, long occupancy, long latency, CoreMemorySystem containingMemSys, int lsqSize) {
 		super(portType, noOfPorts, occupancy, latency, containingMemSys.getCore().getFrequency());
@@ -27,6 +29,8 @@ public class Toma_LSQ extends SimulationElement {
 		this.lsqSize = lsqSize;
 		head = -1;
 		tail = -1;
+
+		curSize = 0;
 
 		toma_lsqueue = new Toma_LSQEntry[lsqSize];
 		for (int i = 0; i < lsqSize; i++) {
@@ -41,6 +45,13 @@ public class Toma_LSQ extends SimulationElement {
 	public void handleEvent(EventQueue eventQ, Event event) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public boolean isFull() {
+		if (curSize >= lsqSize)
+			return true;
+		else
+			return false;
 	}
 
 }

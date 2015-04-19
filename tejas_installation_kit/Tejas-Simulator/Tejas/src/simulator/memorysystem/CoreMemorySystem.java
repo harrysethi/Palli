@@ -202,6 +202,13 @@ public abstract class CoreMemorySystem extends SimulationElement {
 		return toma_CDB;
 	}
 
+	/**
+	 * @return the toma_LSQ
+	 */
+	public Toma_LSQ getToma_LSQ() {
+		return toma_LSQ;
+	}
+
 	// ------Toma Change End-------------
 
 	public Cache getL1Cache() {

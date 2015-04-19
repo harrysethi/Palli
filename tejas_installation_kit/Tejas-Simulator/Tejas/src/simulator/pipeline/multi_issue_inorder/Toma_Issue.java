@@ -6,6 +6,7 @@ package pipeline.multi_issue_inorder;
 import generic.Core;
 import generic.GenericCircularQueue;
 import generic.Instruction;
+import generic.OperationType;
 
 /**
  * @author dell
@@ -17,15 +18,29 @@ public class Toma_Issue {
 
 	MultiIssueInorderExecutionEngine executionEngine;
 	Core core;// TODO: core ko hatao agar ni chiye to
+	GenericCircularQueue<Instruction> toma_fetchBuffer;
 
 	public Toma_Issue(Core core, MultiIssueInorderExecutionEngine executionEngine) {
 		// TODO: check do we need "super(PortType.Unlimited, -1, -1, -1, -1);"... i think hona chahiye
 		this.core = core;
 		this.executionEngine = executionEngine;
+		toma_fetchBuffer = executionEngine.getToma_fetchBuffer();
 	}
 
 	public void performIssue() {
-		Instruction ins = null;// TODO: check instr kahaan se aayegi
+
+		Instruction ins = toma_fetchBuffer.peek(0);
+
+		if (ins == null) {
+			return;
+		}
+
+		if (ins.getOperationType() == OperationType.load || ins.getOperationType() == OperationType.store) {
+			if (executionEngine.getCoreMemorySystem().getToma_LSQ().isFull()) {
+				// executionEngine.setToStall3(true);//TODO: commented..don't know whether to use
+				return;
+			}
+		}
 
 		Toma_ReservationStation rs = executionEngine.getToma_ReservationStation();
 		Toma_ROB rob = executionEngine.getToma_ROB();
@@ -33,11 +48,13 @@ public class Toma_Issue {
 
 		Toma_ReservationStationEntry rs_freeEntry = rs.getFreeEntryIn_RS();
 		if (rs_freeEntry == null) {
+			// TODO: check yahaan pe memStall ka kuch karna hai kya?
 			return;
 		}
 
 		int rob_freeTail = rob.getROB_freeTail(); // b
 		if (rob_freeTail == -1) {
+			// TODO: check yahaan pe memStall ka kuch karna hai kya?
 			return;
 		}
 
@@ -96,6 +113,17 @@ public class Toma_Issue {
 		rob_freeTail_entry.getInstruction().setOperationType(ins.getOperationType());
 		rob_freeTail_entry.setDestinationRegNumber(register_dest);
 		rob_freeTail_entry.setReady(false);
+
+		if (ins.getOperationType() == OperationType.load) {
+			rs_freeEntry.setAddress(ins.getSourceOperand2MemValue());// TODO. check imm is sourceOperand
+			rf.setToma_ROBEntry(rob_freeTail, register_source2);
+			rf.setBusy(true, register_source2);
+			rob_freeTail_entry.setDestinationRegNumber(register_source2);
+		}
+
+		if (ins.getOperationType() == OperationType.store) {
+			rs_freeEntry.setAddress(ins.getSourceOperand1MemValue());// TODO. check imm is sourceOperand
+		}
 	}
 
 }

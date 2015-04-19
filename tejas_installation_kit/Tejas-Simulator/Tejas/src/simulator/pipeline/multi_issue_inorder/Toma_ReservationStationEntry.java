@@ -22,6 +22,8 @@ public class Toma_ReservationStationEntry {
 	private Object sourceOperand1_value;// Vj
 	private Object sourceOperand2_value;// Vk
 
+	private long address; // A
+
 	public Toma_ReservationStationEntry() {
 		isBusy = false;
 
@@ -133,6 +135,21 @@ public class Toma_ReservationStationEntry {
 	 */
 	public void setSourceOperand2_value(Object sourceOperand2_value) {
 		this.sourceOperand2_value = sourceOperand2_value;
+	}
+
+	/**
+	 * @return the address
+	 */
+	public long getAddress() {
+		return address;
+	}
+
+	/**
+	 * @param address
+	 *            the address to set
+	 */
+	public void setAddress(long address) {
+		this.address = address;
 	}
 
 }
