@@ -11,6 +11,7 @@ import java.io.IOException;
 
 import memorysystem.CoreMemorySystem;
 import pipeline.ExecutionEngine;
+import pipeline.outoforder.ICacheBuffer;
 import config.EnergyConfig;
 import config.SimulationConfig;
 
@@ -28,8 +29,10 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	private WriteBackUnitIn_MII writeBackUnitIn;
 
 	// ------Toma Change Start-------------
-	private Toma_Issue toma_issue; // TODO: making new files..check this shall be fine
+	// TODO: making new files..check this shall be fine
 	// TODO: since we have made new files, check if prev files are referenced somewhere
+	private Toma_Fetch toma_fetch;
+	private Toma_Issue toma_issue;
 	private Toma_Execute toma_execute;
 	private Toma_WriteResult toma_writeResult;
 
@@ -39,6 +42,9 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	private Toma_RegisterFile toma_RegisterFile_integer;
 	// TODO: check whether we need floating registerFile
 
+	private Toma_ICacheBuffer toma_iCacheBuffer;
+
+	private GenericCircularQueue<Instruction> toma_fetchBuffer;
 	// ------Toma Change End-------------
 
 	private boolean executionComplete;
@@ -88,6 +94,9 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 
 		// ------Toma Change Start-------------
 
+		this.toma_fetchBuffer = new GenericCircularQueue<Instruction>(Instruction.class, core.getDecodeWidth());
+		this.toma_fetch = new Toma_Fetch(core, this);
+
 		this.toma_issue = new Toma_Issue(core, this);
 		this.toma_execute = new Toma_Execute(this);
 		this.toma_writeResult = new Toma_WriteResult(this);
@@ -127,11 +136,10 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	}
 
 	/**
-	 * @param toma_writeResult
-	 *            the toma_writeResult to set
+	 * @return the toma_fetchBuffer
 	 */
-	public void setToma_writeResult(Toma_WriteResult toma_writeResult) {
-		this.toma_writeResult = toma_writeResult;
+	public GenericCircularQueue<Instruction> getToma_fetchBuffer() {
+		return toma_fetchBuffer;
 	}
 
 	public Toma_ROB getToma_ROB() {
@@ -151,6 +159,13 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	}
 
 	/**
+	 * @return the toma_fetch
+	 */
+	public Toma_Fetch getToma_fetch() {
+		return toma_fetch;
+	}
+
+	/**
 	 * @return the toma_issue
 	 */
 	public Toma_Issue getToma_issue() {
@@ -158,26 +173,10 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	}
 
 	/**
-	 * @param toma_issue
-	 *            the toma_issue to set
-	 */
-	public void setToma_issue(Toma_Issue toma_issue) {
-		this.toma_issue = toma_issue;
-	}
-
-	/**
 	 * @return the toma_execute
 	 */
 	public Toma_Execute getToma_execute() {
 		return toma_execute;
-	}
-
-	/**
-	 * @param toma_execute
-	 *            the toma_execute to set
-	 */
-	public void setToma_execute(Toma_Execute toma_execute) {
-		this.toma_execute = toma_execute;
 	}
 
 	/**
@@ -393,7 +392,7 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 
 		fetchUnitIn.setInputToPipeline(inpList[0]);
 		// ------Toma Change Start-------------
-		toma_issue.setInputToPipeline(inpList[0]);
+		toma_fetch.setInputToPipeline(inpList[0]);
 		// ------Toma Change End-------------
 
 	}
@@ -401,6 +400,12 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	public void setCoreMemorySystem(CoreMemorySystem coreMemorySystem) {
 		this.coreMemorySystem = coreMemorySystem;
 		this.multiIssueInorderCoreMemorySystem = (InorderCoreMemorySystem_MII) coreMemorySystem;
+
+		// ------Toma Change Start-------------
+		this.toma_iCacheBuffer = new Toma_ICacheBuffer((int) (core.getDecodeWidth() * coreMemorySystem.getiCache().getLatency()));
+
+		this.toma_fetch.setToma_ICacheBuffer(toma_iCacheBuffer);
+		// ------Toma Change End-------------
 	}
 
 	/*

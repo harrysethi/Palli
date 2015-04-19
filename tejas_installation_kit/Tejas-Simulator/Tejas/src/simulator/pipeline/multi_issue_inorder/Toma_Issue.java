@@ -3,12 +3,9 @@
  */
 package pipeline.multi_issue_inorder;
 
-import main.CustomObjectPool;
-import config.SimulationConfig;
 import generic.Core;
 import generic.GenericCircularQueue;
 import generic.Instruction;
-import generic.OperationType;
 
 /**
  * @author dell
@@ -21,10 +18,6 @@ public class Toma_Issue {
 	MultiIssueInorderExecutionEngine executionEngine;
 	Core core;// TODO: core ko hatao agar ni chiye to
 
-	public GenericCircularQueue<Instruction> inputToPipeline;
-
-	// TODO: check this is a single queue rather a array as in OOO
-
 	public Toma_Issue(Core core, MultiIssueInorderExecutionEngine executionEngine) {
 		// TODO: check do we need "super(PortType.Unlimited, -1, -1, -1, -1);"... i think hona chahiye
 		this.core = core;
@@ -32,38 +25,7 @@ public class Toma_Issue {
 	}
 
 	public void performIssue() {
-		// TODO: check do we need icacheBuffer
-		// TODO: logic in inOrder & OOO -- sir se upar ja ra hai... check later
-
-		if (inputToPipeline.isEmpty())
-			return;
-
-		Instruction ins = inputToPipeline.pollFirst();
-
-		if (ins == null)
-			return;
-
-		if (ins.getOperationType() == OperationType.inValid) {
-			executionEngine.setExecutionComplete(true);
-			CustomObjectPool.getInstructionPool().returnObject(ins);
-			return;
-		}
-
-		// drop memory operations if specified in configuration file
-		if (ins.getOperationType() == OperationType.load || ins.getOperationType() == OperationType.store) {
-			if (SimulationConfig.detachMemSysData == true) {
-				CustomObjectPool.getInstructionPool().returnObject(ins);
-				return;
-			}
-		}
-
-		// TODO: neeche vaala code..abi mein aise hi rakh rha hoon..delete later if required..I liked the code
-		/*
-		 * long fURequest = 0; if (OpTypeToFUTypeMapping.getFUType(ins.getOperationType()) != FunctionalUnitType.inValid) { fURequest = containingExecutionEngine.getExecutionCore
-		 * ().requestFU(OpTypeToFUTypeMapping .getFUType(ins.getOperationType()));
-		 * 
-		 * if (fURequest > 0) { break; } }
-		 */
+		Instruction ins = null;// TODO: check instr kahaan se aayegi
 
 		Toma_ReservationStation rs = executionEngine.getToma_ReservationStation();
 		Toma_ROB rob = executionEngine.getToma_ROB();
@@ -134,14 +96,6 @@ public class Toma_Issue {
 		rob_freeTail_entry.getInstruction().setOperationType(ins.getOperationType());
 		rob_freeTail_entry.setDestinationRegNumber(register_dest);
 		rob_freeTail_entry.setReady(false);
-	}
-
-	/**
-	 * @param inputToPipeline
-	 *            the inputToPipeline to set
-	 */
-	public void setInputToPipeline(GenericCircularQueue<Instruction> inputToPipeline) {
-		this.inputToPipeline = inputToPipeline;
 	}
 
 }

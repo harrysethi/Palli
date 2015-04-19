@@ -44,6 +44,7 @@ public class MultiIssueInorderPipeline implements PipelineInterface {
 		if (currentTime % getCoreStepSize() == 0 && containingExecutionEngine.isExecutionBegun() == true && !containingExecutionEngine.getExecutionComplete()) {
 			toma_execute();
 			toma_issue();
+			toma_fetch();
 		}
 
 		// ------Toma Change End-------------
@@ -62,6 +63,10 @@ public class MultiIssueInorderPipeline implements PipelineInterface {
 	}
 
 	// ------Toma Change Start-------------
+	public void toma_fetch() {
+		containingExecutionEngine.getToma_fetch().performFetch();// TODO: check may need to pass "this" :D..OOO mein naa kiya baai :O :O
+	}
+
 	public void toma_issue() {
 		containingExecutionEngine.getToma_issue().performIssue();// TODO: check may need to pass "this" :D..OOO mein naa kiya baai :O :O
 	}
@@ -71,7 +76,8 @@ public class MultiIssueInorderPipeline implements PipelineInterface {
 	}
 
 	public void toma_writeback() {
-		containingExecutionEngine.getToma_writeResult().performWriteResult();;// TODO: check may need to pass "this" :D..OOO mein naa kiya baai :O :O
+		containingExecutionEngine.getToma_writeResult().performWriteResult();
+		;// TODO: check may need to pass "this" :D..OOO mein naa kiya baai :O :O
 	}
 
 	public void toma_commit() {

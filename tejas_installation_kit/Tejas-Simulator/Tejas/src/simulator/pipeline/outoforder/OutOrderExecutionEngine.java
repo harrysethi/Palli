@@ -2,7 +2,9 @@ package pipeline.outoforder;
 
 import java.io.FileWriter;
 import java.io.IOException;
+
 import config.EnergyConfig;
+import config.SystemConfig;
 import memorysystem.CoreMemorySystem;
 import pipeline.ExecutionCore;
 import pipeline.ExecutionEngine;
@@ -231,6 +233,8 @@ public class OutOrderExecutionEngine extends ExecutionEngine {
 		this.outOrderCoreMemorySystem = (OutOrderCoreMemorySystem)coreMemorySystem;
 		this.iCacheBuffer = new ICacheBuffer((int)(core.getDecodeWidth() *
 				coreMemorySystem.getiCache().getLatency()));
+		
+		
 		this.fetcher.setICacheBuffer(iCacheBuffer);
 	}
 
