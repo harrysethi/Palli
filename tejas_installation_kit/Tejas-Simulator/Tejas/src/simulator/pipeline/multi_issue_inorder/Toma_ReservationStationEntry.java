@@ -3,7 +3,7 @@
  */
 package pipeline.multi_issue_inorder;
 
-import generic.OperationType;
+import generic.Instruction;
 
 /**
  * @author dell
@@ -11,7 +11,9 @@ import generic.OperationType;
  */
 public class Toma_ReservationStationEntry {
 
-	private OperationType operationType; // Op
+	// private OperationType operationType; // Op//TODO: using instruction
+
+	private Instruction instruction;// Op
 	private boolean isBusy;
 	private int inst_entryNumber_ROB; // Qi
 
@@ -24,6 +26,11 @@ public class Toma_ReservationStationEntry {
 
 	private long address; // A
 
+	// TODO: mein chahta ni hun yahaan daalna below 3 fields...bcauz we will be changing the RS structure..see
+	private boolean isStartedExecution;
+	private boolean isCompletedExecution;
+	private long timeToCompleteExecution;
+
 	public Toma_ReservationStationEntry() {
 		isBusy = false;
 
@@ -33,18 +40,63 @@ public class Toma_ReservationStationEntry {
 	}
 
 	/**
-	 * @return the operationType
+	 * @return the timeToCompleteExecution
 	 */
-	public OperationType getOperationType() {
-		return operationType;
+	public long getTimeToCompleteExecution() {
+		return timeToCompleteExecution;
 	}
 
 	/**
-	 * @param operationType
-	 *            the operationType to set
+	 * @param timeToCompleteExecution
+	 *            the timeToCompleteExecution to set
 	 */
-	public void setOperationType(OperationType operationType) {
-		this.operationType = operationType;
+	public void setTimeToCompleteExecution(long timeToCompleteExecution) {
+		this.timeToCompleteExecution = timeToCompleteExecution;
+	}
+
+	/**
+	 * @return the isStartedExecution
+	 */
+	public boolean isStartedExecution() {
+		return isStartedExecution;
+	}
+
+	/**
+	 * @param isStartedExecution
+	 *            the isStartedExecution to set
+	 */
+	public void setStartedExecution(boolean isStartedExecution) {
+		this.isStartedExecution = isStartedExecution;
+	}
+
+	/**
+	 * @return the isCompletedExecution
+	 */
+	public boolean isCompletedExecution() {
+		return isCompletedExecution;
+	}
+
+	/**
+	 * @param isCompletedExecution
+	 *            the isCompletedExecution to set
+	 */
+	public void setCompletedExecution(boolean isCompletedExecution) {
+		this.isCompletedExecution = isCompletedExecution;
+	}
+
+	/**
+	 * @return the instruction
+	 */
+	public Instruction getInstruction() {
+		return instruction;
+	}
+
+	/**
+	 * @param instruction
+	 *            the instruction to set
+	 */
+	public void setInstruction(Instruction instruction) {
+		this.instruction = instruction;
 	}
 
 	/**

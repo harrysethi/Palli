@@ -51,4 +51,11 @@ public class Toma_ReservationStation {
 		return null;
 	}
 
+	public boolean isEntryAvailableIn_RS(Toma_ReservationStationEntry toma_RSentry) {
+		if (toma_RSentry.getSourceOperand1_avaliability() == 0 && toma_RSentry.getSourceOperand2_avaliability() == 0) {
+			return true;
+		}
+
+		return false;
+	}
 }

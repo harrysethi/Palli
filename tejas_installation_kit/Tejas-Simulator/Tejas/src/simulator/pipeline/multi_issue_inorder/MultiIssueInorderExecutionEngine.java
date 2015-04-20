@@ -98,7 +98,7 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 		this.toma_fetch = new Toma_Fetch(core, this);
 
 		this.toma_issue = new Toma_Issue(core, this);
-		this.toma_execute = new Toma_Execute(this);
+		this.toma_execute = new Toma_Execute(this, core);
 		this.toma_writeResult = new Toma_WriteResult(this);
 
 		this.toma_ROB = new Toma_ROB(this, core);

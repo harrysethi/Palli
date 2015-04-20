@@ -6,8 +6,7 @@
 
 		<CommunicationType>sharedMemory</CommunicationType>
 		<StoreExecutionTraceInAFile>false</StoreExecutionTraceInAFile>
-		<BasenameForTraceFiles>/mnt/srishtistr0/home/raj/workspace/Tejas/Traces/ls
-		</BasenameForTraceFiles>
+		<BasenameForTraceFiles>/mnt/srishtistr0/home/raj/workspace/Tejas/Traces/ls</BasenameForTraceFiles>
 
 		<PinTool>/home/harinder/Documents/Dropbox/IITD_CurrentSem/CSL718/workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/PIN/pin-2.14-67254-gcc.4.4.7-linux</PinTool>
 		<PinInstrumentor>/home/harinder/Documents/Dropbox/IITD_CurrentSem/CSL718/workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/Tejas/src/emulator/pin/obj-pin/causalityTool.so</PinInstrumentor>
@@ -162,19 +161,19 @@
 
 			<Toma_CDB>
 				<Toma_CDBLatency>4</Toma_CDBLatency>
-				<Toma_CDBPortType>UL</Toma_CDBPortType>
-				<Toma_CDBAccessPorts>-1</Toma_CDBAccessPorts>
+				<Toma_CDBPortType>FCFS</Toma_CDBPortType>
+				<Toma_CDBAccessPorts>4</Toma_CDBAccessPorts>
 				<Toma_CDBPortOccupancy>1</Toma_CDBPortOccupancy>
 			</Toma_CDB>
-			
+
 			<Toma_LSQ>
 				<Toma_LSQSize>64</Toma_LSQSize>
 				<Toma_LSQLatency>0</Toma_LSQLatency>
 				<Toma_LSQPortType>UL</Toma_LSQPortType>
 				<Toma_LSQAccessPorts>-1</Toma_LSQAccessPorts>
 				<Toma_LSQPortOccupancy>-1</Toma_LSQPortOccupancy>
-				<!--<LeakageEnergy>0.0318</LeakageEnergy>-->
-				<!--<DynamicEnergy>0.1725</DynamicEnergy>-->
+				<!--<LeakageEnergy>0.0318</LeakageEnergy> -->
+				<!--<DynamicEnergy>0.1725</DynamicEnergy> -->
 			</Toma_LSQ>
 
 			<!-- Toma Change End -->

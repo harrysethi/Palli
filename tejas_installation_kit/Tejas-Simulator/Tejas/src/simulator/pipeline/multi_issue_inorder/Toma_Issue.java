@@ -100,7 +100,7 @@ public class Toma_Issue {
 			rs_freeEntry.setSourceOperand2_avaliability(0);
 		}
 
-		rs_freeEntry.setOperationType(ins.getOperationType());
+		rs_freeEntry.setInstruction(ins);
 		rs_freeEntry.setBusy(true);
 		rs_freeEntry.setInst_entryNumber_ROB(rob_freeTail);
 

@@ -3,6 +3,11 @@
  */
 package pipeline.multi_issue_inorder;
 
+import pipeline.FunctionalUnitType;
+import pipeline.OpTypeToFUTypeMapping;
+import generic.Core;
+import generic.GlobalClock;
+
 /**
  * @author dell
  *
@@ -11,18 +16,74 @@ public class Toma_Execute {
 	// TODO:--- check whether to extend simulation element
 
 	MultiIssueInorderExecutionEngine executionEngine;
+	Core core;
 
-	public Toma_Execute(MultiIssueInorderExecutionEngine executionEngine) {
+	public Toma_Execute(MultiIssueInorderExecutionEngine executionEngine, Core core) {
 		// TODO: check do we need "super(PortType.Unlimited, -1, -1, -1, -1);"... i think hona chahiye
 		this.executionEngine = executionEngine;
+		this.core = core;
 	}
 
 	public void performExecute() {
 		Toma_ReservationStation rs = executionEngine.getToma_ReservationStation();
-		Toma_ReservationStationEntry rs_availableEntry = rs.getAvailableEntryIn_RS();
 
-		// TODO: logic in inOrder & OOO -- sir se upar ja ra hai... check later
+		for (Toma_ReservationStationEntry toma_RSentry : rs.getReservationStationEntries()) {
 
-		// TODO: left: compute result...check something shall be required
-	}
+			if (!rs.isEntryAvailableIn_RS(toma_RSentry)) {
+				continue;
+			}
+
+			if (toma_RSentry.isCompletedExecution()) {
+				continue;
+			}
+
+			if (toma_RSentry.isStartedExecution()) {
+				if (GlobalClock.getCurrentTime() >= toma_RSentry.getTimeToCompleteExecution()) {
+					toma_RSentry.setCompletedExecution(true);
+					// TODO: issue request to CDB
+				}
+				return;
+			}
+
+			// not yet started execution
+			toma_RSentry.setStartedExecution(true);
+
+			FunctionalUnitType fuType = OpTypeToFUTypeMapping.getFUType(toma_RSentry.getInstruction().getOperationType());
+			long lat = 1;
+
+			if (fuType != FunctionalUnitType.memory && fuType != FunctionalUnitType.inValid) {
+				lat = executionEngine.getExecutionCore().getFULatency(fuType);
+
+			} else {
+				// TODO: check if something required here
+			}
+
+			toma_RSentry.setTimeToCompleteExecution(GlobalClock.getCurrentTime() + lat * core.getStepSize());
+		}
+
+		/*
+		 * Toma_ReservationStationEntry rs_availableEntry = rs.getAvailableEntryIn_RS();
+		 * 
+		 * if (rs_availableEntry == null) { return; }
+		 */
+		/*
+		 * if (rs_availableEntry.isCompletedExecution()) { return; }
+		 * 
+		 * if (rs_availableEntry.isStartedExecution()) { if (GlobalClock.getCurrentTime() >= rs_availableEntry.getTimeToCompleteExecution()) {
+		 * rs_availableEntry.setCompletedExecution(true); // TODO:duplicate issue request to CDB } return; }
+		 * 
+		 * // not yet started execution rs_availableEntry.setStartedExecution(true);
+		 * 
+		 * FunctionalUnitType fuType = OpTypeToFUTypeMapping.getFUType(rs_availableEntry.getOperationType()); long lat = 1;
+		 * 
+		 * if (fuType != FunctionalUnitType.memory && fuType != FunctionalUnitType.inValid) { lat = executionEngine.getExecutionCore().getFULatency(fuType);
+		 * 
+		 * } else { // TODO:duplicate check if something required here }
+		 * 
+		 * rs_availableEntry.setTimeToCompleteExecution(GlobalClock.getCurrentTime() + lat * core.getStepSize());
+		 * 
+		 * // TODO: logic in inOrder & OOO -- sir se upar ja ra hai... check later
+		 * 
+		 * // TODO: left: compute result...check something shall be required
+		 */}
 }
