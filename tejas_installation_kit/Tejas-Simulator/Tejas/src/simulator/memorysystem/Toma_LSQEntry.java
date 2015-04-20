@@ -36,6 +36,14 @@ public class Toma_LSQEntry {
 		removed = true;
 	}
 
+	public void recycle() {
+		toma_robEntry = null;
+		valid = false;
+		issued = false;
+		forwarded = false;
+		removed = false;
+	}
+
 	/**
 	 * @return the indexInQ
 	 */

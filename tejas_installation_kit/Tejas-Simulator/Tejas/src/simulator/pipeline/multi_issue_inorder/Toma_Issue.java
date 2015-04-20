@@ -124,6 +124,17 @@ public class Toma_Issue {
 		if (ins.getOperationType() == OperationType.store) {
 			rs_freeEntry.setAddress(ins.getSourceOperand1MemValue());// TODO. check imm is sourceOperand
 		}
+
+		// adding instruction to LSQ in case of load/store
+		if (ins.getOperationType() == OperationType.load || ins.getOperationType() == OperationType.store) {
+			boolean isLoad;
+			if (ins.getOperationType() == OperationType.load)
+				isLoad = true;
+			else
+				isLoad = false;
+
+			executionEngine.getCoreMemorySystem().allocateToma_LSQEntry(isLoad, rob_freeTail_entry.getInstruction().getSourceOperand1MemValue(), rob_freeTail_entry);
+		}
 	}
 
 }

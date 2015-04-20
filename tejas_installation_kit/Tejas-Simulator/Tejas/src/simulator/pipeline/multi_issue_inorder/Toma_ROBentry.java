@@ -4,6 +4,7 @@
 package pipeline.multi_issue_inorder;
 
 import generic.Instruction;
+import memorysystem.Toma_LSQEntry;
 
 /**
  * @author dell
@@ -17,6 +18,8 @@ public class Toma_ROBentry {
 	private boolean isReady;
 	private Object resultValue; // Val
 	private int destinationRegNumber; // Dst
+
+	private Toma_LSQEntry toma_lsqEntry = null;
 
 	// TODO:----..check here using regNum may be incorrect
 
@@ -76,6 +79,21 @@ public class Toma_ROBentry {
 	 */
 	public void setResultValue(Object resultValue) {
 		this.resultValue = resultValue;
+	}
+
+	/**
+	 * @return the toma_lsqEntry
+	 */
+	public Toma_LSQEntry getToma_lsqEntry() {
+		return toma_lsqEntry;
+	}
+
+	/**
+	 * @param toma_lsqEntry
+	 *            the toma_lsqEntry to set
+	 */
+	public void setToma_lsqEntry(Toma_LSQEntry toma_lsqEntry) {
+		this.toma_lsqEntry = toma_lsqEntry;
 	}
 
 }

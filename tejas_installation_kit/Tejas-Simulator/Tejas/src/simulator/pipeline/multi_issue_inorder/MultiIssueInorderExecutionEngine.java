@@ -194,6 +194,13 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 		this.toma_ReservationStation = toma_ReservationStation;
 	}
 
+	/**
+	 * @return the multiIssueInorderCoreMemorySystem
+	 */
+	public InorderCoreMemorySystem_MII getCoreMemorySystem() {
+		return multiIssueInorderCoreMemorySystem;
+	}
+
 	// ------Toma Change End-------------
 
 	public int getNumPipelines() {

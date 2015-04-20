@@ -8,6 +8,7 @@ import generic.EventQueue;
 import generic.PortType;
 import generic.SimulationElement;
 import memorysystem.Toma_LSQEntry.Toma_LSQEntryType;
+import pipeline.multi_issue_inorder.Toma_ROBentry;
 
 /**
  * @author dell
@@ -52,6 +53,35 @@ public class Toma_LSQ extends SimulationElement {
 			return true;
 		else
 			return false;
+	}
+
+	public Toma_LSQEntry addEntry(boolean isLoad, long address, Toma_ROBentry toma_robEntry) {
+		// noOfMemRequests++;//TODO: counters..chk
+		Toma_LSQEntry.Toma_LSQEntryType type = (isLoad) ? Toma_LSQEntry.Toma_LSQEntryType.LOAD : Toma_LSQEntry.Toma_LSQEntryType.STORE;
+
+		/*
+		 * if (isLoad)//TODO: counters..chk NoOfLd++; else NoOfSt++;
+		 */
+
+		if (head == -1) {
+			head = tail = 0;
+		} else {
+			tail = (tail + 1) % lsqSize;
+		}
+
+		Toma_LSQEntry toma_lsqEntry = toma_lsqueue[tail];
+		if (!toma_lsqEntry.isRemoved())
+			misc.Error.showErrorAndExit("entry currently in use being re-allocated");
+
+		toma_lsqEntry.recycle();
+		toma_lsqEntry.setType(type);
+		toma_lsqEntry.setToma_robEntry(toma_robEntry);
+		toma_lsqEntry.setAddr(address);
+		this.curSize++;
+
+		// incrementNumAccesses(1);//TODO: counters..chk
+
+		return toma_lsqEntry;
 	}
 
 }
