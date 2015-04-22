@@ -53,7 +53,9 @@ public class Toma_Execute {
 						.getOperationType());
 
 				long FURequest = 0;
-				FURequest = executionEngine.getExecutionCore().requestFU(fuType);
+				if (fuType != FunctionalUnitType.memory && fuType != FunctionalUnitType.inValid) {
+					FURequest = executionEngine.getExecutionCore().requestFU(fuType);
+				}
 
 				if (FURequest > 0) { // FU is not available
 					continue;
