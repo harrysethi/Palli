@@ -67,7 +67,7 @@ public enum RequestType {
 
 	Tlb_Miss_Response, Send_Migrate_Block,
 
-	// ------Toma Change Start-------------
+	// ------Toma Change Start-----------
 	TOMA_CDB
 	// ------Toma Change End-------------
 }

@@ -28,7 +28,6 @@ public class Toma_WriteResult {
 		 * boolean isStoreInstr = true;// TO-DO:imp-this shall be set
 		 */
 		Toma_ReservationStation rs = executionEngine.getToma_ReservationStation();
-		Toma_ROB rob = executionEngine.getToma_ROB();
 		/*
 		 * Toma_ReservationStationEntry rs_r = null;// = rs.getAvailableEntryIn_RS();// TO-DO: IMP-yahaan pe available entry ni aana chiye shayad
 		 */

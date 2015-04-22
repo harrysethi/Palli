@@ -23,7 +23,6 @@ package memorysystem;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import pipeline.multi_issue_inorder.Toma_CDB;
 import generic.PortType;
 import generic.SimulationElement;
 import generic.Core;

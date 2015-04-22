@@ -37,13 +37,14 @@ public class MultiIssueInorderPipeline implements PipelineInterface {
 		if (currentTime % coreStepSize == 0 && containingExecutionEngine.isExecutionBegun() == true && containingExecutionEngine.isExecutionComplete() == false) {
 			toma_commit();
 			toma_writeback();
-			toma_execute();
-			toma_issue();// TODO: check issue yahin pe hi aayega na?
+			// TODO: check toma_writeback yahin pe hi aayega na?
 		}
 
 		drainEventQueue(); // Process Memory Requests
 
 		if (currentTime % getCoreStepSize() == 0 && containingExecutionEngine.isExecutionBegun() == true && !containingExecutionEngine.getExecutionComplete()) {
+			toma_execute();
+			toma_issue();
 			toma_fetch();
 		}
 

@@ -39,6 +39,7 @@ public class Toma_Execute {
 
 			if (toma_RSentry.isStartedExecution()) {
 				if (GlobalClock.getCurrentTime() >= toma_RSentry.getTimeToCompleteExecution()) {
+					// execution completed
 					toma_RSentry.setCompletedExecution(true);
 					executionEngine.getCoreMemorySystem().issueRequestToToma_CDB(toma_RSentry);
 				}

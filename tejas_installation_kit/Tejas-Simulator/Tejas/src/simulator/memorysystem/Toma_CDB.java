@@ -1,15 +1,15 @@
 /**
  * 
  */
-package pipeline.multi_issue_inorder;
+package memorysystem;
 
+import pipeline.multi_issue_inorder.Toma_ROB;
+import pipeline.multi_issue_inorder.Toma_ReservationStation;
+import pipeline.multi_issue_inorder.Toma_ReservationStationEntry;
 import generic.Event;
 import generic.EventQueue;
 import generic.PortType;
 import generic.SimulationElement;
-import memorysystem.CoreMemorySystem;
-import memorysystem.Toma_CDBevent;
-import memorysystem.Toma_CDBentry;
 
 /**
  * @author dell

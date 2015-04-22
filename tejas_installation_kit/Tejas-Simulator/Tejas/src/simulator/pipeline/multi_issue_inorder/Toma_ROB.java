@@ -29,7 +29,8 @@ public class Toma_ROB {
 
 	private int maxROBSize; // configurable
 
-	// private long branchCount;// TO-DO:----check branchCount ko finally kahaan use kar re hain, ya fer iski zaroorat hi ni hai?
+	// private long branchCount;// TO-DO:----check branchCount ko finally kahaan use kar re hain, ya fer iski zaroorat
+	// hi ni hai?
 
 	private long lastValidIPSeen;
 
@@ -84,7 +85,8 @@ public class Toma_ROB {
 			// TODO:---- check whether something like below required
 
 			/*
-			 * //if store, and if store not yet validated if(firstOpType == OperationType.store && !first.getLsqEntry().isValid()) { break; }
+			 * //if store, and if store not yet validated if(firstOpType == OperationType.store &&
+			 * !first.getLsqEntry().isValid()) { break; }
 			 */
 
 			if (operationType == OperationType.branch) {
@@ -101,8 +103,9 @@ public class Toma_ROB {
 
 			// TODO: check if this is required
 			/*
-			 * //Signal LSQ for committing the Instruction at the queue head if(firstOpType == OperationType.load || firstOpType == OperationType.store) { if
-			 * (!first.getLsqEntry().isValid()) { misc .Error.showErrorAndExit("The committed entry is not valid"); }
+			 * //Signal LSQ for committing the Instruction at the queue head if(firstOpType == OperationType.load ||
+			 * firstOpType == OperationType.store) { if (!first.getLsqEntry().isValid()) { misc
+			 * .Error.showErrorAndExit("The committed entry is not valid"); }
 			 * 
 			 * execEngine.getCoreMemorySystem().issueLSQCommit(first); }
 			 */
@@ -115,14 +118,16 @@ public class Toma_ROB {
 
 	}
 
-	private void handleInstructionRetirement(Toma_ROBentry firstRobEntry, Instruction firstInst, int destinationRegNum, int head) {
+	private void handleInstructionRetirement(Toma_ROBentry firstRobEntry, Instruction firstInst, int destinationRegNum,
+			int head) {
 		firstRobEntry.setBusy(false);
 		returnInstructionToPool(firstInst);
 
 		// increment number of instructions executed
 		core.incrementNoOfInstructionsExecuted();
 		if (core.getNoOfInstructionsExecuted() % 1000000 == 0) {
-			System.out.println(core.getNoOfInstructionsExecuted() / 1000000 + " million done on " + core.getCore_number());
+			System.out.println(core.getNoOfInstructionsExecuted() / 1000000 + " million done on "
+					+ core.getCore_number());
 		}
 
 		// debug print
@@ -144,12 +149,14 @@ public class Toma_ROB {
 	}
 
 	private void trainPredictor(Instruction firstInst, boolean prediction) {
-		this.containingExecutionEngine.getBranchPredictor().Train(lastValidIPSeen, firstInst.isBranchTaken(), prediction);
+		this.containingExecutionEngine.getBranchPredictor().Train(lastValidIPSeen, firstInst.isBranchTaken(),
+				prediction);
 		this.containingExecutionEngine.getBranchPredictor().incrementNumAccesses(1);
 	}
 
 	private boolean performPrediction(Instruction firstInst) {
-		boolean prediction = this.containingExecutionEngine.getBranchPredictor().predict(lastValidIPSeen, firstInst.isBranchTaken());
+		boolean prediction = this.containingExecutionEngine.getBranchPredictor().predict(lastValidIPSeen,
+				firstInst.isBranchTaken());
 		this.containingExecutionEngine.getBranchPredictor().incrementNumAccesses(1);
 		return prediction;
 	}
@@ -168,10 +175,12 @@ public class Toma_ROB {
 			toma_registerFile_integer.clearROBentries();// TODO: iski zarooorat hai na?
 			// TODO:float ka bi dekho
 
-			// TODO: check whether we need to make all the instructions present to isBusy = false...not required intuitively
+			// TODO: check whether we need to make all the instructions present to isBusy = false...not required
+			// intuitively
 			// TODO: check we may need to return the instructions present to intructionPool
 
-			// TODO: algo says --- "fetch branch destination"... I say::: it may not be required....ab kaun sahi hai?... aage dekhenge..HUM LOG
+			// TODO: algo says --- "fetch branch destination"... I say::: it may not be required....ab kaun sahi hai?...
+			// aage dekhenge..HUM LOG
 		}
 
 		else { // branch is not mis-predicted
