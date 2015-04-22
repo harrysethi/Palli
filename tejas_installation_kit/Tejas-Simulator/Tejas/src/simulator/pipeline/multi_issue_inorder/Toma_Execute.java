@@ -7,6 +7,7 @@ import pipeline.FunctionalUnitType;
 import pipeline.OpTypeToFUTypeMapping;
 import generic.Core;
 import generic.GlobalClock;
+import generic.OperationType;
 
 /**
  * @author dell
@@ -41,7 +42,9 @@ public class Toma_Execute {
 				if (GlobalClock.getCurrentTime() >= toma_RSentry.getTimeToCompleteExecution()) {
 					// execution completed
 					toma_RSentry.setCompletedExecution(true);
-					executionEngine.getCoreMemorySystem().issueRequestToToma_CDB(toma_RSentry);
+
+					if (toma_RSentry.getInstruction().getOperationType() != OperationType.inValid)
+						executionEngine.getCoreMemorySystem().issueRequestToToma_CDB(toma_RSentry);
 				}
 				continue;
 			}
