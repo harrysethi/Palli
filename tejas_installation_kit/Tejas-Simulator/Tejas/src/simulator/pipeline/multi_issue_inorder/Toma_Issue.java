@@ -65,60 +65,81 @@ public class Toma_Issue {
 				break;
 			}
 
-			int register_source1 = (int) ins.getSourceOperand1().getValue(); // rs
-			int register_source2 = (int) ins.getSourceOperand2().getValue(); // rt
-			int register_dest = (int) ins.getDestinationOperand().getValue(); // rd
+			int register_source1 = -1;
+			int register_source2 = -1;
+			int register_dest = -1;
 
-			if (rf.isBusy(register_source1)) {
-				int h = rf.getToma_ROBEntry(register_source1);
+			if (ins.getSourceOperand1() != null) {
+				register_source1 = (int) ins.getSourceOperand1().getValue(); // rs
+				if (rf.isBusy(register_source1)) {
+					int h = rf.getToma_ROBEntry(register_source1);
 
-				Toma_ROBentry rob_h = rob.getRobEntries()[h];
+					Toma_ROBentry rob_h = rob.getRobEntries()[h];
 
-				if (rob_h.isReady()) {
-					rs_freeEntry.setSourceOperand1_value(rob_h.getResultValue());
+					if (rob_h.isReady()) {
+						rs_freeEntry.setSourceOperand1_value(rob_h.getResultValue());
+						rs_freeEntry.setSourceOperand1_avaliability(0);
+					}
+
+					else {
+						rs_freeEntry.setSourceOperand1_avaliability(h);
+					}
+
+				} else {// else for "if (rf.isBusy(register_source1)) {"
+					rs_freeEntry.setSourceOperand1_value(rf.getValue(register_source1));
 					rs_freeEntry.setSourceOperand1_avaliability(0);
 				}
-
-				else {
-					rs_freeEntry.setSourceOperand1_avaliability(h);
-				}
-
-			} else {
-				rs_freeEntry.setSourceOperand1_value(rf.getValue(register_source1));
-				rs_freeEntry.setSourceOperand1_avaliability(0);
 			}
 
-			if (rf.isBusy(register_source2)) {
-				int h = rf.getToma_ROBEntry(register_source2);
+			else { // else for "if (ins.getSourceOperand1() != null) {"
+					// sourceOperand1 is available if it is null
+				rs_freeEntry.setSourceOperand1_avaliability(0);// TODO: check shall be fine
+			}
 
-				Toma_ROBentry rob_h = rob.getRobEntries()[h];
+			if (ins.getSourceOperand2() != null) {
+				register_source2 = (int) ins.getSourceOperand2().getValue(); // rt
 
-				if (rob_h.isReady()) {
-					rs_freeEntry.setSourceOperand2_value(rob_h.getResultValue());
+				if (rf.isBusy(register_source2)) {
+					int h = rf.getToma_ROBEntry(register_source2);
+
+					Toma_ROBentry rob_h = rob.getRobEntries()[h];
+
+					if (rob_h.isReady()) {
+						rs_freeEntry.setSourceOperand2_value(rob_h.getResultValue());
+						rs_freeEntry.setSourceOperand2_avaliability(0);
+					}
+
+					else {
+						rs_freeEntry.setSourceOperand2_avaliability(h);
+					}
+
+				} else {
+					rs_freeEntry.setSourceOperand2_value(rf.getValue(register_source2));
 					rs_freeEntry.setSourceOperand2_avaliability(0);
 				}
-
-				else {
-					rs_freeEntry.setSourceOperand2_avaliability(h);
-				}
-
-			} else {
-				rs_freeEntry.setSourceOperand2_value(rf.getValue(register_source2));
+			} else { // else for "if (ins.getSourceOperand2() != null) {"
+						// sourceOperand1 is available if it is null
 				rs_freeEntry.setSourceOperand2_avaliability(0);
+			}
+
+			if (ins.getDestinationOperand() != null) {
+				register_dest = (int) ins.getDestinationOperand().getValue(); // rd
+
+				rf.setToma_ROBEntry(rob_freeTail, register_dest);
+				rf.setBusy(true, register_dest);
 			}
 
 			rs_freeEntry.setInstruction(ins);
 			rs_freeEntry.setBusy(true);
 			rs_freeEntry.setInst_entryNumber_ROB(rob_freeTail);
 
-			rf.setToma_ROBEntry(rob_freeTail, register_dest);
-			rf.setBusy(true, register_dest);
-
 			Toma_ROBentry rob_freeTail_entry = rob.getRobEntries()[rob_freeTail];
 
 			rob_freeTail_entry.setBusy(true);
 			rob_freeTail_entry.setInstruction(ins);
+
 			rob_freeTail_entry.setDestinationRegNumber(register_dest);
+
 			rob_freeTail_entry.setReady(false);
 
 			if (ins.getOperationType() == OperationType.load) {

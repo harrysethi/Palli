@@ -34,6 +34,8 @@ public class MultiIssueInorderPipeline implements PipelineInterface {
 		// ------Toma Change Start-------------
 		long currentTime = GlobalClock.getCurrentTime();
 
+		System.out.println("executing cycle: " + currentTime);// TODO: remove later
+
 		if (currentTime % coreStepSize == 0 && containingExecutionEngine.isExecutionBegun() == true
 				&& containingExecutionEngine.isExecutionComplete() == false) {
 			toma_commit();
@@ -47,7 +49,7 @@ public class MultiIssueInorderPipeline implements PipelineInterface {
 				&& !containingExecutionEngine.getExecutionComplete()) {
 			toma_execute();
 			toma_issue();
-			//toma_fetch();// TODO: commented since using inorder fetch
+			// toma_fetch();// TODO: commented since using inorder fetch
 			fetch();
 		}
 

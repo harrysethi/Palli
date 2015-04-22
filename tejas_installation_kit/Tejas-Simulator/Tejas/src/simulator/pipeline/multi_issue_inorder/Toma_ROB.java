@@ -7,6 +7,7 @@ import generic.Core;
 import generic.GlobalClock;
 import generic.Instruction;
 import generic.OperationType;
+import generic.PinPointsProcessing;
 import main.CustomObjectPool;
 import config.SimulationConfig;
 
@@ -71,6 +72,21 @@ public class Toma_ROB {
 			if (!firstRobEntry.isReady()) {
 				// instruction at the head is not ready..stop commiting
 				break;
+			}
+
+			if (firstInst.getOperationType() == OperationType.inValid) {
+				this.core.currentThreads--;
+
+				if (this.core.currentThreads < 0) {
+					this.core.currentThreads = 0;
+					System.out.println("num threads < 0");
+				}
+
+				if (this.core.currentThreads == 0) {
+					// set exec complete only if there are no other thread already assigned to this pipeline
+					containingExecutionEngine.setExecutionComplete(true);
+				}
+
 			}
 
 			// update last valid IP seen

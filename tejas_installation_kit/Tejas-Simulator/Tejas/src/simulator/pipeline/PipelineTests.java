@@ -46,7 +46,7 @@ public class PipelineTests {
 		// generate instruction sequence
 		Instruction newInst;
 		int temp = 1;
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < 100; i++) {
 			temp++;
 			if (temp % 16 == 0) {
 				temp++;
@@ -161,9 +161,36 @@ public class PipelineTests {
 			renameTest();
 			break;
 
+		case 11:
+			toma_test_intALU();
+			break;
+
 		default:
 			misc.Error.showErrorAndExit("unknown test type");
 		}
 	}
+
+	// ------Toma Change Start-------------
+
+	public static void toma_test_intALU() {
+
+		// generate instruction sequence
+		Instruction newInst;
+		for (int i = 0; i < 1; i++) {
+			newInst = Instruction.getIntALUInstruction(Operand.getIntegerRegister(0), Operand.getIntegerRegister(0),
+					Operand.getIntegerRegister(2));
+
+			inputToPipeline.enqueue(newInst);
+		}
+		inputToPipeline.enqueue(Instruction.getInvalidInstruction());
+
+		// simulate pipeline
+		while (ArchitecturalComponent.getCores()[0].getPipelineInterface().isExecutionComplete() == false) {
+			ArchitecturalComponent.getCores()[0].getPipelineInterface().oneCycleOperation();
+			GlobalClock.incrementClock();
+		}
+	}
+
+	// ------Toma Change End-------------
 
 }
