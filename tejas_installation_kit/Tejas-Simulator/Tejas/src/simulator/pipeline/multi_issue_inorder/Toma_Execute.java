@@ -42,23 +42,35 @@ public class Toma_Execute {
 					toma_RSentry.setCompletedExecution(true);
 					// TODO: issue request to CDB
 				}
-				return;
+				continue;
 			}
 
-			// not yet started execution
-			toma_RSentry.setStartedExecution(true);
+			else {// not yet started execution
 
-			FunctionalUnitType fuType = OpTypeToFUTypeMapping.getFUType(toma_RSentry.getInstruction().getOperationType());
-			long lat = 1;
+				// checking if FU is available
+				FunctionalUnitType fuType = OpTypeToFUTypeMapping.getFUType(toma_RSentry.getInstruction().getOperationType());
 
-			if (fuType != FunctionalUnitType.memory && fuType != FunctionalUnitType.inValid) {
-				lat = executionEngine.getExecutionCore().getFULatency(fuType);
+				long FURequest = 0;
+				FURequest = executionEngine.getExecutionCore().requestFU(fuType);
 
-			} else {
-				// TODO: check if something required here
+				if (FURequest > 0) { // FU is not available
+					continue;
+				}
+
+				toma_RSentry.setStartedExecution(true);
+
+				long lat = 1;
+
+				if (fuType != FunctionalUnitType.memory && fuType != FunctionalUnitType.inValid) {
+					lat = executionEngine.getExecutionCore().getFULatency(fuType);
+				}
+
+				else {
+					// TODO: check if something required here
+				}
+
+				toma_RSentry.setTimeToCompleteExecution(GlobalClock.getCurrentTime() + lat * core.getStepSize());
 			}
-
-			toma_RSentry.setTimeToCompleteExecution(GlobalClock.getCurrentTime() + lat * core.getStepSize());
 		}
 
 		/*

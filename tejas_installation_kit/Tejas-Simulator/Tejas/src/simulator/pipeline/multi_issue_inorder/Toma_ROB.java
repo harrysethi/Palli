@@ -29,7 +29,7 @@ public class Toma_ROB {
 
 	private int maxROBSize; // configurable
 
-	private long branchCount;// TODO:----check branchCount ko finally kahaan use kar re hain, ya fer iski zaroorat hi ni hai?
+	// private long branchCount;// TO-DO:----check branchCount ko finally kahaan use kar re hain, ya fer iski zaroorat hi ni hai?
 
 	private long lastValidIPSeen;
 
@@ -46,7 +46,7 @@ public class Toma_ROB {
 
 		lastValidIPSeen = -1;
 
-		branchCount = 0;
+		// branchCount = 0;
 
 		this.containingExecutionEngine = containingExecutionEngine;
 		this.core = core;
@@ -67,46 +67,45 @@ public class Toma_ROB {
 			Instruction firstInst = firstRobEntry.getInstruction();
 			OperationType operationType = firstInst.getOperationType();
 
-			// TODO:---chk if this requires some change
-			// "wait until instruction reaches head of ROB"
-			if (firstRobEntry.isReady()) {
-
-				// update last valid IP seen
-				if (firstInst.getCISCProgramCounter() != -1) {
-					lastValidIPSeen = firstInst.getCISCProgramCounter();
-				}
-
-				// TODO:--- chk "if(first.isWriteBackDone() == true)"
-
-				// TODO:--- chk this is required....."if(firstOpType==OperationType.inValid)"
-
-				// TODO:---- check whether something like below required
-
-				/*
-				 * //if store, and if store not yet validated if(firstOpType == OperationType.store && !first.getLsqEntry().isValid()) { break; }
-				 */
-
-				if (operationType == OperationType.branch) {
-					commitBranch(firstRobEntry, firstInst, head);
-				}
-
-				else { // not a branch instruction
-					commitNonBranch(firstRobEntry, firstInst, head);
-				}
-
-				// TODO: check if this is required
-				/*
-				 * //Signal LSQ for committing the Instruction at the queue head if(firstOpType == OperationType.load || firstOpType == OperationType.store) { if
-				 * (!first.getLsqEntry().isValid()) { misc .Error.showErrorAndExit("The committed entry is not valid"); }
-				 * 
-				 * execEngine.getCoreMemorySystem().issueLSQCommit(first); }
-				 */
-			}
-
-			else {// the firstInstruction is not ready..stop commiting
-					// TODO:----check this is fine...i.e. ki yahaan break hi aayega }
+			if (!firstRobEntry.isReady()) {
+				// instruction at the head is not ready..stop commiting
 				break;
 			}
+
+			// update last valid IP seen
+			if (firstInst.getCISCProgramCounter() != -1) {
+				lastValidIPSeen = firstInst.getCISCProgramCounter();
+			}
+
+			// TO-DO:--- chk "if(first.isWriteBackDone() == true)"
+
+			// TODO:--- chk this is required....."if(firstOpType==OperationType.inValid)"
+
+			// TODO:---- check whether something like below required
+
+			/*
+			 * //if store, and if store not yet validated if(firstOpType == OperationType.store && !first.getLsqEntry().isValid()) { break; }
+			 */
+
+			if (operationType == OperationType.branch) {
+				commitBranch(firstRobEntry, firstInst);
+			}
+
+			else if (operationType == OperationType.store) {
+				// TODO:IMP to be implemented
+			}
+
+			else { // not a branch instruction
+				commitNonBranch(firstRobEntry, firstInst);
+			}
+
+			// TODO: check if this is required
+			/*
+			 * //Signal LSQ for committing the Instruction at the queue head if(firstOpType == OperationType.load || firstOpType == OperationType.store) { if
+			 * (!first.getLsqEntry().isValid()) { misc .Error.showErrorAndExit("The committed entry is not valid"); }
+			 * 
+			 * execEngine.getCoreMemorySystem().issueLSQCommit(first); }
+			 */
 		}
 
 		// TODO: check if below required
@@ -135,6 +134,7 @@ public class Toma_ROB {
 		if (toma_registerFile_integer.getToma_ROBEntry(destinationRegNum) == head) {
 			toma_registerFile_integer.setBusy(false, destinationRegNum);
 		}
+		// TODO: float ka bi dekho
 	}
 
 	private boolean performPredictionNtrain(Instruction firstInst) {
@@ -154,15 +154,19 @@ public class Toma_ROB {
 		return prediction;
 	}
 
-	private void commitBranch(Toma_ROBentry firstRobEntry, Instruction firstInst, int head) {
+	private void commitBranch(Toma_ROBentry firstRobEntry, Instruction firstInst) {
+
+		// branchCount++;
+		int destinationRegNum = firstRobEntry.getDestinationRegNumber(); // d
+
 		boolean prediction = performPredictionNtrain(firstInst);
-
-		branchCount++;
-		int destinationRegNum = firstRobEntry.getDestinationRegNumber();
-
 		if (prediction != firstInst.isBranchTaken()) { // branch mispredicted
-			head = -1;
+			head = -1; // TODO:IMP check yahan pe clear hi hona chiye kya...or ni???
 			tail = -1;
+
+			Toma_RegisterFile toma_registerFile_integer = containingExecutionEngine.getToma_RegisterFile_integer();
+			toma_registerFile_integer.clearROBentries();// TODO: iski zarooorat hai na?
+			// TODO:float ka bi dekho
 
 			// TODO: check whether we need to make all the instructions present to isBusy = false...not required intuitively
 			// TODO: check we may need to return the instructions present to intructionPool
@@ -175,13 +179,14 @@ public class Toma_ROB {
 		}
 	}
 
-	private void commitNonBranch(Toma_ROBentry firstRobEntry, Instruction firstInst, int head) {
+	private void commitNonBranch(Toma_ROBentry firstRobEntry, Instruction firstInst) {
 
-		int destinationRegNum = firstRobEntry.getDestinationRegNumber();
-		Object robHead_value = firstRobEntry.getResultValue();
+		int destinationRegNum = firstRobEntry.getDestinationRegNumber(); // d
+		Object robHead_value = firstRobEntry.getResultValue(); // ROB[h].value
 
 		Toma_RegisterFile toma_registerFile_integer = containingExecutionEngine.getToma_RegisterFile_integer();
 		toma_registerFile_integer.setValue(robHead_value, destinationRegNum);
+		// TODO: float ka bi dekho
 
 		handleInstructionRetirement(firstRobEntry, firstInst, destinationRegNum, head);
 	}

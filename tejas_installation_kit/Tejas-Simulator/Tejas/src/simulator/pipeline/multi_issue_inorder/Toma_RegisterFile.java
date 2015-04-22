@@ -58,4 +58,10 @@ public class Toma_RegisterFile {
 	public void setToma_ROBEntry(int toma_ROBentry, int index) {
 		this.toma_ROBentry[index] = toma_ROBentry;
 	}
+
+	public void clearROBentries() {
+		for (int i = 0; i < registerFileSize; i++) {
+			toma_ROBentry[i] = -1;
+		}
+	}
 }
