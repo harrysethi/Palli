@@ -142,8 +142,6 @@ public class Toma_ROB {
 		firstRobEntry.setBusy(false);
 		firstRobEntry.setInstruction(null);
 
-		returnInstructionToPool(firstInst);
-
 		// increment number of instructions executed
 		core.incrementNoOfInstructionsExecuted();
 		if (core.getNoOfInstructionsExecuted() % 1000000 == 0) {
@@ -156,11 +154,12 @@ public class Toma_ROB {
 			System.out.println("committed : " + GlobalClock.getCurrentTime() / core.getStepSize() + " : " + firstInst);
 		}
 
-		Toma_RegisterFile toma_registerFile_integer = containingExecutionEngine.getToma_RegisterFile_integer();
-		if (destinationRegNum != -1 && toma_registerFile_integer.getToma_ROBEntry(destinationRegNum) == head) {
-			toma_registerFile_integer.setBusy(false, destinationRegNum);
+		Toma_RegisterFile toma_RF = containingExecutionEngine.getToma_RegisterFile(firstInst.getDestinationOperand());
+		if (destinationRegNum != -1 && toma_RF.getToma_ROBEntry(destinationRegNum) == head) {
+			toma_RF.setBusy(false, destinationRegNum);
 		}
-		// TODO: float ka bi dekho
+
+		returnInstructionToPool(firstInst);
 	}
 
 	private boolean performPredictionNtrain(Instruction firstInst) {
@@ -192,9 +191,9 @@ public class Toma_ROB {
 			head = -1; // TODO:IMP check yahan pe clear hi hona chiye kya...or ni???
 			tail = -1;
 
-			Toma_RegisterFile toma_registerFile_integer = containingExecutionEngine.getToma_RegisterFile_integer();
-			toma_registerFile_integer.clearROBentries();// TODO: iski zarooorat hai na?
-			// TODO:float ka bi dekho
+			Toma_RegisterFile toma_RF = containingExecutionEngine.getToma_RegisterFile(firstInst
+					.getDestinationOperand());
+			toma_RF.clearROBentries();// TODO: iski zarooorat hai na?
 
 			// TODO: check whether we need to make all the instructions present to isBusy = false...not required
 			// intuitively
@@ -215,10 +214,10 @@ public class Toma_ROB {
 		Object robHead_value = firstRobEntry.getResultValue(); // ROB[h].value
 
 		if (destinationRegNum != -1) {
-			Toma_RegisterFile toma_registerFile_integer = containingExecutionEngine.getToma_RegisterFile_integer();
-			toma_registerFile_integer.setValue(robHead_value, destinationRegNum);
+			Toma_RegisterFile toma_RF = containingExecutionEngine.getToma_RegisterFile(firstInst
+					.getDestinationOperand());
+			toma_RF.setValue(robHead_value, destinationRegNum);
 		}
-		// TODO: float ka bi dekho
 
 		handleInstructionRetirement(firstRobEntry, firstInst, destinationRegNum);
 	}

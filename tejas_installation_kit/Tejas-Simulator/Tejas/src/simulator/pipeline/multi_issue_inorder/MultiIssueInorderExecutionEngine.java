@@ -4,6 +4,7 @@ import generic.Core;
 import generic.GenericCircularQueue;
 import generic.GlobalClock;
 import generic.Instruction;
+import generic.Operand;
 import generic.Statistics;
 
 import java.io.FileWriter;
@@ -149,12 +150,53 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 		this.toma_ROB = toma_ROB;
 	}
 
-	public Toma_RegisterFile getToma_RegisterFile_integer() {
+	private Toma_RegisterFile getToma_RegisterFile_integer() {
 		return toma_RegisterFile_integer;
 	}
 
-	public void setToma_RegisterFile_integer(Toma_RegisterFile toma_RegisterFile_integer) {
-		this.toma_RegisterFile_integer = toma_RegisterFile_integer;
+	/**
+	 * @return the toma_RegisterFile_floating
+	 */
+	private Toma_RegisterFile getToma_RegisterFile_floating() {
+		return toma_RegisterFile_floating;
+	}
+
+	public Toma_RegisterFile getToma_RegisterFile(Operand operand1, Operand operand2) {
+		// TODO:IMP the below logic is written assuming an instruction can have either int or float operands
+		Operand availableOperand = null;
+
+		if (operand1 != null) {
+			availableOperand = operand1;
+		}
+
+		if (operand2 != null) {
+			availableOperand = operand2;
+		}
+
+		return getToma_RF_type(availableOperand);
+	}
+
+	public Toma_RegisterFile getToma_RegisterFile(Operand operand) {
+		// TODO:IMP the below logic is written assuming an instruction can have either int or float operands
+		Operand availableOperand = operand;
+
+		return getToma_RF_type(availableOperand);
+	}
+
+	private Toma_RegisterFile getToma_RF_type(Operand availableOperand) {
+		if (availableOperand == null) {
+			return null;
+		}
+
+		if (availableOperand.isIntegerRegisterOperand()) {
+			return getToma_RegisterFile_integer();
+		}
+
+		if (availableOperand.isFloatRegisterOperand()) {
+			return getToma_RegisterFile_floating();
+		}
+
+		return null;
 	}
 
 	/**

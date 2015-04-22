@@ -175,6 +175,10 @@ public class PipelineTests {
 			toma_test_simple_mov();
 			break;
 
+		case 14:
+			toma_test_simple_floatALU();
+			break;
+
 		default:
 			misc.Error.showErrorAndExit("unknown test type");
 		}
@@ -197,6 +201,11 @@ public class PipelineTests {
 
 			case mov:
 				newInst = Instruction.getMoveInstruction(Operand.getIntegerRegister(2), Operand.getIntegerRegister(1));
+				break;
+
+			case floatALU:
+				newInst = Instruction.getFloatingPointALU(Operand.getIntegerRegister(0), Operand.getIntegerRegister(0),
+						Operand.getIntegerRegister(2));
 				break;
 
 			default:
@@ -231,6 +240,11 @@ public class PipelineTests {
 
 	public static void toma_test_simple_mov() {
 		toma_simple_helper(OperationType.mov);
+		toma_printIPC();
+	}
+
+	public static void toma_test_simple_floatALU() {
+		toma_simple_helper(OperationType.floatALU);
 		toma_printIPC();
 	}
 
