@@ -42,7 +42,8 @@ public class Toma_Fetch {
 
 		// TODO: ye jo neeche hain ..ye OOO mein shayad kabi ni chalega...to fer kahaan karna hai
 		/*
-		 * if (ins.getOperationType() == OperationType.inValid) { executionEngine.setExecutionComplete(true); CustomObjectPool.getInstructionPool().returnObject(ins); return; }
+		 * if (ins.getOperationType() == OperationType.inValid) { executionEngine.setExecutionComplete(true);
+		 * CustomObjectPool.getInstructionPool().returnObject(ins); return; }
 		 */
 		Instruction ins;
 		for (int i = 0; i < toma_fetchWidth; i++) {
@@ -56,10 +57,10 @@ public class Toma_Fetch {
 				toma_fetchBuffer.enqueue(ins);
 			}
 
-			// TODO: check below karna hai ke ni
-			/*
-			 * else { this.core.getExecEngine().incrementInstructionMemStall(1); break; }
-			 */
+			else {
+				this.core.getExecEngine().incrementInstructionMemStall(1); // TODO: check karna hai ke ni
+				break;
+			}
 		}
 
 		for (int i = 0; i < toma_ICacheBuffer.getSize(); i++) {

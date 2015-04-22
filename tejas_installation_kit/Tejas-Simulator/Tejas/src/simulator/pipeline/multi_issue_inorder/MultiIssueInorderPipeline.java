@@ -34,7 +34,8 @@ public class MultiIssueInorderPipeline implements PipelineInterface {
 		// ------Toma Change Start-------------
 		long currentTime = GlobalClock.getCurrentTime();
 
-		if (currentTime % coreStepSize == 0 && containingExecutionEngine.isExecutionBegun() == true && containingExecutionEngine.isExecutionComplete() == false) {
+		if (currentTime % coreStepSize == 0 && containingExecutionEngine.isExecutionBegun() == true
+				&& containingExecutionEngine.isExecutionComplete() == false) {
 			toma_commit();
 			toma_writeback();
 			// TODO: check toma_writeback yahin pe hi aayega na?
@@ -42,20 +43,24 @@ public class MultiIssueInorderPipeline implements PipelineInterface {
 
 		drainEventQueue(); // Process Memory Requests
 
-		if (currentTime % getCoreStepSize() == 0 && containingExecutionEngine.isExecutionBegun() == true && !containingExecutionEngine.getExecutionComplete()) {
+		if (currentTime % getCoreStepSize() == 0 && containingExecutionEngine.isExecutionBegun() == true
+				&& !containingExecutionEngine.getExecutionComplete()) {
 			toma_execute();
 			toma_issue();
-			toma_fetch();
+			//toma_fetch();// TODO: commented since using inorder fetch
+			fetch();
 		}
 
 		// ------Toma Change End-------------
 
 		// Toma:: below is commented as part of Toma Changes
 		/*
-		 * if (currentTime % getCoreStepSize() == 0 && containingExecutionEngine.isExecutionBegun() == true && !containingExecutionEngine.getExecutionComplete()) { writeback(); }
+		 * if (currentTime % getCoreStepSize() == 0 && containingExecutionEngine.isExecutionBegun() == true &&
+		 * !containingExecutionEngine.getExecutionComplete()) { writeback(); }
 		 * 
-		 * drainEventQueue(); // Process Memory Requests if (currentTime % getCoreStepSize() == 0 && containingExecutionEngine.isExecutionBegun() == true &&
-		 * !containingExecutionEngine.getExecutionComplete()) { mem(); exec(); decode(); fetch(); }
+		 * drainEventQueue(); // Process Memory Requests if (currentTime % getCoreStepSize() == 0 &&
+		 * containingExecutionEngine.isExecutionBegun() == true && !containingExecutionEngine.getExecutionComplete()) {
+		 * mem(); exec(); decode(); fetch(); }
 		 */
 	}
 
@@ -65,24 +70,28 @@ public class MultiIssueInorderPipeline implements PipelineInterface {
 
 	// ------Toma Change Start-------------
 	public void toma_fetch() {
-		containingExecutionEngine.getToma_fetch().performFetch();// TODO: check may need to pass "this" :D..OOO mein naa kiya baai :O :O
+		containingExecutionEngine.getToma_fetch().performFetch();
+		// TODO: check may need to pass "this" :D..OOO mein naa kiya baai :O :O
 	}
 
 	public void toma_issue() {
-		containingExecutionEngine.getToma_issue().performIssue();// TODO: check may need to pass "this" :D..OOO mein naa kiya baai :O :O
+		containingExecutionEngine.getToma_issue().performIssue();
+		// TODO: check may need to pass "this" :D..OOO mein naa kiya baai :O :O
 	}
 
 	public void toma_execute() {
-		containingExecutionEngine.getToma_execute().performExecute();// TODO: check may need to pass "this" :D..OOO mein naa kiya baai :O :O
+		containingExecutionEngine.getToma_execute().performExecute();
+		// TODO: check may need to pass "this" :D..OOO mein naa kiya baai :O :O
 	}
 
 	public void toma_writeback() {
 		containingExecutionEngine.getToma_writeResult().performWriteResult();
-		;// TODO: check may need to pass "this" :D..OOO mein naa kiya baai :O :O
+		// TODO: check may need to pass "this" :D..OOO mein naa kiya baai :O :O
 	}
 
 	public void toma_commit() {
-		containingExecutionEngine.getToma_ROB().performCommits();// TODO: check may need to pass "this" :D..OOO mein naa kiya baai :O :O
+		containingExecutionEngine.getToma_ROB().performCommits();
+		// TODO: check may need to pass "this" :D..OOO mein naa kiya baai :O :O
 	}
 
 	// ------Toma Change End-------------
