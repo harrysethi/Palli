@@ -176,7 +176,19 @@ public class PipelineTests {
 			break;
 
 		case 14:
-			toma_test_simple_floatALU();
+			toma_test_simple_floatDIV();
+			break;
+
+		case 15:
+			toma_test_simple_xchg();
+			break;
+
+		case 16:
+			toma_test_simple_jump();
+			break;
+
+		case 17:
+			toma_test_simple_branch();
 			break;
 
 		default:
@@ -190,6 +202,11 @@ public class PipelineTests {
 		Instruction newInst = null;
 		for (int i = 0; i < 1; i++) {
 			switch (opType) {
+			case inValid:// TODO: check kya likha & kyun
+				newInst = Instruction.getIntALUInstruction(Operand.getIntegerRegister(0),
+						Operand.getIntegerRegister(0), Operand.getIntegerRegister(2));
+				break;
+
 			case integerALU:
 				newInst = Instruction.getIntALUInstruction(Operand.getIntegerRegister(0),
 						Operand.getIntegerRegister(0), Operand.getIntegerRegister(2));
@@ -203,9 +220,22 @@ public class PipelineTests {
 				newInst = Instruction.getMoveInstruction(Operand.getIntegerRegister(2), Operand.getIntegerRegister(1));
 				break;
 
-			case floatALU:
-				newInst = Instruction.getFloatingPointALU(Operand.getIntegerRegister(0), Operand.getIntegerRegister(0),
-						Operand.getIntegerRegister(2));
+			case floatDiv:
+				newInst = Instruction.getFloatingPointDivision(Operand.getIntegerRegister(0),
+						Operand.getIntegerRegister(0), Operand.getIntegerRegister(2));
+				break;
+
+			case xchg:
+				newInst = Instruction.getExchangeInstruction(Operand.getIntegerRegister(0),
+						Operand.getIntegerRegister(1));
+				break;
+
+			case jump:
+				// newInst = Instruction.getUnconditionalJumpInstruction(newInstructionAddress);//TODO:vekho ainu
+				break;
+
+			case branch:
+				// newInst = Instruction.getBranchInstruction(newInstructionAddress);//TODO: vekho ainu
 				break;
 
 			default:
@@ -228,6 +258,11 @@ public class PipelineTests {
 		System.out.println("IPC: " + (float) 1 / GlobalClock.getCurrentTime());
 	}
 
+	public static void toma_test_simple_noInst() {
+		toma_simple_helper(OperationType.inValid);
+		toma_printIPC();
+	}
+
 	public static void toma_test_simple_intALU() {
 		toma_simple_helper(OperationType.integerALU);
 		toma_printIPC();
@@ -243,8 +278,23 @@ public class PipelineTests {
 		toma_printIPC();
 	}
 
-	public static void toma_test_simple_floatALU() {
-		toma_simple_helper(OperationType.floatALU);
+	public static void toma_test_simple_floatDIV() {
+		toma_simple_helper(OperationType.floatDiv);
+		toma_printIPC();
+	}
+
+	public static void toma_test_simple_xchg() {
+		toma_simple_helper(OperationType.xchg);
+		toma_printIPC();
+	}
+
+	public static void toma_test_simple_jump() {
+		toma_simple_helper(OperationType.jump);
+		toma_printIPC();
+	}
+
+	public static void toma_test_simple_branch() {
+		toma_simple_helper(OperationType.branch);
 		toma_printIPC();
 	}
 
