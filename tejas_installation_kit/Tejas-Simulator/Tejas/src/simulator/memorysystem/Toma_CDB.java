@@ -32,6 +32,8 @@ public class Toma_CDB extends SimulationElement {
 		toma_RSentry.setBusy(false);
 		toma_RSentry.setCompletedExecution(false);
 		toma_RSentry.setStartedExecution(false);
+		toma_RSentry.setSourceOperand1_avaliability(-1);
+		toma_RSentry.setSourceOperand2_avaliability(-1);
 
 		Toma_ReservationStationEntry[] reservationStationEntries = rs.getReservationStationEntries();
 

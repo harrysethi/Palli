@@ -7,7 +7,6 @@ import generic.Core;
 import generic.GlobalClock;
 import generic.Instruction;
 import generic.OperationType;
-import generic.PinPointsProcessing;
 import main.CustomObjectPool;
 import config.SimulationConfig;
 
@@ -37,12 +36,13 @@ public class Toma_ROB {
 
 	public Toma_ROB(MultiIssueInorderExecutionEngine containingExecutionEngine, Core core) {
 		// TODO: check do we need "super(PortType.Unlimited, -1, -1, -1, -1);"... i think hona chahiye
-		this.maxROBSize = core.getToma_robBufferSize();
+		this.maxROBSize = core.getToma_robBufferSize() + 1;
+		// '1' added since we are starting the counter with 1
 		head = -1;
 		tail = -1;
 
 		robEntries = new Toma_ROBentry[maxROBSize];
-		for (int i = 0; i < maxROBSize; i++) {
+		for (int i = 1; i < maxROBSize; i++) {
 			robEntries[i] = new Toma_ROBentry();
 		}
 
@@ -117,6 +117,17 @@ public class Toma_ROB {
 				commitNonBranch(firstRobEntry, firstInst);
 			}
 
+			if (head == tail) {
+				head = -1;
+				tail = -1;
+			}
+
+			else {
+				head = (head + 1) % maxROBSize;
+				if (head == 0)
+					head = 1;
+			}
+
 			// TODO: check if this is required
 			/*
 			 * //Signal LSQ for committing the Instruction at the queue head if(firstOpType == OperationType.load ||
@@ -134,9 +145,10 @@ public class Toma_ROB {
 
 	}
 
-	private void handleInstructionRetirement(Toma_ROBentry firstRobEntry, Instruction firstInst, int destinationRegNum,
-			int head) {
+	private void handleInstructionRetirement(Toma_ROBentry firstRobEntry, Instruction firstInst, int destinationRegNum) {
 		firstRobEntry.setBusy(false);
+		firstRobEntry.setInstruction(null);
+
 		returnInstructionToPool(firstInst);
 
 		// increment number of instructions executed
@@ -152,7 +164,7 @@ public class Toma_ROB {
 		}
 
 		Toma_RegisterFile toma_registerFile_integer = containingExecutionEngine.getToma_RegisterFile_integer();
-		if (toma_registerFile_integer.getToma_ROBEntry(destinationRegNum) == head) {
+		if (destinationRegNum != -1 && toma_registerFile_integer.getToma_ROBEntry(destinationRegNum) == head) {
 			toma_registerFile_integer.setBusy(false, destinationRegNum);
 		}
 		// TODO: float ka bi dekho
@@ -200,7 +212,7 @@ public class Toma_ROB {
 		}
 
 		else { // branch is not mis-predicted
-			handleInstructionRetirement(firstRobEntry, firstInst, destinationRegNum, head);
+			handleInstructionRetirement(firstRobEntry, firstInst, destinationRegNum);
 		}
 	}
 
@@ -209,11 +221,13 @@ public class Toma_ROB {
 		int destinationRegNum = firstRobEntry.getDestinationRegNumber(); // d
 		Object robHead_value = firstRobEntry.getResultValue(); // ROB[h].value
 
-		Toma_RegisterFile toma_registerFile_integer = containingExecutionEngine.getToma_RegisterFile_integer();
-		toma_registerFile_integer.setValue(robHead_value, destinationRegNum);
+		if (destinationRegNum != -1) {
+			Toma_RegisterFile toma_registerFile_integer = containingExecutionEngine.getToma_RegisterFile_integer();
+			toma_registerFile_integer.setValue(robHead_value, destinationRegNum);
+		}
 		// TODO: float ka bi dekho
 
-		handleInstructionRetirement(firstRobEntry, firstInst, destinationRegNum, head);
+		handleInstructionRetirement(firstRobEntry, firstInst, destinationRegNum);
 	}
 
 	private void returnInstructionToPool(Instruction instruction) {
@@ -228,12 +242,16 @@ public class Toma_ROB {
 	public int getROB_freeTail() {
 		// TODO: below logic modified apne se...ensure it's fine
 		if (tail == -1) {
-			head = 0;
-			tail = 0;
+			head = 1;
+			tail = 1;
 			return tail;
 		}
 
 		int nextTail = (tail + 1) % maxROBSize;
+
+		if (nextTail == 0)
+			nextTail = 1;
+
 		if (!robEntries[nextTail].isBusy()) {
 			tail = nextTail;
 			return tail;

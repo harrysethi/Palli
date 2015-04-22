@@ -37,6 +37,8 @@ public class Toma_ReservationStationEntry {
 		this.sourceOperand1_avaliability = -1;
 		this.sourceOperand2_avaliability = -1;
 		this.inst_entryNumber_ROB = -1;// TODO: check initializing here with -1 is fine
+		this.isStartedExecution = false;
+		this.isCompletedExecution = false;
 	}
 
 	/**

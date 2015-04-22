@@ -8,46 +8,43 @@ import java.util.PriorityQueue;
 import main.ArchitecturalComponent;
 import memorysystem.AddressCarryingEvent;
 
-public class EventQueue 
-{
+public class EventQueue {
 	static final int queueSize = 1024;
 	LinkedList<Event> myPriorityQueue[];
 	int head = 0;
-	
-	public EventQueue() 
-	{
+
+	public EventQueue() {
 		myPriorityQueue = (LinkedList<Event>[]) Array.newInstance(LinkedList.class, queueSize);
-		for(int i=0; i<queueSize; i++) {
-			myPriorityQueue[i] = new LinkedList<Event>(); 
+		for (int i = 0; i < queueSize; i++) {
+			myPriorityQueue[i] = new LinkedList<Event>();
 		}
 	}
-	
+
 	int getIndex(int index) {
-		return (head+index)%queueSize;
+		return (head + index) % queueSize;
 	}
-	
-	public void addEvent(Event event)
-	{
+
+	public void addEvent(Event event) {
 		long currentClockTime = GlobalClock.currentTime;
 		long eventTime = event.getEventTime();
-		if(eventTime<currentClockTime) {
+		if (eventTime < currentClockTime) {
 			myPriorityQueue[getIndex(0)].add(event);
 		} else {
-			int diffTime = (int)(eventTime - currentClockTime);
+			int diffTime = (int) (eventTime - currentClockTime);
 			myPriorityQueue[getIndex(diffTime)].add(event);
 		}
 	}
-	
-	public void processEvents()
-	{
+
+	public void processEvents() {
 		LinkedList<Event> eventList = myPriorityQueue[head];
-		
-		while(eventList.isEmpty()==false) {
+
+		while (eventList.isEmpty() == false) {
 			Event e = eventList.pollFirst();
+			System.out.println("Draining event: " + e.getRequestType());
 			e.getProcessingElement().handleEvent(this, e);
 		}
-	
+
 		head = (head + 1) % queueSize;
-		
+
 	}
 }

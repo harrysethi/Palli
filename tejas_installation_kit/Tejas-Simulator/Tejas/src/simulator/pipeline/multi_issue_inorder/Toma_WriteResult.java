@@ -30,6 +30,7 @@ public class Toma_WriteResult {
 				int b = toma_RSentry.getInst_entryNumber_ROB();
 				Toma_ROB rob = executionEngine.getToma_ROB();
 				rob.getRobEntries()[b].setReady(true);
+				continue;
 			}
 
 			if (toma_RSentry.getInstruction().getOperationType() != OperationType.store) {

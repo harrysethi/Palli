@@ -30,6 +30,11 @@ public class Toma_Execute {
 
 		for (Toma_ReservationStationEntry toma_RSentry : rs.getReservationStationEntries()) {
 
+			if (!toma_RSentry.isBusy()) {
+				// there is no point of executing a non-busy RS
+				continue;
+			}
+
 			if (!rs.isEntryAvailableIn_RS(toma_RSentry)) {
 				continue;
 			}

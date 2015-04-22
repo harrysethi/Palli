@@ -189,6 +189,9 @@ public class PipelineTests {
 			ArchitecturalComponent.getCores()[0].getPipelineInterface().oneCycleOperation();
 			GlobalClock.incrementClock();
 		}
+
+		System.out.println("Total cycles taken: " + GlobalClock.getCurrentTime());
+		System.out.println("IPC: " + (float)1 / GlobalClock.getCurrentTime());
 	}
 
 	// ------Toma Change End-------------
