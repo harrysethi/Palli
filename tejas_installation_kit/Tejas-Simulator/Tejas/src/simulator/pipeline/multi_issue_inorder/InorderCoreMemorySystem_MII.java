@@ -6,6 +6,8 @@ import generic.EventQueue;
 import generic.RequestType;
 import memorysystem.AddressCarryingEvent;
 import memorysystem.CoreMemorySystem;
+import memorysystem.Toma_CDBevent;
+import memorysystem.Toma_CDBentry;
 
 public class InorderCoreMemorySystem_MII extends CoreMemorySystem {
 
@@ -26,7 +28,8 @@ public class InorderCoreMemorySystem_MII extends CoreMemorySystem {
 
 		int tlbMissPenalty = performDTLBLookup(address, inorderPipeline);
 
-		AddressCarryingEvent addressEvent = new AddressCarryingEvent(getCore().getEventQueue(), tlbMissPenalty, this, l1Cache, requestType, address);
+		AddressCarryingEvent addressEvent = new AddressCarryingEvent(getCore().getEventQueue(), tlbMissPenalty, this,
+				l1Cache, requestType, address);
 
 		if (l1Cache.isBusy()) {
 			return false;
@@ -50,13 +53,23 @@ public class InorderCoreMemorySystem_MII extends CoreMemorySystem {
 
 		int tlbMissPenalty = performITLBLookup(address, inorderPipeline);
 
-		AddressCarryingEvent addressEvent = new AddressCarryingEvent(getCore().getEventQueue(), tlbMissPenalty, this, iCache, RequestType.Cache_Read, address);
+		AddressCarryingEvent addressEvent = new AddressCarryingEvent(getCore().getEventQueue(), tlbMissPenalty, this,
+				iCache, RequestType.Cache_Read, address);
 
 		// attempt issue to lower level cache
 		this.iCache.getPort().put(addressEvent);
 	}
 
 	// ------Toma Change Start-------------
+
+	public void issueRequestToToma_CDB(Toma_ReservationStationEntry toma_ReservationStationEntry) {
+		Toma_CDBentry toma_CDBentry = new Toma_CDBentry(containingExecEngine, toma_ReservationStationEntry);
+		Toma_CDBevent toma_CDB_event = new Toma_CDBevent(getCore().getEventQueue(), toma_CDB.getLatency(), null,
+				toma_CDB, RequestType.TOMA_CDB, toma_CDBentry);
+
+		this.toma_CDB.getPort().put(toma_CDB_event);
+	}
+
 	public void allocateToma_LSQEntry(boolean isLoad, long address, Toma_ROBentry toma_robEntry) {
 		toma_robEntry.setToma_lsqEntry(toma_LSQ.addEntry(isLoad, address, toma_robEntry));
 	}
@@ -108,7 +121,8 @@ public class InorderCoreMemorySystem_MII extends CoreMemorySystem {
 		}
 
 		else {
-			System.out.println("mem response received by inordercoreMemSys from unkown object : " + memResponse.getRequestingElement());
+			System.out.println("mem response received by inordercoreMemSys from unkown object : "
+					+ memResponse.getRequestingElement());
 		}
 	}
 

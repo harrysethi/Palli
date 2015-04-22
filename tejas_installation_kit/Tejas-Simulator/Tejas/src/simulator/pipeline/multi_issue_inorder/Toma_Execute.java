@@ -40,7 +40,7 @@ public class Toma_Execute {
 			if (toma_RSentry.isStartedExecution()) {
 				if (GlobalClock.getCurrentTime() >= toma_RSentry.getTimeToCompleteExecution()) {
 					toma_RSentry.setCompletedExecution(true);
-					// TODO: issue request to CDB
+					executionEngine.getCoreMemorySystem().issueRequestToToma_CDB(toma_RSentry);
 				}
 				continue;
 			}
@@ -48,7 +48,8 @@ public class Toma_Execute {
 			else {// not yet started execution
 
 				// checking if FU is available
-				FunctionalUnitType fuType = OpTypeToFUTypeMapping.getFUType(toma_RSentry.getInstruction().getOperationType());
+				FunctionalUnitType fuType = OpTypeToFUTypeMapping.getFUType(toma_RSentry.getInstruction()
+						.getOperationType());
 
 				long FURequest = 0;
 				FURequest = executionEngine.getExecutionCore().requestFU(fuType);
@@ -81,14 +82,17 @@ public class Toma_Execute {
 		/*
 		 * if (rs_availableEntry.isCompletedExecution()) { return; }
 		 * 
-		 * if (rs_availableEntry.isStartedExecution()) { if (GlobalClock.getCurrentTime() >= rs_availableEntry.getTimeToCompleteExecution()) {
-		 * rs_availableEntry.setCompletedExecution(true); // TODO:duplicate issue request to CDB } return; }
+		 * if (rs_availableEntry.isStartedExecution()) { if (GlobalClock.getCurrentTime() >=
+		 * rs_availableEntry.getTimeToCompleteExecution()) { rs_availableEntry.setCompletedExecution(true); //
+		 * TODO:duplicate issue request to CDB } return; }
 		 * 
 		 * // not yet started execution rs_availableEntry.setStartedExecution(true);
 		 * 
-		 * FunctionalUnitType fuType = OpTypeToFUTypeMapping.getFUType(rs_availableEntry.getOperationType()); long lat = 1;
+		 * FunctionalUnitType fuType = OpTypeToFUTypeMapping.getFUType(rs_availableEntry.getOperationType()); long lat =
+		 * 1;
 		 * 
-		 * if (fuType != FunctionalUnitType.memory && fuType != FunctionalUnitType.inValid) { lat = executionEngine.getExecutionCore().getFULatency(fuType);
+		 * if (fuType != FunctionalUnitType.memory && fuType != FunctionalUnitType.inValid) { lat =
+		 * executionEngine.getExecutionCore().getFULatency(fuType);
 		 * 
 		 * } else { // TODO:duplicate check if something required here }
 		 * 

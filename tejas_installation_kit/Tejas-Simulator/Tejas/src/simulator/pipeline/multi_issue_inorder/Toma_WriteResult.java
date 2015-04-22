@@ -39,9 +39,11 @@ public class Toma_WriteResult {
 			}
 
 			if (toma_RSentry.getInstruction().getOperationType() != OperationType.store) {
+				//TODO : handled in handleEvent of CDB..confirm fine
+				
 				// TODO: Wait until CDB available
 
-				int b = toma_RSentry.getInst_entryNumber_ROB();
+				/*int b = toma_RSentry.getInst_entryNumber_ROB();
 				toma_RSentry.setBusy(false);
 				toma_RSentry.setCompletedExecution(false);
 				toma_RSentry.setStartedExecution(false);
@@ -66,7 +68,7 @@ public class Toma_WriteResult {
 				}
 
 				rob.getRobEntries()[b].setReady(true);
-				rob.getRobEntries()[b].setResultValue(result);
+				rob.getRobEntries()[b].setResultValue(result);*/
 			}
 
 			else {// store instruction

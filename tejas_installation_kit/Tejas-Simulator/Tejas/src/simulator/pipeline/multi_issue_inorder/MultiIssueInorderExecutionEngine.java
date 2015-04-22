@@ -11,7 +11,6 @@ import java.io.IOException;
 
 import memorysystem.CoreMemorySystem;
 import pipeline.ExecutionEngine;
-import pipeline.outoforder.ICacheBuffer;
 import config.EnergyConfig;
 import config.SimulationConfig;
 
