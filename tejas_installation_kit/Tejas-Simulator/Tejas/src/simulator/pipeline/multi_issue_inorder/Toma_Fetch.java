@@ -15,12 +15,10 @@ import generic.OperationType;
  *
  */
 public class Toma_Fetch {
-	// TODO:--- check whether to extend simulation element
-	// TODO: --- check do we need latch
 
 	Toma_ICacheBuffer toma_ICacheBuffer;
 	MultiIssueInorderExecutionEngine executionEngine;
-	Core core;// TODO: core ko hatao agar ni chiye to
+	Core core;
 
 	GenericCircularQueue<Instruction> toma_fetchBuffer;
 	int toma_fetchWidth;
@@ -30,7 +28,6 @@ public class Toma_Fetch {
 	// TODO: check this is a single queue rather a array as in OOO
 
 	public Toma_Fetch(Core core, MultiIssueInorderExecutionEngine executionEngine) {
-		// TODO: check do we need "super(PortType.Unlimited, -1, -1, -1, -1);"... i think hona chahiye
 		this.core = core;
 		this.executionEngine = executionEngine;
 		toma_fetchBuffer = executionEngine.getToma_fetchBuffer();
@@ -38,13 +35,8 @@ public class Toma_Fetch {
 	}
 
 	public void performFetch() {
-		// TODO: logic in inOrder-- sir se upar ja ra hai... "we are using similar as OOO".
+		// TO-DO: logic in inOrder-- sir se upar ja ra hai... "we are using similar as OOO".
 
-		// TODO: ye jo neeche hain ..ye OOO mein shayad kabi ni chalega...to fer kahaan karna hai
-		/*
-		 * if (ins.getOperationType() == OperationType.inValid) { executionEngine.setExecutionComplete(true);
-		 * CustomObjectPool.getInstructionPool().returnObject(ins); return; }
-		 */
 		Instruction ins;
 		for (int i = 0; i < toma_fetchWidth; i++) {
 			if (toma_fetchBuffer.isFull() == true) {
@@ -70,9 +62,7 @@ public class Toma_Fetch {
 
 			ins = inputToPipeline.peek(0);
 
-			// TODO: fetch_logic se chaep rahe hain...& synch ni chaepa...ensure it's correct
-
-			// TODO: instructions to be dropped...bi ni chaepa
+			// TODO: "instructions to be dropped" & "synch" logic not written
 
 			// drop memory operations if specified in configuration file
 			if (ins.getOperationType() == OperationType.load || ins.getOperationType() == OperationType.store) {

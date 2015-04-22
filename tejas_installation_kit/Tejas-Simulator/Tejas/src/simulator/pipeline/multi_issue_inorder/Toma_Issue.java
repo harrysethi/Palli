@@ -13,26 +13,21 @@ import generic.OperationType;
  *
  */
 public class Toma_Issue {
-	// TODO:--- check whether to extend simulation element
-	// TODO: --- check do we need latch
 
 	MultiIssueInorderExecutionEngine executionEngine;
-	Core core;// TODO: core ko hatao agar ni chiye to
-	GenericCircularQueue<Instruction> toma_fetchBuffer;// TODO: remove if not required
+	// GenericCircularQueue<Instruction> toma_fetchBuffer;
 
-	StageLatch_MII ifIdLatch;// TODO: using logic similar to inorder as experiment
+	StageLatch_MII ifIdLatch;
 
 	public Toma_Issue(Core core, MultiIssueInorderExecutionEngine executionEngine) {
-		// TODO: check do we need "super(PortType.Unlimited, -1, -1, -1, -1);"... i think hona chahiye
-		this.core = core;
 		this.executionEngine = executionEngine;
-		toma_fetchBuffer = executionEngine.getToma_fetchBuffer();// TODO: remove if not required
-		ifIdLatch = executionEngine.getIfIdLatch();// TODO: using logic similar to inorder as experiment
+		// toma_fetchBuffer = executionEngine.getToma_fetchBuffer();
+		ifIdLatch = executionEngine.getIfIdLatch();
 	}
 
 	public void performIssue() {
 
-		// Instruction ins = toma_fetchBuffer.peek(0);//TODO: commented as using inorder fetch
+		// Instruction ins = toma_fetchBuffer.peek(0);
 
 		while (ifIdLatch.isEmpty() == false) {
 			Instruction ins = ifIdLatch.peek(0);

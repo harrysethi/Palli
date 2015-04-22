@@ -1,6 +1,7 @@
 package pipeline;
 
 import java.lang.reflect.Array;
+
 import main.ArchitecturalComponent;
 import main.Main;
 import config.XMLParser;
@@ -8,6 +9,7 @@ import generic.GenericCircularQueue;
 import generic.GlobalClock;
 import generic.Instruction;
 import generic.Operand;
+import generic.OperationType;
 import generic.Statistics;
 
 public class PipelineTests {
@@ -162,7 +164,15 @@ public class PipelineTests {
 			break;
 
 		case 11:
-			toma_test_intALU();
+			toma_test_simple_intALU();
+			break;
+
+		case 12:
+			toma_test_simple_nop();
+			break;
+
+		case 13:
+			toma_test_simple_mov();
 			break;
 
 		default:
@@ -172,13 +182,26 @@ public class PipelineTests {
 
 	// ------Toma Change Start-------------
 
-	public static void toma_test_intALU() {
-
-		// generate instruction sequence
-		Instruction newInst;
+	private static void toma_simple_helper(OperationType opType) {
+		Instruction newInst = null;
 		for (int i = 0; i < 1; i++) {
-			newInst = Instruction.getIntALUInstruction(Operand.getIntegerRegister(0), Operand.getIntegerRegister(0),
-					Operand.getIntegerRegister(2));
+			switch (opType) {
+			case integerALU:
+				newInst = Instruction.getIntALUInstruction(Operand.getIntegerRegister(0),
+						Operand.getIntegerRegister(0), Operand.getIntegerRegister(2));
+				break;
+
+			case nop:
+				newInst = Instruction.getNOPInstruction();
+				break;
+
+			case mov:
+				newInst = Instruction.getMoveInstruction(Operand.getIntegerRegister(2), Operand.getIntegerRegister(1));
+				break;
+
+			default:
+				break;
+			}
 
 			inputToPipeline.enqueue(newInst);
 		}
@@ -189,11 +212,27 @@ public class PipelineTests {
 			ArchitecturalComponent.getCores()[0].getPipelineInterface().oneCycleOperation();
 			GlobalClock.incrementClock();
 		}
+	}
 
+	private static void toma_printIPC() {
 		System.out.println("Total cycles taken: " + GlobalClock.getCurrentTime());
-		System.out.println("IPC: " + (float)1 / GlobalClock.getCurrentTime());
+		System.out.println("IPC: " + (float) 1 / GlobalClock.getCurrentTime());
+	}
+
+	public static void toma_test_simple_intALU() {
+		toma_simple_helper(OperationType.integerALU);
+		toma_printIPC();
+	}
+
+	public static void toma_test_simple_nop() {
+		toma_simple_helper(OperationType.nop);
+		toma_printIPC();
+	}
+
+	public static void toma_test_simple_mov() {
+		toma_simple_helper(OperationType.mov);
+		toma_printIPC();
 	}
 
 	// ------Toma Change End-------------
-
 }

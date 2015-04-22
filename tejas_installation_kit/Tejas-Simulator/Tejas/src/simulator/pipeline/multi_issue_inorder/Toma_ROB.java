@@ -16,7 +16,6 @@ import config.SimulationConfig;
  */
 public class Toma_ROB {
 
-	// TODO:--- check whether to extend simulation element
 	// TODO:--- check whether we need retireWidth
 
 	private MultiIssueInorderExecutionEngine containingExecutionEngine;
@@ -25,17 +24,15 @@ public class Toma_ROB {
 	private Toma_ROBentry[] robEntries;
 	private int head;
 	private int tail;
-	// int size; //TODO:---check if this required
 
 	private int maxROBSize; // configurable
 
-	// private long branchCount;// TO-DO:----check branchCount ko finally kahaan use kar re hain, ya fer iski zaroorat
-	// hi ni hai?
+	// private long branchCount;
+	// TO-DO:----check branchCount ko finally kahaan use kar re hain, ya fer iski zaroorat hi ni hai?
 
 	private long lastValidIPSeen;
 
 	public Toma_ROB(MultiIssueInorderExecutionEngine containingExecutionEngine, Core core) {
-		// TODO: check do we need "super(PortType.Unlimited, -1, -1, -1, -1);"... i think hona chahiye
 		this.maxROBSize = core.getToma_robBufferSize() + 1;
 		// '1' added since we are starting the counter with 1
 		head = -1;
@@ -57,7 +54,7 @@ public class Toma_ROB {
 
 	public void performCommits() {
 
-		while (true) {// TODO:---chk this condition may need to be changed
+		while (true) {
 
 			if (head == -1) {
 				// ROB empty .. does not mean execution has completed
@@ -93,10 +90,6 @@ public class Toma_ROB {
 			if (firstInst.getCISCProgramCounter() != -1) {
 				lastValidIPSeen = firstInst.getCISCProgramCounter();
 			}
-
-			// TO-DO:--- chk "if(first.isWriteBackDone() == true)"
-
-			// TODO:--- chk this is required....."if(firstOpType==OperationType.inValid)"
 
 			// TODO:---- check whether something like below required
 
@@ -240,7 +233,6 @@ public class Toma_ROB {
 
 	// returns -1 if rob tail is not free
 	public int getROB_freeTail() {
-		// TODO: below logic modified apne se...ensure it's fine
 		if (tail == -1) {
 			head = 1;
 			tail = 1;

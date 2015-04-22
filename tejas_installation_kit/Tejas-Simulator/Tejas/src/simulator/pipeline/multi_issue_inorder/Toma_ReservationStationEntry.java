@@ -26,7 +26,7 @@ public class Toma_ReservationStationEntry {
 
 	private long address; // A
 
-	// TODO: mein chahta ni hun yahaan daalna below 3 fields...bcauz we will be changing the RS structure..see
+	// TODO: check if using below 3 fields is fine over here
 	private boolean isStartedExecution;
 	private boolean isCompletedExecution;
 	private long timeToCompleteExecution;

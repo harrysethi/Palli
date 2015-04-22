@@ -37,8 +37,8 @@ public class Toma_CDB extends SimulationElement {
 
 		Toma_ReservationStationEntry[] reservationStationEntries = rs.getReservationStationEntries();
 
-		Object result = null;// TODO: left | this shall come from somewhere
-		// TODO: pallavi says: "vaise bi humein value se kuch lena dena to hai ni"
+		Object result = null;
+		// TODO: left | this shall come from somewhere..vaise shall not be required..values se kuch lena dena ni hai
 
 		for (Toma_ReservationStationEntry toma_RSentryentry : reservationStationEntries) {
 

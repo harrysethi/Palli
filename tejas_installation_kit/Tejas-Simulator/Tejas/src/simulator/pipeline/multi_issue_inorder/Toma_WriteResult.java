@@ -26,7 +26,8 @@ public class Toma_WriteResult {
 				continue;
 			}
 
-			if (toma_RSentry.getInstruction().getOperationType() == OperationType.inValid) {
+			OperationType opType = toma_RSentry.getInstruction().getOperationType();
+			if (opType == OperationType.inValid || opType == OperationType.nop) {
 				int b = toma_RSentry.getInst_entryNumber_ROB();
 				Toma_ROB rob = executionEngine.getToma_ROB();
 				rob.getRobEntries()[b].setReady(true);
