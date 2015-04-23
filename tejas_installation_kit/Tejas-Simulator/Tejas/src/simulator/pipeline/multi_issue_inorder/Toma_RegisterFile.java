@@ -9,9 +9,6 @@ package pipeline.multi_issue_inorder;
  */
 public class Toma_RegisterFile {
 
-	// TODO:--- check whether to extend simulation element
-
-	// private Toma_ROBentry[] toma_ROBentry;// Qi[] //TODO: we are using index rather than this (though this is what is there in OOO)
 	private int[] toma_ROBentry;// Qi[]
 	private boolean isBusy[];// Busy[]
 	private Object values[];// Val[]
@@ -26,7 +23,7 @@ public class Toma_RegisterFile {
 
 		for (int i = 0; i < _registerFileSize; i++) {
 			isBusy[i] = false;
-			toma_ROBentry[i] = -1;// TODO: check initializing here with -1 is fine
+			toma_ROBentry[i] = -1;
 		}
 	}
 
@@ -39,16 +36,11 @@ public class Toma_RegisterFile {
 	}
 
 	public boolean isBusy(int index) {
-		// TODO : checko "incrementNumAccesses(1);"
 		return isBusy[index];
 	}
 
 	public void setBusy(boolean isBusy, int index) {
 		this.isBusy[index] = isBusy;
-		// TODO : checko if required
-		/*
-		 * if(isBusy == true) { incrementNumAccesses(1); }
-		 */
 	}
 
 	public int getToma_ROBEntry(int index) {

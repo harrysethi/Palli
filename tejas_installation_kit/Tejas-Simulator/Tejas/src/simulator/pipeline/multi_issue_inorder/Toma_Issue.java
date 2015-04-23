@@ -29,6 +29,7 @@ public class Toma_Issue {
 		// Instruction ins = toma_fetchBuffer.peek(0);
 
 		while (ifIdLatch.isEmpty() == false) {
+
 			Instruction ins = ifIdLatch.peek(0);
 
 			if (ins == null) {
@@ -37,8 +38,8 @@ public class Toma_Issue {
 
 			if (ins.getOperationType() == OperationType.load || ins.getOperationType() == OperationType.store) {
 				if (executionEngine.getCoreMemorySystem().getToma_LSQ().isFull()) {
-					// executionEngine.setToStall3(true);//TODO: commented..don't know whether to use
-					break;// TODO: check yahaan "return" aayega ya "continue" ya "break"
+					// executionEngine.setToStall3(true);
+					continue;
 				}
 			}
 
@@ -50,13 +51,13 @@ public class Toma_Issue {
 
 			Toma_ReservationStationEntry rs_freeEntry = rs.getFreeEntryIn_RS();
 			if (rs_freeEntry == null) {
-				// TODO: check yahaan pe memStall ka kuch karna hai kya?
+				// TO-DO: check yahaan pe memStall ka kuch karna hai kya?
 				break;
 			}
 
 			int rob_freeTail = rob.getROB_freeTail(); // b
 			if (rob_freeTail == -1) {
-				// TODO: check yahaan pe memStall ka kuch karna hai kya?
+				// TO-DO: check yahaan pe memStall ka kuch karna hai kya?
 				break;
 			}
 
@@ -64,6 +65,7 @@ public class Toma_Issue {
 			int register_source2 = -1;
 			int register_dest = -1;
 
+			// TODO: some change will be needed here in case of load & store
 			if (ins.getSourceOperand1() != null) {
 				register_source1 = (int) ins.getSourceOperand1().getValue(); // rs
 				if (toma_RF.isBusy(register_source1)) {
@@ -88,9 +90,10 @@ public class Toma_Issue {
 
 			else { // else for "if (ins.getSourceOperand1() != null) {"
 					// sourceOperand1 is available if it is null
-				rs_freeEntry.setSourceOperand1_avaliability(0);// TODO: check shall be fine
+				rs_freeEntry.setSourceOperand1_avaliability(0);
 			}
 
+			// TODO: some change will be needed here in case of store
 			if (ins.getSourceOperand2() != null) {
 				register_source2 = (int) ins.getSourceOperand2().getValue(); // rt
 
@@ -138,14 +141,14 @@ public class Toma_Issue {
 			rob_freeTail_entry.setReady(false);
 
 			if (ins.getOperationType() == OperationType.load) {
-				rs_freeEntry.setAddress(ins.getSourceOperand2MemValue());// TODO. check imm is sourceOperand
+				rs_freeEntry.setAddress(ins.getSourceOperand1MemValue());
 				toma_RF.setToma_ROBEntry(rob_freeTail, register_source2);
 				toma_RF.setBusy(true, register_source2);
 				rob_freeTail_entry.setDestinationRegNumber(register_source2);
 			}
 
 			if (ins.getOperationType() == OperationType.store) {
-				rs_freeEntry.setAddress(ins.getSourceOperand1MemValue());// TODO. check imm is sourceOperand
+				rs_freeEntry.setAddress(ins.getSourceOperand1MemValue());
 			}
 
 			// adding instruction to LSQ in case of load/store

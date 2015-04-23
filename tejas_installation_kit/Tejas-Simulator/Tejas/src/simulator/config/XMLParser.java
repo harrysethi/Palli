@@ -118,7 +118,9 @@ public class XMLParser {
 		return (element.getAttribute(str) != "");
 	}
 
-	private static boolean isElementPresent(String tagName, Element parent) // Get the immediate string value of a particular tag name under a particular parent tag
+	private static boolean isElementPresent(String tagName, Element parent) // Get the immediate string value of a
+																			// particular tag name under a particular
+																			// parent tag
 	{
 		NodeList nodeLst = parent.getElementsByTagName(tagName);
 		if (nodeLst.item(0) == null) {
@@ -158,7 +160,8 @@ public class XMLParser {
 		try {
 			t = EmulatorType.valueOf(emulatorType);
 		} catch (Exception e) {
-			misc.Error.showErrorAndExit("Error in setting the emulator type argument." + "\nExpected values : pin, or qemu");
+			misc.Error.showErrorAndExit("Error in setting the emulator type argument."
+					+ "\nExpected values : pin, or qemu");
 		}
 
 		return t;
@@ -170,7 +173,8 @@ public class XMLParser {
 		try {
 			t = CommunicationType.valueOf(communicationType);
 		} catch (Exception e) {
-			misc.Error.showErrorAndExit("Error in setting the communication type argument." + "\nExpected values : sharedMemory, network, or file");
+			misc.Error.showErrorAndExit("Error in setting the communication type argument."
+					+ "\nExpected values : sharedMemory, network, or file");
 		}
 
 		return t;
@@ -190,7 +194,8 @@ public class XMLParser {
 		EmulatorConfig.ShmLibDirectory = getImmediateString("ShmLibDirectory", emulatorElmnt);
 		EmulatorConfig.KillEmulatorScript = getImmediateString("KillEmulatorScript", emulatorElmnt);
 
-		EmulatorConfig.storeExecutionTraceInAFile = Boolean.parseBoolean(getImmediateString("StoreExecutionTraceInAFile", emulatorElmnt));
+		EmulatorConfig.storeExecutionTraceInAFile = Boolean.parseBoolean(getImmediateString(
+				"StoreExecutionTraceInAFile", emulatorElmnt));
 		EmulatorConfig.basenameForTraceFiles = getImmediateString("BasenameForTraceFiles", emulatorElmnt);
 
 		if (EmulatorConfig.storeExecutionTraceInAFile == true) {
@@ -206,14 +211,16 @@ public class XMLParser {
 
 			File f = new File(fileName);
 			if (f != null && f.exists()) {
-				misc.Error.showErrorAndExit("Trace file already present : " + fileName + " !!" + "\nKindly rename the trace file and start collecting trace again.");
+				misc.Error.showErrorAndExit("Trace file already present : " + fileName + " !!"
+						+ "\nKindly rename the trace file and start collecting trace again.");
 			}
 		}
 	}
 
 	private static void runEmulatorForTracing() {
 		// Strict condition : Emulator is pin, and communication type is file.
-		if (EmulatorConfig.emulatorType == EmulatorType.pin && EmulatorConfig.communicationType == CommunicationType.file) {
+		if (EmulatorConfig.emulatorType == EmulatorType.pin
+				&& EmulatorConfig.communicationType == CommunicationType.file) {
 
 		} else {
 			misc.Error.showErrorAndExit("Invalid emulator/communication-type combination !!");
@@ -221,7 +228,8 @@ public class XMLParser {
 
 		checkIfTraceFileAlreadyExists();
 
-		Emulator emulator = new Emulator(EmulatorConfig.PinTool, EmulatorConfig.PinInstrumentor, Main.getBenchmarkArguments(), EmulatorConfig.basenameForTraceFiles);
+		Emulator emulator = new Emulator(EmulatorConfig.PinTool, EmulatorConfig.PinInstrumentor,
+				Main.getBenchmarkArguments(), EmulatorConfig.basenameForTraceFiles);
 
 		emulator.waitForEmulator();
 
@@ -238,13 +246,17 @@ public class XMLParser {
 		SimulationConfig.NumTempIntReg = Integer.parseInt(getImmediateString("NumTempIntReg", simulationElmnt));
 		SimulationConfig.NumInsToIgnore = Long.parseLong(getImmediateString("NumInsToIgnore", simulationElmnt));
 
-		SimulationConfig.collectInsnWorkingSetInfo = Boolean.parseBoolean(getImmediateString("CollectInsnWorkingSet", simulationElmnt));
+		SimulationConfig.collectInsnWorkingSetInfo = Boolean.parseBoolean(getImmediateString("CollectInsnWorkingSet",
+				simulationElmnt));
 
-		SimulationConfig.insnWorkingSetChunkSize = Long.parseLong(getImmediateString("InsnWorkingSetChunkSize", simulationElmnt));
+		SimulationConfig.insnWorkingSetChunkSize = Long.parseLong(getImmediateString("InsnWorkingSetChunkSize",
+				simulationElmnt));
 
-		SimulationConfig.collectDataWorkingSetInfo = Boolean.parseBoolean(getImmediateString("CollectDataWorkingSet", simulationElmnt));
+		SimulationConfig.collectDataWorkingSetInfo = Boolean.parseBoolean(getImmediateString("CollectDataWorkingSet",
+				simulationElmnt));
 
-		SimulationConfig.dataWorkingSetChunkSize = Long.parseLong(getImmediateString("DataWorkingSetChunkSize", simulationElmnt));
+		SimulationConfig.dataWorkingSetChunkSize = Long.parseLong(getImmediateString("DataWorkingSetChunkSize",
+				simulationElmnt));
 
 		// Read number of cores and define the array of core configurations
 		// Note that number of Cores specified in config.xml is deprecated and is instead done as follows
@@ -263,16 +275,20 @@ public class XMLParser {
 
 		// System.out.println(SimulationConfig.NumTempIntReg + ", " + SimulationConfig.IndexAddrModeEnable);
 
-		if (getImmediateString("DebugMode", simulationElmnt).compareTo("true") == 0 || getImmediateString("DebugMode", simulationElmnt).compareTo("True") == 0) {
+		if (getImmediateString("DebugMode", simulationElmnt).compareTo("true") == 0
+				|| getImmediateString("DebugMode", simulationElmnt).compareTo("True") == 0) {
 			SimulationConfig.debugMode = true;
 		} else {
 			SimulationConfig.debugMode = false;
 		}
 
-		SimulationConfig.detachMemSysData = Boolean.parseBoolean(getImmediateString("DetachMemSysData", simulationElmnt));
-		SimulationConfig.detachMemSysInsn = Boolean.parseBoolean(getImmediateString("DetachMemSysInsn", simulationElmnt));
+		SimulationConfig.detachMemSysData = Boolean
+				.parseBoolean(getImmediateString("DetachMemSysData", simulationElmnt));
+		SimulationConfig.detachMemSysInsn = Boolean
+				.parseBoolean(getImmediateString("DetachMemSysInsn", simulationElmnt));
 
-		if (getImmediateString("subsetSim", simulationElmnt).compareTo("true") == 0 || getImmediateString("subsetSim", simulationElmnt).compareTo("True") == 0) {
+		if (getImmediateString("subsetSim", simulationElmnt).compareTo("true") == 0
+				|| getImmediateString("subsetSim", simulationElmnt).compareTo("True") == 0) {
 			SimulationConfig.subsetSimulation = true;
 			SimulationConfig.subsetSimSize = Long.parseLong(getImmediateString("subsetSimSize", simulationElmnt));
 		} else {
@@ -280,7 +296,8 @@ public class XMLParser {
 			SimulationConfig.subsetSimSize = -1;
 		}
 
-		if (getImmediateString("pinpointsSim", simulationElmnt).compareTo("true") == 0 || getImmediateString("pinpointsSim", simulationElmnt).compareTo("True") == 0) {
+		if (getImmediateString("pinpointsSim", simulationElmnt).compareTo("true") == 0
+				|| getImmediateString("pinpointsSim", simulationElmnt).compareTo("True") == 0) {
 			SimulationConfig.pinpointsSimulation = true;
 			SimulationConfig.pinpointsFile = getImmediateString("pinpointsFile", simulationElmnt);
 		} else {
@@ -288,7 +305,8 @@ public class XMLParser {
 			SimulationConfig.pinpointsFile = "";
 		}
 
-		if (getImmediateString("markerFunctions", simulationElmnt).compareTo("true") == 0 || getImmediateString("markerFunctions", simulationElmnt).compareTo("True") == 0) {
+		if (getImmediateString("markerFunctions", simulationElmnt).compareTo("true") == 0
+				|| getImmediateString("markerFunctions", simulationElmnt).compareTo("True") == 0) {
 			SimulationConfig.markerFunctionsSimulation = true;
 			SimulationConfig.startMarker = getImmediateString("startSimMarker", simulationElmnt);
 			SimulationConfig.endMarker = getImmediateString("endSimMarker", simulationElmnt);
@@ -298,7 +316,8 @@ public class XMLParser {
 			SimulationConfig.endMarker = "";
 		}
 
-		if (getImmediateString("PrintPowerStats", simulationElmnt).compareTo("true") == 0 || getImmediateString("subsetSim", simulationElmnt).compareTo("True") == 0) {
+		if (getImmediateString("PrintPowerStats", simulationElmnt).compareTo("true") == 0
+				|| getImmediateString("subsetSim", simulationElmnt).compareTo("True") == 0) {
 			SimulationConfig.powerStats = true;
 		} else {
 			SimulationConfig.powerStats = false;
@@ -336,7 +355,8 @@ public class XMLParser {
 		SystemConfig.mainMemoryFrequency = Long.parseLong(getImmediateString("MainMemoryFrequency", systemElmnt));
 		SystemConfig.mainMemPortType = setPortType(getImmediateString("MainMemoryPortType", systemElmnt));
 		SystemConfig.mainMemoryAccessPorts = Integer.parseInt(getImmediateString("MainMemoryAccessPorts", systemElmnt));
-		SystemConfig.mainMemoryPortOccupancy = Integer.parseInt(getImmediateString("MainMemoryPortOccupancy", systemElmnt));
+		SystemConfig.mainMemoryPortOccupancy = Integer.parseInt(getImmediateString("MainMemoryPortOccupancy",
+				systemElmnt));
 
 		Element mainMemElmnt = (Element) (systemElmnt.getElementsByTagName("MainMemory")).item(0);
 		SystemConfig.mainMemoryControllerPower = getEnergyConfig(mainMemElmnt);
@@ -409,23 +429,17 @@ public class XMLParser {
 			Element toma_Elmnt = (Element) (coreElmnt.getElementsByTagName("Toma_params")).item(0);
 			core.toma_RS_size = Integer.parseInt(getImmediateString("rs_buffersize", toma_Elmnt));
 			core.toma_ROB_size = Integer.parseInt(getImmediateString("rob_buffersize", toma_Elmnt));
+			core.toma_LSQ_size = Integer.parseInt(getImmediateString("Toma_LSQSize", toma_Elmnt));
 
 			Element toma_CDB_Elmnt = (Element) (coreElmnt.getElementsByTagName("Toma_CDB")).item(0);
 			core.toma_CDB_latency = Integer.parseInt(getImmediateString("Toma_CDBLatency", toma_CDB_Elmnt));
 			core.toma_CDB_portType = setPortType(getImmediateString("Toma_CDBPortType", toma_CDB_Elmnt));
 			core.toma_CDB_accessPorts = Integer.parseInt(getImmediateString("Toma_CDBAccessPorts", toma_CDB_Elmnt));
 			core.toma_CDB_portOccupancy = Integer.parseInt(getImmediateString("Toma_CDBPortOccupancy", toma_CDB_Elmnt));
-
-			Element toma_LSQ_Elmnt = (Element) (coreElmnt.getElementsByTagName("Toma_LSQ")).item(0);
-			core.toma_LSQ_size = Integer.parseInt(getImmediateString("Toma_LSQSize", toma_LSQ_Elmnt));
-			core.toma_LSQ_latency = Integer.parseInt(getImmediateString("Toma_LSQLatency", toma_LSQ_Elmnt));
-			core.toma_LSQ_portType = setPortType(getImmediateString("Toma_LSQPortType", toma_LSQ_Elmnt));
-			core.toma_LSQ_accessPorts = Integer.parseInt(getImmediateString("Toma_LSQAccessPorts", toma_LSQ_Elmnt));
-			core.toma_LSQ_portOccupancy = Integer.parseInt(getImmediateString("Toma_LSQPortOccupancy", toma_LSQ_Elmnt));
-
 			// ------Toma Change End-------------
 
-			Element resultsBroadcastBusElmnt = (Element) (coreElmnt.getElementsByTagName("ResultsBroadcastBus")).item(0);
+			Element resultsBroadcastBusElmnt = (Element) (coreElmnt.getElementsByTagName("ResultsBroadcastBus"))
+					.item(0);
 			core.resultsBroadcastBusPower = getEnergyConfig(resultsBroadcastBusElmnt);
 
 			Element renameElmnt = (Element) (coreElmnt.getElementsByTagName("Rename")).item(0);
@@ -450,60 +464,73 @@ public class XMLParser {
 			core.FloatArchRegNum = Integer.parseInt(getImmediateString("FloatArchRegNum", floatRegisterFileElmnt));
 			core.floatRegFilePower = getEnergyConfig(floatRegisterFileElmnt);
 
-			core.ExecutionCoreNumPorts = Integer.parseInt(coreElmnt.getElementsByTagName("ExecutionCoreNumPorts").item(0).getFirstChild().getNodeValue());
+			core.ExecutionCoreNumPorts = Integer.parseInt(coreElmnt.getElementsByTagName("ExecutionCoreNumPorts")
+					.item(0).getFirstChild().getNodeValue());
 
 			Element intALUElmnt = (Element) (coreElmnt.getElementsByTagName("IntALU")).item(0);
 			core.IntALUNum = Integer.parseInt(getImmediateString("Num", intALUElmnt));
 			core.IntALULatency = Integer.parseInt(getImmediateString("Latency", intALUElmnt));
-			core.IntALUReciprocalOfThroughput = Integer.parseInt(getImmediateString("ReciprocalOfThroughput", intALUElmnt));
+			core.IntALUReciprocalOfThroughput = Integer.parseInt(getImmediateString("ReciprocalOfThroughput",
+					intALUElmnt));
 			core.IntALUPortNumbers = new int[core.IntALUNum];
 			for (int j = 0; j < core.IntALUNum; j++) {
-				core.IntALUPortNumbers[j] = Integer.parseInt(intALUElmnt.getElementsByTagName("PortNumber").item(j).getFirstChild().getNodeValue());
+				core.IntALUPortNumbers[j] = Integer.parseInt(intALUElmnt.getElementsByTagName("PortNumber").item(j)
+						.getFirstChild().getNodeValue());
 			}
 
 			Element intMulElmnt = (Element) (coreElmnt.getElementsByTagName("IntMul")).item(0);
 			core.IntMulNum = Integer.parseInt(getImmediateString("Num", intMulElmnt));
 			core.IntMulLatency = Integer.parseInt(getImmediateString("Latency", intMulElmnt));
-			core.IntMulReciprocalOfThroughput = Integer.parseInt(getImmediateString("ReciprocalOfThroughput", intMulElmnt));
+			core.IntMulReciprocalOfThroughput = Integer.parseInt(getImmediateString("ReciprocalOfThroughput",
+					intMulElmnt));
 			core.IntMulPortNumbers = new int[core.IntMulNum];
 			for (int j = 0; j < core.IntMulNum; j++) {
-				core.IntMulPortNumbers[j] = Integer.parseInt(intMulElmnt.getElementsByTagName("PortNumber").item(j).getFirstChild().getNodeValue());
+				core.IntMulPortNumbers[j] = Integer.parseInt(intMulElmnt.getElementsByTagName("PortNumber").item(j)
+						.getFirstChild().getNodeValue());
 			}
 
 			Element intDivElmnt = (Element) (coreElmnt.getElementsByTagName("IntDiv")).item(0);
 			core.IntDivNum = Integer.parseInt(getImmediateString("Num", intDivElmnt));
 			core.IntDivLatency = Integer.parseInt(getImmediateString("Latency", intDivElmnt));
-			core.IntDivReciprocalOfThroughput = Integer.parseInt(getImmediateString("ReciprocalOfThroughput", intDivElmnt));
+			core.IntDivReciprocalOfThroughput = Integer.parseInt(getImmediateString("ReciprocalOfThroughput",
+					intDivElmnt));
 			core.IntDivPortNumbers = new int[core.IntDivNum];
 			for (int j = 0; j < core.IntDivNum; j++) {
-				core.IntDivPortNumbers[j] = Integer.parseInt(intDivElmnt.getElementsByTagName("PortNumber").item(j).getFirstChild().getNodeValue());
+				core.IntDivPortNumbers[j] = Integer.parseInt(intDivElmnt.getElementsByTagName("PortNumber").item(j)
+						.getFirstChild().getNodeValue());
 			}
 
 			Element floatALUElmnt = (Element) (coreElmnt.getElementsByTagName("FloatALU")).item(0);
 			core.FloatALUNum = Integer.parseInt(getImmediateString("Num", floatALUElmnt));
 			core.FloatALULatency = Integer.parseInt(getImmediateString("Latency", floatALUElmnt));
-			core.FloatALUReciprocalOfThroughput = Integer.parseInt(getImmediateString("ReciprocalOfThroughput", floatALUElmnt));
+			core.FloatALUReciprocalOfThroughput = Integer.parseInt(getImmediateString("ReciprocalOfThroughput",
+					floatALUElmnt));
 			core.FloatALUPortNumbers = new int[core.FloatALUNum];
 			for (int j = 0; j < core.FloatALUNum; j++) {
-				core.FloatALUPortNumbers[j] = Integer.parseInt(floatALUElmnt.getElementsByTagName("PortNumber").item(j).getFirstChild().getNodeValue());
+				core.FloatALUPortNumbers[j] = Integer.parseInt(floatALUElmnt.getElementsByTagName("PortNumber").item(j)
+						.getFirstChild().getNodeValue());
 			}
 
 			Element floatMulElmnt = (Element) (coreElmnt.getElementsByTagName("FloatMul")).item(0);
 			core.FloatMulNum = Integer.parseInt(getImmediateString("Num", floatMulElmnt));
 			core.FloatMulLatency = Integer.parseInt(getImmediateString("Latency", floatMulElmnt));
-			core.FloatMulReciprocalOfThroughput = Integer.parseInt(getImmediateString("ReciprocalOfThroughput", floatMulElmnt));
+			core.FloatMulReciprocalOfThroughput = Integer.parseInt(getImmediateString("ReciprocalOfThroughput",
+					floatMulElmnt));
 			core.FloatMulPortNumbers = new int[core.FloatMulNum];
 			for (int j = 0; j < core.FloatMulNum; j++) {
-				core.FloatMulPortNumbers[j] = Integer.parseInt(floatMulElmnt.getElementsByTagName("PortNumber").item(j).getFirstChild().getNodeValue());
+				core.FloatMulPortNumbers[j] = Integer.parseInt(floatMulElmnt.getElementsByTagName("PortNumber").item(j)
+						.getFirstChild().getNodeValue());
 			}
 
 			Element floatDivElmnt = (Element) (coreElmnt.getElementsByTagName("FloatDiv")).item(0);
 			core.FloatDivNum = Integer.parseInt(getImmediateString("Num", floatDivElmnt));
 			core.FloatDivLatency = Integer.parseInt(getImmediateString("Latency", floatDivElmnt));
-			core.FloatDivReciprocalOfThroughput = Integer.parseInt(getImmediateString("ReciprocalOfThroughput", floatDivElmnt));
+			core.FloatDivReciprocalOfThroughput = Integer.parseInt(getImmediateString("ReciprocalOfThroughput",
+					floatDivElmnt));
 			core.FloatDivPortNumbers = new int[core.FloatDivNum];
 			for (int j = 0; j < core.FloatDivNum; j++) {
-				core.FloatDivPortNumbers[j] = Integer.parseInt(floatDivElmnt.getElementsByTagName("PortNumber").item(j).getFirstChild().getNodeValue());
+				core.FloatDivPortNumbers[j] = Integer.parseInt(floatDivElmnt.getElementsByTagName("PortNumber").item(j)
+						.getFirstChild().getNodeValue());
 			}
 
 			Element jumpElmnt = (Element) (coreElmnt.getElementsByTagName("Jump")).item(0);
@@ -512,16 +539,19 @@ public class XMLParser {
 			core.JumpReciprocalOfThroughput = Integer.parseInt(getImmediateString("ReciprocalOfThroughput", jumpElmnt));
 			core.JumpPortNumbers = new int[core.JumpNum];
 			for (int j = 0; j < core.JumpNum; j++) {
-				core.JumpPortNumbers[j] = Integer.parseInt(jumpElmnt.getElementsByTagName("PortNumber").item(j).getFirstChild().getNodeValue());
+				core.JumpPortNumbers[j] = Integer.parseInt(jumpElmnt.getElementsByTagName("PortNumber").item(j)
+						.getFirstChild().getNodeValue());
 			}
 
 			Element memoryElmnt = (Element) (coreElmnt.getElementsByTagName("Memory")).item(0);
 			core.MemoryNum = Integer.parseInt(getImmediateString("Num", memoryElmnt));
 			core.MemoryLatency = Integer.parseInt(getImmediateString("Latency", memoryElmnt));
-			core.MemoryReciprocalOfThroughput = Integer.parseInt(getImmediateString("ReciprocalOfThroughput", memoryElmnt));
+			core.MemoryReciprocalOfThroughput = Integer.parseInt(getImmediateString("ReciprocalOfThroughput",
+					memoryElmnt));
 			core.MemoryPortNumbers = new int[core.MemoryNum];
 			for (int j = 0; j < core.MemoryNum; j++) {
-				core.MemoryPortNumbers[j] = Integer.parseInt(memoryElmnt.getElementsByTagName("PortNumber").item(j).getFirstChild().getNodeValue());
+				core.MemoryPortNumbers[j] = Integer.parseInt(memoryElmnt.getElementsByTagName("PortNumber").item(j)
+						.getFirstChild().getNodeValue());
 			}
 
 			core.intALUPower = getEnergyConfig(intALUElmnt);
@@ -571,13 +601,15 @@ public class XMLParser {
 					core.coreCacheList.add(config);
 
 					// icache config
-					if (SimulationConfig.collectInsnWorkingSetInfo && config.firstLevel == true && config.cacheDataType == CacheDataType.Instruction) {
+					if (SimulationConfig.collectInsnWorkingSetInfo && config.firstLevel == true
+							&& config.cacheDataType == CacheDataType.Instruction) {
 						config.collectWorkingSetData = true;
 						config.workingSetChunkSize = SimulationConfig.insnWorkingSetChunkSize;
 					}
 
 					// l1cache config
-					if (SimulationConfig.collectInsnWorkingSetInfo && config.firstLevel == true && config.cacheDataType == CacheDataType.Data) {
+					if (SimulationConfig.collectInsnWorkingSetInfo && config.firstLevel == true
+							&& config.cacheDataType == CacheDataType.Data) {
 						config.collectWorkingSetData = true;
 						config.workingSetChunkSize = SimulationConfig.dataWorkingSetChunkSize;
 					}
@@ -612,7 +644,8 @@ public class XMLParser {
 		nocConfig.portOccupancy = Integer.parseInt(getImmediateString("NocPortOccupancy", NocType));
 		nocConfig.latency = Integer.parseInt(getImmediateString("NocLatency", NocType));
 		nocConfig.operatingFreq = Integer.parseInt(getImmediateString("NocOperatingFreq", NocType));
-		nocConfig.latencyBetweenNOCElements = Integer.parseInt(getImmediateString("NocLatencyBetweenNOCElements", NocType));
+		nocConfig.latencyBetweenNOCElements = Integer.parseInt(getImmediateString("NocLatencyBetweenNOCElements",
+				NocType));
 
 		String tempStr = getImmediateString("NocTopology", NocType);
 		nocConfig.topology = TOPOLOGY.valueOf(tempStr);
@@ -639,7 +672,8 @@ public class XMLParser {
 		else if (tempStr.equalsIgnoreCase("WT"))
 			cache.writePolicy = CacheConfig.WritePolicy.WRITE_THROUGH;
 		else {
-			System.err.println("XML Configuration error : Invalid Write Mode (please enter WB for write-back or WT for write-through)");
+			System.err
+					.println("XML Configuration error : Invalid Write Mode (please enter WB for write-back or WT for write-through)");
 			System.exit(1);
 		}
 
@@ -702,7 +736,8 @@ public class XMLParser {
 		cache.power = getCacheEnergyConfig(CacheType);
 	}
 
-	private static void setBranchPredictorProperties(Element predictorElmnt, Element BTBElmnt, BranchPredictorConfig branchPredictor) {
+	private static void setBranchPredictorProperties(Element predictorElmnt, Element BTBElmnt,
+			BranchPredictorConfig branchPredictor) {
 
 		String tempStr = getImmediateString("Predictor_Mode", predictorElmnt);
 		if (tempStr.equalsIgnoreCase("NoPredictor"))
@@ -744,7 +779,8 @@ public class XMLParser {
 			return false;
 	}
 
-	private static Element searchLibraryForItem(String tagName) // Searches the <Library> section for a given tag name and returns it in Element form
+	private static Element searchLibraryForItem(String tagName) // Searches the <Library> section for a given tag name
+																// and returns it in Element form
 	{ // Used mainly for cache types
 		NodeList nodeLst = doc.getElementsByTagName("Library");
 		Element libraryElmnt = (Element) nodeLst.item(0);
@@ -752,13 +788,15 @@ public class XMLParser {
 
 		if (libItemLst.item(0) == null) // Item not found
 		{
-			System.err.println("XML Configuration error : Item type \"" + tagName + "\" not found in library section in the configuration file!!");
+			System.err.println("XML Configuration error : Item type \"" + tagName
+					+ "\" not found in library section in the configuration file!!");
 			System.exit(1);
 		}
 
 		if (libItemLst.item(1) != null) // Item found more than once
 		{
-			System.err.println("XML Configuration error : More than one definitions of item type \"" + tagName + "\" found in library section in the configuration file!!");
+			System.err.println("XML Configuration error : More than one definitions of item type \"" + tagName
+					+ "\" found in library section in the configuration file!!");
 			System.exit(1);
 		}
 
@@ -766,11 +804,14 @@ public class XMLParser {
 		return resultElmnt;
 	}
 
-	private static String getImmediateString(String tagName, Element parent) // Get the immediate string value of a particular tag name under a particular parent tag
+	private static String getImmediateString(String tagName, Element parent) // Get the immediate string value of a
+																				// particular tag name under a
+																				// particular parent tag
 	{
 		NodeList nodeLst = parent.getElementsByTagName(tagName);
 		if (nodeLst.item(0) == null) {
-			System.err.println("XML Configuration error : Item \"" + tagName + "\" not found inside the \"" + parent.getTagName() + "\" tag in the configuration file!!");
+			System.err.println("XML Configuration error : Item \"" + tagName + "\" not found inside the \""
+					+ parent.getTagName() + "\" tag in the configuration file!!");
 			System.exit(1);
 		}
 		Element NodeElmnt = (Element) nodeLst.item(0);

@@ -129,17 +129,12 @@ public class CoreConfig {
 
 	public int toma_RS_size;
 	public int toma_ROB_size;
+	public int toma_LSQ_size;
 
 	public int toma_CDB_latency;
 	public PortType toma_CDB_portType;
 	public int toma_CDB_accessPorts;
 	public int toma_CDB_portOccupancy;
-
-	public int toma_LSQ_size;
-	public int toma_LSQ_latency;
-	public PortType toma_LSQ_portType;
-	public int toma_LSQ_accessPorts;
-	public int toma_LSQ_portOccupancy;
 
 	// ------Toma Change End-------------
 

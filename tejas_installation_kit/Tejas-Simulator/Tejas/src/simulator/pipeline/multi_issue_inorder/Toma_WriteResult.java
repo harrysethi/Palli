@@ -34,8 +34,9 @@ public class Toma_WriteResult {
 				continue;
 			}
 
-			if (toma_RSentry.getInstruction().getOperationType() != OperationType.store) {
-				// TODO : handled in handleEvent of CDB..confirm fine
+			if (opType != OperationType.store) {
+				// issuing request to CDB
+				executionEngine.getCoreMemorySystem().issueRequestToToma_CDB(toma_RSentry);
 			}
 
 			else {// store instruction

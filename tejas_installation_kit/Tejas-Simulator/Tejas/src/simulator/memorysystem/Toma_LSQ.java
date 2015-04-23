@@ -3,85 +3,90 @@
  */
 package memorysystem;
 
-import generic.Event;
-import generic.EventQueue;
-import generic.PortType;
-import generic.SimulationElement;
-import memorysystem.Toma_LSQEntry.Toma_LSQEntryType;
+import memorysystem.Toma_LSQentry.Toma_LSQEntryType;
 import pipeline.multi_issue_inorder.Toma_ROBentry;
 
 /**
  * @author dell
  *
  */
-public class Toma_LSQ extends SimulationElement {
-	CoreMemorySystem containingMemSys;
+public class Toma_LSQ {
 
-	private Toma_LSQEntry[] toma_lsqueue;
-	private int tail;
+	Toma_LSQentry toma_lsqueue[];
+
 	private int head;
+	private int tail;
 
-	private int lsqSize;
-	private int curSize;
+	private int lsq_Size;
+	private int current_Size;
 
-	public Toma_LSQ(PortType portType, int noOfPorts, long occupancy, long latency, CoreMemorySystem containingMemSys, int lsqSize) {
-		super(portType, noOfPorts, occupancy, latency, containingMemSys.getCore().getFrequency());
-		this.containingMemSys = containingMemSys;
-		this.lsqSize = lsqSize;
+	public Toma_LSQ(int lsq_Size) {
+		this.lsq_Size = lsq_Size;
+
 		head = -1;
 		tail = -1;
-
-		curSize = 0;
-
-		toma_lsqueue = new Toma_LSQEntry[lsqSize];
-		for (int i = 0; i < lsqSize; i++) {
-			Toma_LSQEntry entry = new Toma_LSQEntry(Toma_LSQEntryType.LOAD, null);
-			entry.setAddr(-1);
-			entry.setIndexInQ(i);
-			toma_lsqueue[i] = entry;
+		for (int i = 0; i < lsq_Size; i++) {
+			toma_lsqueue[i] = new Toma_LSQentry(i);
 		}
-	}
 
-	@Override
-	public void handleEvent(EventQueue eventQ, Event event) {
-		// TODO Auto-generated method stub
+		current_Size = 0;
 
 	}
 
 	public boolean isFull() {
-		if (curSize >= lsqSize)
+		if (current_Size >= current_Size)
 			return true;
 		else
 			return false;
 	}
 
-	public Toma_LSQEntry addEntry(boolean isLoad, long address, Toma_ROBentry toma_robEntry) {
-		// noOfMemRequests++;//TODO: counters..chk
-		Toma_LSQEntry.Toma_LSQEntryType type = (isLoad) ? Toma_LSQEntry.Toma_LSQEntryType.LOAD : Toma_LSQEntry.Toma_LSQEntryType.STORE;
-
-		/*
-		 * if (isLoad)//TODO: counters..chk NoOfLd++; else NoOfSt++;
-		 */
+	public Toma_LSQentry addLsqEntry(boolean isLoad, long address, Toma_ROBentry toma_robEntry) {
 
 		if (head == -1) {
 			head = tail = 0;
 		} else {
-			tail = (tail + 1) % lsqSize;
+			tail = (tail + 1) % lsq_Size;
 		}
 
-		Toma_LSQEntry toma_lsqEntry = toma_lsqueue[tail];
-		if (!toma_lsqEntry.isRemoved())
-			misc.Error.showErrorAndExit("entry currently in use being re-allocated");
+		Toma_LSQentry toma_LSQentry = toma_lsqueue[tail];
 
-		toma_lsqEntry.recycle();
-		toma_lsqEntry.setType(type);
-		toma_lsqEntry.setToma_robEntry(toma_robEntry);
-		toma_lsqEntry.setAddr(address);
-		this.curSize++;
+		toma_LSQentry.setAddress(address);
+		toma_LSQentry.setToma_robEntry(toma_robEntry);
 
-		// incrementNumAccesses(1);//TODO: counters..chk
+		Toma_LSQEntryType type = Toma_LSQEntryType.LOAD;
 
-		return toma_lsqEntry;
+		if (!isLoad) {
+			type = Toma_LSQEntryType.STORE;
+		}
+
+		toma_LSQentry.setType(type);
+		toma_LSQentry.setOccupied(true);
+
+		current_Size++;
+		return toma_LSQentry;
+
+		// TODO: check what if the entry is not available..i.e. lsqueue full
 	}
 
+	public boolean isStoreAlreadyAvailableWithSameAddress(Toma_LSQentry toma_LSQentry_load) {
+		for (int index = head; index < toma_LSQentry_load.getIndexInQ(); index = (index + 1) % lsq_Size) {
+
+			Toma_LSQentry entry = toma_lsqueue[index];
+
+			if (entry.getType() == Toma_LSQEntryType.LOAD) {
+				continue;
+			}
+
+			if (entry.isAddressCalculated() == false) {
+				// the address may be same when calculated, thus returning true
+				return true;
+			}
+
+			if (entry.getAddress() == toma_LSQentry_load.getAddress()) {
+				return true;
+			}
+
+		}
+		return false;
+	}
 }

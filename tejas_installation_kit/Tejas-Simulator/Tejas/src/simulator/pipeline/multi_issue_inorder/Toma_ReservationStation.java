@@ -11,8 +11,6 @@ import generic.Core;
  */
 public class Toma_ReservationStation {
 
-	// TODO:--- check whether to extend simulation element
-
 	private int maxReservationStationSize;
 	private Toma_ReservationStationEntry[] reservationStationEntries;
 
@@ -44,18 +42,11 @@ public class Toma_ReservationStation {
 	// returns the entry whose both operands are available
 	public Toma_ReservationStationEntry getAvailableEntryIn_RS() {
 		for (Toma_ReservationStationEntry toma_RSentry : reservationStationEntries) {
-			if (toma_RSentry.getSourceOperand1_avaliability() == 0 && toma_RSentry.getSourceOperand2_avaliability() == 0) {
+			if (toma_RSentry.getSourceOperand1_avaliability() == 0
+					&& toma_RSentry.getSourceOperand2_avaliability() == 0) {
 				return toma_RSentry;
 			}
 		}
 		return null;
-	}
-
-	public boolean isEntryAvailableIn_RS(Toma_ReservationStationEntry toma_RSentry) {
-		if (toma_RSentry.getSourceOperand1_avaliability() == 0 && toma_RSentry.getSourceOperand2_avaliability() == 0) {
-			return true;
-		}
-
-		return false;
 	}
 }

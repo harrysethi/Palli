@@ -87,25 +87,28 @@ public abstract class CoreMemorySystem extends SimulationElement {
 
 		// Initialise the TLB
 		int numPageLevels = 1;
-		iTLB = new TLB(SystemConfig.core[coreID].ITLBPortType, SystemConfig.core[coreID].ITLBAccessPorts, SystemConfig.core[coreID].ITLBPortOccupancy,
-				SystemConfig.core[coreID].ITLBLatency, this, SystemConfig.core[coreID].ITLBSize, SystemConfig.mainMemoryLatency * numPageLevels,
+		iTLB = new TLB(SystemConfig.core[coreID].ITLBPortType, SystemConfig.core[coreID].ITLBAccessPorts,
+				SystemConfig.core[coreID].ITLBPortOccupancy, SystemConfig.core[coreID].ITLBLatency, this,
+				SystemConfig.core[coreID].ITLBSize, SystemConfig.mainMemoryLatency * numPageLevels,
 				SystemConfig.core[coreID].iTLBPower);
 
-		dTLB = new TLB(SystemConfig.core[coreID].DTLBPortType, SystemConfig.core[coreID].DTLBAccessPorts, SystemConfig.core[coreID].DTLBPortOccupancy,
-				SystemConfig.core[coreID].DTLBLatency, this, SystemConfig.core[coreID].DTLBSize, SystemConfig.mainMemoryLatency * numPageLevels,
+		dTLB = new TLB(SystemConfig.core[coreID].DTLBPortType, SystemConfig.core[coreID].DTLBAccessPorts,
+				SystemConfig.core[coreID].DTLBPortOccupancy, SystemConfig.core[coreID].DTLBLatency, this,
+				SystemConfig.core[coreID].DTLBSize, SystemConfig.mainMemoryLatency * numPageLevels,
 				SystemConfig.core[coreID].dTLBPower);
 
 		// Initialise the LSQ
-		lsqueue = new LSQ(SystemConfig.core[coreID].LSQPortType, SystemConfig.core[coreID].LSQAccessPorts, SystemConfig.core[coreID].LSQPortOccupancy,
-				SystemConfig.core[coreID].LSQLatency, this, SystemConfig.core[coreID].LSQSize);
+		lsqueue = new LSQ(SystemConfig.core[coreID].LSQPortType, SystemConfig.core[coreID].LSQAccessPorts,
+				SystemConfig.core[coreID].LSQPortOccupancy, SystemConfig.core[coreID].LSQLatency, this,
+				SystemConfig.core[coreID].LSQSize);
 		// lsqueue.setMultiPortType(SystemConfig.core[coreID].LSQMultiportType);
 
 		// ------Toma Change Start-------------
-		toma_CDB = new Toma_CDB(SystemConfig.core[coreID].toma_CDB_portType, SystemConfig.core[coreID].toma_CDB_accessPorts, SystemConfig.core[coreID].toma_CDB_portOccupancy,
+		toma_CDB = new Toma_CDB(SystemConfig.core[coreID].toma_CDB_portType,
+				SystemConfig.core[coreID].toma_CDB_accessPorts, SystemConfig.core[coreID].toma_CDB_portOccupancy,
 				SystemConfig.core[coreID].toma_CDB_latency, this);
 
-		toma_LSQ = new Toma_LSQ(SystemConfig.core[coreID].LSQPortType, SystemConfig.core[coreID].LSQAccessPorts, SystemConfig.core[coreID].LSQPortOccupancy,
-				SystemConfig.core[coreID].LSQLatency, this, SystemConfig.core[coreID].LSQSize);
+		toma_LSQ = new Toma_LSQ(SystemConfig.core[coreID].LSQSize);
 		// ------Toma Change End-------------
 	}
 
@@ -150,8 +153,9 @@ public abstract class CoreMemorySystem extends SimulationElement {
 			if (SystemConfig.core[coreID].coreCacheList.size() == 0) {
 				misc.Error.showErrorAndExit("No private cache for this core !!");
 			} else {
-				misc.Error.showErrorAndExit("There are " + coreCacheList.size() + " private caches " + "but none of them is a first level cache. "
-						+ "Set the firstLevel attribute to true in the " + "cache tag of the configuration file");
+				misc.Error.showErrorAndExit("There are " + coreCacheList.size() + " private caches "
+						+ "but none of them is a first level cache. " + "Set the firstLevel attribute to true in the "
+						+ "cache tag of the configuration file");
 			}
 		}
 	}
@@ -170,7 +174,8 @@ public abstract class CoreMemorySystem extends SimulationElement {
 				} else if (iCache != null) {
 					misc.Error.showErrorAndExit("Core cannot have two instruction caches !!");
 				} else if (cacheConfig.firstLevel == false) {
-					misc.Error.showErrorAndExit("Instruction cache must be a first level cache\n" + "Set the firstLevel attribute field of the cache to true");
+					misc.Error.showErrorAndExit("Instruction cache must be a first level cache\n"
+							+ "Set the firstLevel attribute field of the cache to true");
 				}
 			}
 
@@ -180,7 +185,8 @@ public abstract class CoreMemorySystem extends SimulationElement {
 				} else if (l1Cache != null) {
 					misc.Error.showErrorAndExit("Core cannot have two data caches !!");
 				} else if (cacheConfig.firstLevel == false) {
-					misc.Error.showErrorAndExit("Data cache must be a first level cache\n" + "Set the firstLevel attribute field of the cache to true");
+					misc.Error.showErrorAndExit("Data cache must be a first level cache\n"
+							+ "Set the firstLevel attribute field of the cache to true");
 				}
 			}
 		}

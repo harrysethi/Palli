@@ -11,8 +11,6 @@ import generic.Instruction;
  */
 public class Toma_ReservationStationEntry {
 
-	// private OperationType operationType; // Op//TODO: using instruction
-
 	private Instruction instruction;// Op
 	private boolean isBusy;
 	private int inst_entryNumber_ROB; // Qi
@@ -20,13 +18,12 @@ public class Toma_ReservationStationEntry {
 	private int sourceOperand1_avaliability;// Qj
 	private int sourceOperand2_avaliability;// Qk
 
-	// TODO:-------check if value actually required ;)..aaye haaye..akhiyon se goli maare
+	// TO-DO:-------check if value actually required
 	private Object sourceOperand1_value;// Vj
 	private Object sourceOperand2_value;// Vk
 
 	private long address; // A
 
-	// TODO: check if using below 3 fields is fine over here
 	private boolean isStartedExecution;
 	private boolean isCompletedExecution;
 	private long timeToCompleteExecution;
@@ -36,7 +33,7 @@ public class Toma_ReservationStationEntry {
 
 		this.sourceOperand1_avaliability = -1;
 		this.sourceOperand2_avaliability = -1;
-		this.inst_entryNumber_ROB = -1;// TODO: check initializing here with -1 is fine
+		this.inst_entryNumber_ROB = -1;
 		this.isStartedExecution = false;
 		this.isCompletedExecution = false;
 	}
@@ -204,6 +201,14 @@ public class Toma_ReservationStationEntry {
 	 */
 	public void setAddress(long address) {
 		this.address = address;
+	}
+
+	public boolean isEntryAvailableIn_RS() {
+		if (this.getSourceOperand1_avaliability() == 0 && this.getSourceOperand2_avaliability() == 0) {
+			return true;
+		}
+
+		return false;
 	}
 
 }

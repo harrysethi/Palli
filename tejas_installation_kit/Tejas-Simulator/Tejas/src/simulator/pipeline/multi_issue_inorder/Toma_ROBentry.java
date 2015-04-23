@@ -4,7 +4,7 @@
 package pipeline.multi_issue_inorder;
 
 import generic.Instruction;
-import memorysystem.Toma_LSQEntry;
+import memorysystem.Toma_LSQentry;
 
 /**
  * @author dell
@@ -13,18 +13,15 @@ import memorysystem.Toma_LSQEntry;
 public class Toma_ROBentry {
 
 	private Instruction instruction; // Inst
-	// TODO:---- humein poore instruction ki zaroorat hai kya.. ya fer operationType shall work
 	private boolean isBusy;
 	private boolean isReady;
 	private Object resultValue; // Val
 	private int destinationRegNumber; // Dst
 
-	private Toma_LSQEntry toma_lsqEntry = null;
-
-	// TODO:----..check here using regNum may be incorrect
+	private Toma_LSQentry toma_lsqEntry = null;
 
 	public Toma_ROBentry() {
-		this.destinationRegNumber = -1;// TODO: check here initializing with -1 is fine
+		this.destinationRegNumber = -1;
 	}
 
 	public Instruction getInstruction() {
@@ -84,7 +81,7 @@ public class Toma_ROBentry {
 	/**
 	 * @return the toma_lsqEntry
 	 */
-	public Toma_LSQEntry getToma_lsqEntry() {
+	public Toma_LSQentry getToma_lsqEntry() {
 		return toma_lsqEntry;
 	}
 
@@ -92,7 +89,7 @@ public class Toma_ROBentry {
 	 * @param toma_lsqEntry
 	 *            the toma_lsqEntry to set
 	 */
-	public void setToma_lsqEntry(Toma_LSQEntry toma_lsqEntry) {
+	public void setToma_lsqEntry(Toma_LSQentry toma_lsqEntry) {
 		this.toma_lsqEntry = toma_lsqEntry;
 	}
 

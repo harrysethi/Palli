@@ -71,7 +71,7 @@ public class InorderCoreMemorySystem_MII extends CoreMemorySystem {
 	}
 
 	public void allocateToma_LSQEntry(boolean isLoad, long address, Toma_ROBentry toma_robEntry) {
-		toma_robEntry.setToma_lsqEntry(toma_LSQ.addEntry(isLoad, address, toma_robEntry));
+		toma_robEntry.setToma_lsqEntry(toma_LSQ.addLsqEntry(isLoad, address, toma_robEntry));
 	}
 
 	// ------Toma Change End-------------

@@ -44,26 +44,6 @@ public class Instruction implements Serializable {
 	private long serialNo;
 	private int threadID;
 
-	// ------Toma Change Start-------------
-	Toma_ROBentry toma_ROBentry;// TODO: hatao yahaan se if not required
-
-	/**
-	 * @return the toma_ROBentry
-	 */
-	public Toma_ROBentry getToma_ROBentry() {
-		return toma_ROBentry;
-	}
-
-	/**
-	 * @param toma_ROBentry
-	 *            the toma_ROBentry to set
-	 */
-	public void setToma_ROBentry(Toma_ROBentry toma_ROBentry) {
-		this.toma_ROBentry = toma_ROBentry;
-	}
-
-	// ------Toma Change End-------------
-
 	public Instruction() {
 		this.sourceOperand1 = null;
 		this.sourceOperand2 = null;
@@ -138,7 +118,8 @@ public class Instruction implements Serializable {
 		this.threadID = sourceInstruction.threadID;
 	}
 
-	public static Instruction getIntALUInstruction(Operand sourceOperand1, Operand sourceOperand2, Operand destinationOperand) {
+	public static Instruction getIntALUInstruction(Operand sourceOperand1, Operand sourceOperand2,
+			Operand destinationOperand) {
 		Instruction ins = CustomObjectPool.getInstructionPool().borrowObject();
 		ins.set(OperationType.integerALU, sourceOperand1, sourceOperand2, destinationOperand);
 		return ins;
@@ -168,13 +149,15 @@ public class Instruction implements Serializable {
 		return ins;
 	}
 
-	public static Instruction getIntegerDivisionInstruction(Operand sourceOperand1, Operand sourceOperand2, Operand destinationOperand) {
+	public static Instruction getIntegerDivisionInstruction(Operand sourceOperand1, Operand sourceOperand2,
+			Operand destinationOperand) {
 		Instruction ins = CustomObjectPool.getInstructionPool().borrowObject();
 		ins.set(OperationType.integerDiv, sourceOperand1, sourceOperand2, destinationOperand);
 		return ins;
 	}
 
-	public static Instruction getIntegerMultiplicationInstruction(Operand sourceOperand1, Operand sourceOperand2, Operand destinationOperand) {
+	public static Instruction getIntegerMultiplicationInstruction(Operand sourceOperand1, Operand sourceOperand2,
+			Operand destinationOperand) {
 		Instruction ins = CustomObjectPool.getInstructionPool().borrowObject();
 		ins.set(OperationType.integerMul, sourceOperand1, sourceOperand2, destinationOperand);
 		return ins;
@@ -192,19 +175,22 @@ public class Instruction implements Serializable {
 		return ins;
 	}
 
-	public static Instruction getFloatingPointALU(Operand sourceOperand1, Operand sourceOperand2, Operand destinationOperand) {
+	public static Instruction getFloatingPointALU(Operand sourceOperand1, Operand sourceOperand2,
+			Operand destinationOperand) {
 		Instruction ins = CustomObjectPool.getInstructionPool().borrowObject();
 		ins.set(OperationType.floatALU, sourceOperand1, sourceOperand2, destinationOperand);
 		return ins;
 	}
 
-	public static Instruction getFloatingPointMultiplication(Operand sourceOperand1, Operand sourceOperand2, Operand destinationOperand) {
+	public static Instruction getFloatingPointMultiplication(Operand sourceOperand1, Operand sourceOperand2,
+			Operand destinationOperand) {
 		Instruction ins = CustomObjectPool.getInstructionPool().borrowObject();
 		ins.set(OperationType.floatMul, sourceOperand1, sourceOperand2, destinationOperand);
 		return ins;
 	}
 
-	public static Instruction getFloatingPointDivision(Operand sourceOperand1, Operand sourceOperand2, Operand destinationOperand) {
+	public static Instruction getFloatingPointDivision(Operand sourceOperand1, Operand sourceOperand2,
+			Operand destinationOperand) {
 		Instruction ins = CustomObjectPool.getInstructionPool().borrowObject();
 		ins.set(OperationType.floatDiv, sourceOperand1, sourceOperand2, destinationOperand);
 		return ins;
@@ -332,8 +318,9 @@ public class Instruction implements Serializable {
 	 * @return String describing the instruction
 	 */
 	public String toString() {
-		return (String.format("%-20s", "IP = " + Long.toHexString(ciscProgramCounter)) + String.format("%-20s", "Op = " + type)
-				+ String.format("%-60s", "srcOp1 = " + sourceOperand1) + String.format("%-60s", "srcOp2 = " + sourceOperand2) + String.format("%-60s", "dstOp = "
+		return (String.format("%-20s", "IP = " + Long.toHexString(ciscProgramCounter))
+				+ String.format("%-20s", "Op = " + type) + String.format("%-60s", "srcOp1 = " + sourceOperand1)
+				+ String.format("%-60s", "srcOp2 = " + sourceOperand2) + String.format("%-60s", "dstOp = "
 				+ destinationOperand));
 	}
 

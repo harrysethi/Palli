@@ -29,9 +29,7 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	private WriteBackUnitIn_MII writeBackUnitIn;
 
 	// ------Toma Change Start-------------
-	// TODO: making new files..check this shall be fine
 	// TODO: since we have made new files, check if prev files are referenced somewhere
-	private Toma_Fetch toma_fetch;
 	private Toma_Issue toma_issue;
 	private Toma_Execute toma_execute;
 	private Toma_WriteResult toma_writeResult;
@@ -41,8 +39,6 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 
 	private Toma_RegisterFile toma_RegisterFile_integer;
 	private Toma_RegisterFile toma_RegisterFile_floating;
-
-	private Toma_ICacheBuffer toma_iCacheBuffer;
 
 	private GenericCircularQueue<Instruction> toma_fetchBuffer;
 	// ------Toma Change End-------------

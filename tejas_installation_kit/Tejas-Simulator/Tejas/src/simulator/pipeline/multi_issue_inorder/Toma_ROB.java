@@ -16,8 +16,6 @@ import config.SimulationConfig;
  */
 public class Toma_ROB {
 
-	// TODO:--- check whether we need retireWidth
-
 	private MultiIssueInorderExecutionEngine containingExecutionEngine;
 	private Core core;
 
@@ -121,14 +119,6 @@ public class Toma_ROB {
 					head = 1;
 			}
 
-			// TODO: check if this is required
-			/*
-			 * //Signal LSQ for committing the Instruction at the queue head if(firstOpType == OperationType.load ||
-			 * firstOpType == OperationType.store) { if (!first.getLsqEntry().isValid()) { misc
-			 * .Error.showErrorAndExit("The committed entry is not valid"); }
-			 * 
-			 * execEngine.getCoreMemorySystem().issueLSQCommit(first); }
-			 */
 		}
 
 		// TODO: check if below required
@@ -188,19 +178,18 @@ public class Toma_ROB {
 
 		boolean prediction = performPredictionNtrain(firstInst);
 		if (prediction != firstInst.isBranchTaken()) { // branch mispredicted
-			head = -1; // TODO:IMP check yahan pe clear hi hona chiye kya...or ni???
-			tail = -1;
 
-			Toma_RegisterFile toma_RF = containingExecutionEngine.getToma_RegisterFile(firstInst
-					.getDestinationOperand());
-			toma_RF.clearROBentries();// TODO: iski zarooorat hai na?
+			// TODO: check branchmispredicted pe stalls aayein
 
-			// TODO: check whether we need to make all the instructions present to isBusy = false...not required
-			// intuitively
-			// TODO: check we may need to return the instructions present to intructionPool
+			// no need to clear the ROB or RF_ROBentries..just use stalls
 
-			// TODO: algo says --- "fetch branch destination"... I say::: it may not be required....ab kaun sahi hai?...
-			// aage dekhenge..HUM LOG
+			/*
+			 * head = -1; tail = -1; Toma_RegisterFile toma_RF =
+			 * containingExecutionEngine.getToma_RegisterFile(firstInst .getDestinationOperand());
+			 * toma_RF.clearROBentries();
+			 */
+
+			// TODO: algo says --- "fetch branch destination"... I say::: it may not be required
 		}
 
 		else { // branch is not mis-predicted
