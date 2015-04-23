@@ -91,7 +91,6 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 		// ------Toma Change Start-------------
 
 		this.toma_fetchBuffer = new GenericCircularQueue<Instruction>(Instruction.class, core.getDecodeWidth());
-		this.toma_fetch = new Toma_Fetch(core, this);
 
 		this.toma_issue = new Toma_Issue(core, this);
 		this.toma_execute = new Toma_Execute(this, core);
@@ -193,13 +192,6 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 		}
 
 		return null;
-	}
-
-	/**
-	 * @return the toma_fetch
-	 */
-	public Toma_Fetch getToma_fetch() {
-		return toma_fetch;
 	}
 
 	/**
@@ -447,22 +439,12 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	public void setInputToPipeline(GenericCircularQueue<Instruction>[] inpList) {
 
 		fetchUnitIn.setInputToPipeline(inpList[0]);
-		// ------Toma Change Start-------------
-		toma_fetch.setInputToPipeline(inpList[0]);
-		// ------Toma Change End-------------
 
 	}
 
 	public void setCoreMemorySystem(CoreMemorySystem coreMemorySystem) {
 		this.coreMemorySystem = coreMemorySystem;
 		this.multiIssueInorderCoreMemorySystem = (InorderCoreMemorySystem_MII) coreMemorySystem;
-
-		// ------Toma Change Start-------------
-		this.toma_iCacheBuffer = new Toma_ICacheBuffer((int) (core.getDecodeWidth() * coreMemorySystem.getiCache()
-				.getLatency()));
-
-		this.toma_fetch.setToma_ICacheBuffer(toma_iCacheBuffer);
-		// ------Toma Change End-------------
 	}
 
 	/*

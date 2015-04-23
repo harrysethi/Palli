@@ -64,8 +64,6 @@ public class Toma_LSQ {
 
 		current_Size++;
 		return toma_LSQentry;
-
-		// TODO: check what if the entry is not available..i.e. lsqueue full
 	}
 
 	public boolean isStoreAlreadyAvailableWithSameAddress(Toma_LSQentry toma_LSQentry_load) {
