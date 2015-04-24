@@ -5,6 +5,7 @@ package memorysystem;
 
 import memorysystem.Toma_LSQentry.Toma_LSQEntryType;
 import pipeline.multi_issue_inorder.Toma_ROBentry;
+import pipeline.multi_issue_inorder.Toma_ReservationStationEntry;
 
 /**
  * @author dell
@@ -40,7 +41,8 @@ public class Toma_LSQ {
 			return false;
 	}
 
-	public Toma_LSQentry addLsqEntry(boolean isLoad, long address, Toma_ROBentry toma_robEntry) {
+	public Toma_LSQentry addLsqEntry(boolean isLoad, long address, Toma_ROBentry toma_robEntry,
+			Toma_ReservationStationEntry toma_RSentry) {
 
 		if (head == -1) {
 			head = tail = 0;
@@ -52,11 +54,16 @@ public class Toma_LSQ {
 
 		toma_LSQentry.setAddress(address);
 		toma_LSQentry.setToma_robEntry(toma_robEntry);
+		toma_LSQentry.setToma_RSentry(toma_RSentry);
 
 		Toma_LSQEntryType type = Toma_LSQEntryType.LOAD;
 
 		if (!isLoad) {
 			type = Toma_LSQEntryType.STORE;
+		}
+
+		if (toma_LSQentry.isOccupied()) {
+			misc.Error.showErrorAndExit("entry currently in use being re-allocated");
 		}
 
 		toma_LSQentry.setType(type);
@@ -86,5 +93,49 @@ public class Toma_LSQ {
 
 		}
 		return false;
+	}
+
+	public void handleMemoryResponse(long address) {
+		Toma_LSQentry toma_LSQentry = null;
+
+		int index = this.head;
+
+		for (int i = 0; i < this.current_Size; i++) {
+
+			toma_LSQentry = this.toma_lsqueue[index];
+
+			Toma_ReservationStationEntry toma_RSentry = toma_LSQentry.getToma_RSentry();
+
+			if (toma_LSQentry.getType() == Toma_LSQEntryType.LOAD && toma_RSentry.isStartedExecution()
+					&& !toma_RSentry.isCompletedExecution() && toma_LSQentry.isAddressCalculated()
+					&& toma_LSQentry.getAddress() == address && toma_LSQentry.isOccupied()) {
+				toma_RSentry.setCompletedExecution(true);
+				return;
+			}
+
+			index = (index + 1) % lsq_Size;
+		}
+
+	}
+
+	public void removeEntry(Toma_LSQentry toma_LSQentry) {
+
+		if (toma_LSQentry.isOccupied() == false) {
+			return;
+		}
+
+		toma_LSQentry.setOccupied(false);
+
+		if (head == tail) {
+			head = -1;
+			tail = -1;
+		}
+
+		else {
+			head = (head + 1) % lsq_Size;
+		}
+
+		current_Size--;
+
 	}
 }

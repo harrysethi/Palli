@@ -4,6 +4,7 @@
 package memorysystem;
 
 import pipeline.multi_issue_inorder.Toma_ROBentry;
+import pipeline.multi_issue_inorder.Toma_ReservationStationEntry;
 
 /**
  * @author dell
@@ -18,9 +19,13 @@ public class Toma_LSQentry {
 	private long address;
 
 	private boolean isOccupied;
+
+	private boolean isStartedCalculatingAddress;
 	private boolean isAddressCalculated;
+	private long timeToCompleteAddressCalculation;
 
 	private Toma_ROBentry toma_robEntry;
+	private Toma_ReservationStationEntry toma_RSentry;
 
 	private int indexInQ;
 
@@ -30,6 +35,9 @@ public class Toma_LSQentry {
 		this.toma_robEntry = null;
 		this.address = -1;
 		this.indexInQ = indexInQ;
+
+		this.isAddressCalculated = false;
+		this.isStartedCalculatingAddress = false;
 	}
 
 	/**
@@ -112,6 +120,51 @@ public class Toma_LSQentry {
 	 */
 	public void setToma_robEntry(Toma_ROBentry toma_robEntry) {
 		this.toma_robEntry = toma_robEntry;
+	}
+
+	/**
+	 * @return the toma_RSentry
+	 */
+	public Toma_ReservationStationEntry getToma_RSentry() {
+		return toma_RSentry;
+	}
+
+	/**
+	 * @param toma_RSentry
+	 *            the toma_RSentry to set
+	 */
+	public void setToma_RSentry(Toma_ReservationStationEntry toma_RSentry) {
+		this.toma_RSentry = toma_RSentry;
+	}
+
+	/**
+	 * @return the isStartedCalculatingAddress
+	 */
+	public boolean isStartedCalculatingAddress() {
+		return isStartedCalculatingAddress;
+	}
+
+	/**
+	 * @param isStartedCalculatingAddress
+	 *            the isStartedCalculatingAddress to set
+	 */
+	public void setStartedCalculatingAddress(boolean isStartedCalculatingAddress) {
+		this.isStartedCalculatingAddress = isStartedCalculatingAddress;
+	}
+
+	/**
+	 * @return the timeToCompleteAddressCalculation
+	 */
+	public long getTimeToCompleteAddressCalculation() {
+		return timeToCompleteAddressCalculation;
+	}
+
+	/**
+	 * @param timeToCompleteAddressCalculation
+	 *            the timeToCompleteAddressCalculation to set
+	 */
+	public void setTimeToCompleteAddressCalculation(long timeToCompleteAddressCalculation) {
+		this.timeToCompleteAddressCalculation = timeToCompleteAddressCalculation;
 	}
 
 }

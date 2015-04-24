@@ -7,7 +7,9 @@ import generic.Core;
 import generic.GlobalClock;
 import generic.Instruction;
 import generic.OperationType;
+import generic.RequestType;
 import main.CustomObjectPool;
+import memorysystem.Toma_LSQ;
 import config.SimulationConfig;
 
 /**
@@ -84,6 +86,8 @@ public class Toma_ROB {
 
 			}
 
+			int destinationRegNum = firstRobEntry.getDestinationRegNumber(); // d
+
 			// update last valid IP seen
 			if (firstInst.getCISCProgramCounter() != -1) {
 				lastValidIPSeen = firstInst.getCISCProgramCounter();
@@ -97,15 +101,24 @@ public class Toma_ROB {
 			 */
 
 			if (operationType == OperationType.branch) {
-				commitBranch(firstRobEntry, firstInst);
+				commitBranch(firstRobEntry, firstInst, destinationRegNum);
 			}
 
 			else if (operationType == OperationType.store) {
-				// TODO:IMP to be implemented
+
+				boolean memReqIssued = containingExecutionEngine.multiIssueInorderCoreMemorySystem
+						.issueRequestToL1Cache(RequestType.Cache_Write, firstRobEntry.getToma_lsqEntry().getAddress());
+
+				if (memReqIssued == false) {
+					break;
+				}
+
+				handleInstructionRetirement(firstRobEntry, firstInst, destinationRegNum);
+
 			}
 
 			else { // not a branch instruction
-				commitNonBranch(firstRobEntry, firstInst);
+				commitNonBranch(firstRobEntry, firstInst, destinationRegNum);
 			}
 
 			if (head == tail) {
@@ -118,7 +131,6 @@ public class Toma_ROB {
 				if (head == 0)
 					head = 1;
 			}
-
 		}
 
 		// TODO: check if below required
@@ -131,6 +143,11 @@ public class Toma_ROB {
 	private void handleInstructionRetirement(Toma_ROBentry firstRobEntry, Instruction firstInst, int destinationRegNum) {
 		firstRobEntry.setBusy(false);
 		firstRobEntry.setInstruction(null);
+
+		if (firstInst.getOperationType() == OperationType.load || firstInst.getOperationType() == OperationType.store) {
+			Toma_LSQ toma_LSQ = containingExecutionEngine.getCoreMemorySystem().getToma_LSQ();
+			toma_LSQ.removeEntry(firstRobEntry.getToma_lsqEntry());
+		}
 
 		// increment number of instructions executed
 		core.incrementNoOfInstructionsExecuted();
@@ -171,10 +188,9 @@ public class Toma_ROB {
 		return prediction;
 	}
 
-	private void commitBranch(Toma_ROBentry firstRobEntry, Instruction firstInst) {
+	private void commitBranch(Toma_ROBentry firstRobEntry, Instruction firstInst, int destinationRegNum) {
 
 		// branchCount++;
-		int destinationRegNum = firstRobEntry.getDestinationRegNumber(); // d
 
 		boolean prediction = performPredictionNtrain(firstInst);
 		if (prediction != firstInst.isBranchTaken()) { // branch mispredicted
@@ -197,9 +213,8 @@ public class Toma_ROB {
 		}
 	}
 
-	private void commitNonBranch(Toma_ROBentry firstRobEntry, Instruction firstInst) {
+	private void commitNonBranch(Toma_ROBentry firstRobEntry, Instruction firstInst, int destinationRegNum) {
 
-		int destinationRegNum = firstRobEntry.getDestinationRegNumber(); // d
 		Object robHead_value = firstRobEntry.getResultValue(); // ROB[h].value
 
 		if (destinationRegNum != -1) {

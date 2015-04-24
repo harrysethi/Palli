@@ -18,7 +18,7 @@ public class Toma_ROBentry {
 	private Object resultValue; // Val
 	private int destinationRegNumber; // Dst
 
-	private Toma_LSQentry toma_lsqEntry = null;
+	private Toma_LSQentry toma_lsqEntry;
 
 	public Toma_ROBentry() {
 		this.destinationRegNumber = -1;

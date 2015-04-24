@@ -3,15 +3,14 @@
  */
 package pipeline.multi_issue_inorder;
 
+import generic.Core;
+import generic.GlobalClock;
+import generic.OperationType;
+import generic.RequestType;
 import memorysystem.Toma_LSQ;
 import memorysystem.Toma_LSQentry;
 import pipeline.FunctionalUnitType;
 import pipeline.OpTypeToFUTypeMapping;
-import generic.Core;
-import generic.GlobalClock;
-import generic.Instruction;
-import generic.OperationType;
-import generic.RequestType;
 
 /**
  * @author dell
@@ -32,7 +31,7 @@ public class Toma_Execute {
 
 		for (Toma_ReservationStationEntry toma_RSentry : rs.getReservationStationEntries()) {
 
-			if (!toma_RSentry.isBusy()) {
+			if (toma_RSentry.isBusy() == false) {
 				// there is no point of executing a non-busy RS
 				continue;
 			}
@@ -47,31 +46,42 @@ public class Toma_Execute {
 					.getToma_lsqEntry();
 
 			if (toma_RSentry.getInstruction().getOperationType() == OperationType.load) {
-				if (toma_RSentry.isStartedExecution()) {
-					continue;
-				}
 
 				if (toma_RSentry.getSourceOperand1_avaliability() != 0) {
 					continue;
 				}
 
+				if (toma_RSentry.isStartedExecution()) {
+					continue;
+				}
+
+				if (toma_LSQentry.isAddressCalculated()) {
+
+					if (toma_LSQ.isStoreAlreadyAvailableWithSameAddress(toma_LSQentry)) {
+						continue;
+					}
+
+					boolean memReqIssued = executionEngine.multiIssueInorderCoreMemorySystem.issueRequestToL1Cache(
+							RequestType.Cache_Read, toma_LSQentry.getAddress());
+
+					if (memReqIssued == false) {
+						continue;
+					}
+
+					toma_RSentry.setStartedExecution(true);
+					continue;
+				}
+
+				// address not yet calculated
+				if (toma_LSQentry.isStartedCalculatingAddress()) {
+					if (GlobalClock.getCurrentTime() >= toma_LSQentry.getTimeToCompleteAddressCalculation()) {
+						// address calculated
+						toma_LSQentry.setAddressCalculated(true);
+					}
+					continue;
+				}
+
 				calculateAddressForLoadStore(toma_RSentry, toma_LSQentry);
-
-				if (toma_LSQentry.isAddressCalculated() == false
-						|| toma_LSQ.isStoreAlreadyAvailableWithSameAddress(toma_LSQentry)) {
-					continue;
-				}
-
-				boolean memReqIssued = executionEngine.multiIssueInorderCoreMemorySystem.issueRequestToL1Cache(
-						RequestType.Cache_Read, toma_LSQentry.getAddress());
-
-				if (memReqIssued == false) {
-					continue;
-				}
-
-				toma_RSentry.setStartedExecution(true);
-
-				// TODO
 			}
 
 			else if (toma_RSentry.getInstruction().getOperationType() == OperationType.store) {
@@ -79,17 +89,29 @@ public class Toma_Execute {
 					continue;
 				}
 
-				toma_RSentry.setStartedExecution(true);
+				if (toma_LSQentry.isAddressCalculated()) {
+					toma_RSentry.setStartedExecution(true);
+
+					// setting completed execution since no event is called for store
+					toma_RSentry.setCompletedExecution(true);
+					continue;
+				}
+
+				// address not yet calculated
+				if (toma_LSQentry.isStartedCalculatingAddress()) {
+					if (GlobalClock.getCurrentTime() >= toma_LSQentry.getTimeToCompleteAddressCalculation()) {
+						// address calculated
+						toma_LSQentry.setAddressCalculated(true);
+					}
+					continue;
+				}
 
 				calculateAddressForLoadStore(toma_RSentry, toma_LSQentry);
-
-				// setting completed execution since no event is called for store
-				toma_RSentry.setCompletedExecution(true);
 			}
 
 			else {// not a load/store instruction
 
-				if (!toma_RSentry.isEntryAvailableIn_RS()) {
+				if (toma_RSentry.isEntryAvailableIn_RS() == false) {
 					continue;
 				}
 
@@ -101,49 +123,83 @@ public class Toma_Execute {
 					continue;
 				}
 
-				else {// not yet started execution
+				// execution not yet started...checking if FU is available
+				FunctionalUnitType fuType = getFUtype(toma_RSentry);
 
-					// checking if FU is available
-					FunctionalUnitType fuType = OpTypeToFUTypeMapping.getFUType(toma_RSentry.getInstruction()
-							.getOperationType());
-
-					long FURequest = 0;
-					if (fuType != FunctionalUnitType.memory && fuType != FunctionalUnitType.inValid) {
-						FURequest = executionEngine.getExecutionCore().requestFU(fuType);
-					}
-
-					if (FURequest > 0) { // FU is not available
-						continue;
-					}
-
-					toma_RSentry.setStartedExecution(true);
-
-					long lat = 1;
-
-					if (fuType != FunctionalUnitType.memory && fuType != FunctionalUnitType.inValid) {
-						lat = executionEngine.getExecutionCore().getFULatency(fuType);
-					}
-
-					else {
-						// TODO: check if something required here
-					}
-
-					toma_RSentry.setTimeToCompleteExecution(GlobalClock.getCurrentTime() + lat * core.getStepSize());
+				if (isFUavailable(fuType) == false) {
+					continue;
 				}
+
+				toma_RSentry.setStartedExecution(true);
+
+				long lat = getFUlatency(fuType);
+
+				toma_RSentry.setTimeToCompleteExecution(GlobalClock.getCurrentTime() + lat * core.getStepSize());
 			}
 		}
 
 	}
 
+	private FunctionalUnitType getFUtype(Toma_ReservationStationEntry toma_RSentry) {
+		FunctionalUnitType fuType = OpTypeToFUTypeMapping.getFUType(toma_RSentry.getInstruction().getOperationType());
+		return fuType;
+	}
+
+	private boolean isFUavailable(FunctionalUnitType fuType) {
+		long FURequest = 0;
+
+		// TODO: check ye memory kyun laga hua tha pehle jabki humko load/store ke liye to memory chiye
+		// & baaki mein memory hota hi ni
+		// if (fuType != FunctionalUnitType.memory && fuType != FunctionalUnitType.inValid) {
+
+		if (fuType != FunctionalUnitType.inValid) {
+			FURequest = executionEngine.getExecutionCore().requestFU(fuType);
+		}
+
+		if (FURequest > 0) { // FU is not available
+			return false;
+		}
+
+		return true;
+	}
+
+	private long getFUlatency(FunctionalUnitType fuType) {
+		long latency = 1;
+
+		// TODO: check ye memory kyun laga hua tha pehle jabki humko load/store ke liye to memory chiye
+		// & baaki mein memory hota hi ni
+		// if (fuType != FunctionalUnitType.memory && fuType != FunctionalUnitType.inValid) {
+
+		if (fuType != FunctionalUnitType.inValid) {
+			latency = executionEngine.getExecutionCore().getFULatency(fuType);
+		}
+
+		return latency;
+	}
+
 	private void calculateAddressForLoadStore(Toma_ReservationStationEntry toma_RSentry, Toma_LSQentry toma_LSQentry) {
 		// TODO: check why condn in algo.. before address calculate ..both in case of load & store
+
 		// calculating address
 		long address = toma_RSentry.getAddress();
-		address += (Long) toma_RSentry.getSourceOperand1_value();
+
+		FunctionalUnitType fuType = getFUtype(toma_RSentry);
+
+		if (!isFUavailable(fuType)) {
+			return;
+		}
+
+		toma_LSQentry.setStartedCalculatingAddress(true);
+
+		long lat = getFUlatency(fuType);
+
+		toma_RSentry.setTimeToCompleteExecution(GlobalClock.getCurrentTime() + lat * core.getStepSize());
+
+		// TODO: check do we need to actually calculate the address
+		// address += (Long) toma_RSentry.getSourceOperand1_value();
 
 		toma_RSentry.setAddress(address);
 
 		toma_LSQentry.setAddress(address);
-		toma_LSQentry.setAddressCalculated(true);
 	}
 }

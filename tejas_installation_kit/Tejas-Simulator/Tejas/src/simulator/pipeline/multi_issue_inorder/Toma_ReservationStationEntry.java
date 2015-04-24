@@ -27,7 +27,7 @@ public class Toma_ReservationStationEntry {
 	private boolean isStartedExecution;
 	private boolean isCompletedExecution;
 	private long timeToCompleteExecution;
-
+	
 	public Toma_ReservationStationEntry() {
 		isBusy = false;
 

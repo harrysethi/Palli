@@ -22,7 +22,6 @@ package generic;
 
 import java.io.Serializable;
 
-import pipeline.multi_issue_inorder.Toma_ROBentry;
 import main.CustomObjectPool;
 
 @SuppressWarnings("serial")

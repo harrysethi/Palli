@@ -70,8 +70,9 @@ public class InorderCoreMemorySystem_MII extends CoreMemorySystem {
 		this.toma_CDB.getPort().put(toma_CDB_event);
 	}
 
-	public void allocateToma_LSQEntry(boolean isLoad, long address, Toma_ROBentry toma_robEntry) {
-		toma_robEntry.setToma_lsqEntry(toma_LSQ.addLsqEntry(isLoad, address, toma_robEntry));
+	public void allocateToma_LSQEntry(boolean isLoad, long address, Toma_ROBentry toma_robEntry,
+			Toma_ReservationStationEntry toma_RSentry) {
+		toma_robEntry.setToma_lsqEntry(toma_LSQ.addLsqEntry(isLoad, address, toma_robEntry, toma_RSentry));
 	}
 
 	// ------Toma Change End-------------
@@ -106,6 +107,9 @@ public class InorderCoreMemorySystem_MII extends CoreMemorySystem {
 		if (iCache == l1Cache) {
 			containingExecEngine.getFetchUnitIn().processCompletionOfMemRequest(address);
 			containingExecEngine.getMemUnitIn().processCompletionOfMemRequest(address);
+			// ------Toma Change Start-------------
+			toma_LSQ.handleMemoryResponse(address);
+			// ------Toma Change End-------------
 		}
 
 		// if response comes from iCache, inform fetchunit
@@ -118,6 +122,9 @@ public class InorderCoreMemorySystem_MII extends CoreMemorySystem {
 		else if (memResponse.getRequestingElement() == l1Cache) {
 			// L1MissStatusHoldingRegister.removeRequestsByAddress(memResponse);
 			containingExecEngine.getMemUnitIn().processCompletionOfMemRequest(address);
+			// ------Toma Change Start-------------
+			toma_LSQ.handleMemoryResponse(address);
+			// ------Toma Change End-------------
 		}
 
 		else {

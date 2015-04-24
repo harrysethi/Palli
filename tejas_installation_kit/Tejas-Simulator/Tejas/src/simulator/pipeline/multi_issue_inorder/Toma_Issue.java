@@ -160,7 +160,8 @@ public class Toma_Issue {
 					isLoad = false;
 
 				executionEngine.getCoreMemorySystem().allocateToma_LSQEntry(isLoad,
-						rob_freeTail_entry.getInstruction().getSourceOperand1MemValue(), rob_freeTail_entry);
+						rob_freeTail_entry.getInstruction().getSourceOperand1MemValue(), rob_freeTail_entry,
+						rs_freeEntry);
 			}
 
 			ifIdLatch.poll();

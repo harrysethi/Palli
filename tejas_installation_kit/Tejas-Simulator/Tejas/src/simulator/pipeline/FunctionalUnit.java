@@ -1,6 +1,5 @@
 package pipeline;
 
-
 public class FunctionalUnit {
 
 	FunctionalUnitType FUType;

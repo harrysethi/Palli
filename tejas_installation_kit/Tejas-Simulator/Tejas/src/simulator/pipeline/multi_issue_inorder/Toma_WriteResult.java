@@ -27,6 +27,7 @@ public class Toma_WriteResult {
 			}
 
 			OperationType opType = toma_RSentry.getInstruction().getOperationType();
+
 			if (opType == OperationType.inValid || opType == OperationType.nop) {
 				int b = toma_RSentry.getInst_entryNumber_ROB();
 				Toma_ROB rob = executionEngine.getToma_ROB();
@@ -37,15 +38,15 @@ public class Toma_WriteResult {
 			if (opType != OperationType.store) {
 				// issuing request to CDB
 				executionEngine.getCoreMemorySystem().issueRequestToToma_CDB(toma_RSentry);
+				continue;
 			}
 
-			else {// store instruction
-				if (toma_RSentry.getSourceOperand2_avaliability() != 0) {
-					return;
-				}
-
-				// TODO:-imp => ROB[h].value = RS[r].VK;
+			// store instruction
+			if (toma_RSentry.getSourceOperand2_avaliability() != 0) {
+				return;
 			}
+
+			// TODO:-imp => ROB[h].value = RS[r].VK;...not required
 
 		}
 	}
