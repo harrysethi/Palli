@@ -163,16 +163,18 @@ public class PipelineTests {
 			renameTest();
 			break;
 
+		// ------Toma Change Start-------------
+
 		case 11:
 			toma_test_simple_noInst();
 			break;
 
 		case 12:
-			toma_test_simple_intALU();
+			toma_test_simple_nop();
 			break;
 
 		case 13:
-			toma_test_simple_nop();
+			toma_test_simple_intALU();
 			break;
 
 		case 14:
@@ -188,10 +190,20 @@ public class PipelineTests {
 			break;
 
 		case 17:
-			toma_test_simple_jump();
+			toma_test_simple_load();
 			break;
 
 		case 18:
+			toma_test_simple_store();
+			break;
+			
+			
+
+		case 19:
+			toma_test_simple_jump();
+			break;
+
+		case 20:
 			toma_test_simple_branch();
 			break;
 
@@ -200,8 +212,6 @@ public class PipelineTests {
 		}
 	}
 
-	// ------Toma Change Start-------------
-
 	private static void toma_simple_helper(OperationType opType) {
 		Instruction newInst = null;
 		for (int i = 0; i < 1; i++) {
@@ -209,13 +219,13 @@ public class PipelineTests {
 			case inValid:
 				break;
 
+			case nop:
+				newInst = Instruction.getNOPInstruction();
+				break;
+
 			case integerALU:
 				newInst = Instruction.getIntALUInstruction(Operand.getIntegerRegister(0),
 						Operand.getIntegerRegister(0), Operand.getIntegerRegister(2));
-				break;
-
-			case nop:
-				newInst = Instruction.getNOPInstruction();
 				break;
 
 			case mov:
@@ -223,14 +233,26 @@ public class PipelineTests {
 				break;
 
 			case floatDiv:
-				newInst = Instruction.getFloatingPointDivision(Operand.getIntegerRegister(0),
-						Operand.getIntegerRegister(0), Operand.getIntegerRegister(2));
+				newInst = Instruction.getFloatingPointDivision(Operand.getFloatRegister(0),
+						Operand.getFloatRegister(0), Operand.getFloatRegister(2));
 				break;
 
 			case xchg:
 				newInst = Instruction.getExchangeInstruction(Operand.getIntegerRegister(0),
 						Operand.getIntegerRegister(1));
 				break;
+				
+			case load:
+				newInst = Instruction.getLoadInstruction(Operand.getIntegerRegister(0), Operand.getIntegerRegister(1));
+				newInst.setSourceOperand1MemValue(1234);
+				break;
+				
+			case store:
+				newInst = Instruction.getStoreInstruction(Operand.getIntegerRegister(0), Operand.getIntegerRegister(0));
+				newInst.setSourceOperand1MemValue(1234);
+				break;
+				
+				
 
 			case jump:
 				// newInst = Instruction.getUnconditionalJumpInstruction(newInstructionAddress);//TODO:vekho ainu
@@ -258,31 +280,38 @@ public class PipelineTests {
 	}
 
 	private static void toma_printIPC() {
+		System.out.println();
+		System.out.println();
 		System.out.println("Total cycles taken: " + GlobalClock.getCurrentTime());
 		System.out.println("IPC: " + (float) 1 / GlobalClock.getCurrentTime());
 	}
 
 	public static void toma_test_simple_noInst() {
+		System.out.println("toma_test_simple_noInst");
 		toma_simple_helper(OperationType.inValid);
 		toma_printIPC();
 	}
 
-	public static void toma_test_simple_intALU() {
-		toma_simple_helper(OperationType.integerALU);
-		toma_printIPC();
-	}
-
 	public static void toma_test_simple_nop() {
+		System.out.println("toma_test_simple_nop");
 		toma_simple_helper(OperationType.nop);
 		toma_printIPC();
 	}
 
+	public static void toma_test_simple_intALU() {
+		System.out.println("toma_test_simple_intALU");
+		toma_simple_helper(OperationType.integerALU);
+		toma_printIPC();
+	}
+
 	public static void toma_test_simple_mov() {
+		System.out.println("toma_test_simple_mov");
 		toma_simple_helper(OperationType.mov);
 		toma_printIPC();
 	}
 
 	public static void toma_test_simple_floatDIV() {
+		System.out.println("toma_test_simple_floatDIV");
 		toma_simple_helper(OperationType.floatDiv);
 		toma_printIPC();
 	}
@@ -291,6 +320,18 @@ public class PipelineTests {
 		toma_simple_helper(OperationType.xchg);
 		toma_printIPC();
 	}
+	
+	public static void toma_test_simple_load() {
+		toma_simple_helper(OperationType.load);
+		toma_printIPC();
+	}
+	
+	public static void toma_test_simple_store() {
+		toma_simple_helper(OperationType.store);
+		toma_printIPC();
+	}
+	
+	
 
 	public static void toma_test_simple_jump() {
 		toma_simple_helper(OperationType.jump);

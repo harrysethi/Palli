@@ -34,7 +34,7 @@ public class MultiIssueInorderPipeline implements PipelineInterface {
 		// ------Toma Change Start-------------
 		long currentTime = GlobalClock.getCurrentTime();
 
-		System.out.println("executing cycle: " + currentTime);// TODO: remove later
+		System.out.println("\n------executing cycle: " + currentTime + "-------");// TODO: remove later
 
 		if (currentTime % coreStepSize == 0 && containingExecutionEngine.isExecutionBegun() == true
 				&& containingExecutionEngine.isExecutionComplete() == false) {

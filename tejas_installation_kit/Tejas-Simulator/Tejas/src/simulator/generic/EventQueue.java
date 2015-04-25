@@ -40,7 +40,7 @@ public class EventQueue {
 
 		while (eventList.isEmpty() == false) {
 			Event e = eventList.pollFirst();
-			System.out.println("Draining event: " + e.getRequestType());
+			// System.out.println("Draining event: " + e.getRequestType());
 			e.getProcessingElement().handleEvent(this, e);
 		}
 

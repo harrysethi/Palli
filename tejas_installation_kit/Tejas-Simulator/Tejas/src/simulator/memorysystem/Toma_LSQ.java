@@ -3,6 +3,7 @@
  */
 package memorysystem;
 
+import config.SimulationConfig;
 import memorysystem.Toma_LSQentry.Toma_LSQEntryType;
 import pipeline.multi_issue_inorder.Toma_ROBentry;
 import pipeline.multi_issue_inorder.Toma_ReservationStationEntry;
@@ -36,7 +37,7 @@ public class Toma_LSQ {
 	}
 
 	public boolean isFull() {
-		if (current_Size >= current_Size)
+		if (current_Size >= lsq_Size)
 			return true;
 		else
 			return false;
@@ -111,6 +112,10 @@ public class Toma_LSQ {
 					&& !toma_RSentry.isCompletedExecution() && toma_LSQentry.isAddressCalculated()
 					&& toma_LSQentry.getAddress() == address && toma_LSQentry.isOccupied()) {
 				toma_RSentry.setCompletedExecution(true);
+				if (SimulationConfig.debugMode) {
+					System.out.println("Execute (LSQ) | Completed Executing : " + " \n "
+							+ toma_RSentry.getInstruction());
+				}
 				return;
 			}
 

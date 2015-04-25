@@ -28,6 +28,8 @@ public class Toma_ReservationStationEntry {
 	private boolean isCompletedExecution;
 	private long timeToCompleteExecution;
 
+	private boolean isIssuedRequestToCDB;
+
 	public Toma_ReservationStationEntry() {
 		isBusy = false;
 
@@ -36,6 +38,22 @@ public class Toma_ReservationStationEntry {
 		this.inst_entryNumber_ROB = -1;
 		this.isStartedExecution = false;
 		this.isCompletedExecution = false;
+		this.isIssuedRequestToCDB = false;
+	}
+
+	/**
+	 * @return the isIssuedRequestToCDB
+	 */
+	public boolean isIssuedRequestToCDB() {
+		return isIssuedRequestToCDB;
+	}
+
+	/**
+	 * @param isIssuedRequestToCDB
+	 *            the isIssuedRequestToCDB to set
+	 */
+	public void setIssuedRequestToCDB(boolean isIssuedRequestToCDB) {
+		this.isIssuedRequestToCDB = isIssuedRequestToCDB;
 	}
 
 	/**
@@ -209,6 +227,19 @@ public class Toma_ReservationStationEntry {
 		}
 
 		return false;
+	}
+
+	public void clearEntry() {
+		this.setBusy(false);
+		this.setInstruction(null);
+		this.setInst_entryNumber_ROB(-1);
+		this.setCompletedExecution(false);
+		this.setStartedExecution(false);
+		this.setIssuedRequestToCDB(false);
+		this.setSourceOperand1_availability(-1);
+		this.setSourceOperand2_availability(-1);
+		this.setAddress(-1);
+		this.setTimeToCompleteExecution(0);
 	}
 
 }

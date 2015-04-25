@@ -3,9 +3,12 @@
  */
 package pipeline.multi_issue_inorder;
 
+import config.SimulationConfig;
 import generic.Core;
+import generic.GlobalClock;
 import generic.Instruction;
 import generic.Operand;
+import generic.OperandType;
 import generic.OperationType;
 
 /**
@@ -15,6 +18,7 @@ import generic.OperationType;
 public class Toma_Issue {
 
 	MultiIssueInorderExecutionEngine executionEngine;
+	Core core;
 	// GenericCircularQueue<Instruction> toma_fetchBuffer;
 
 	StageLatch_MII ifIdLatch;
@@ -22,7 +26,8 @@ public class Toma_Issue {
 	public Toma_Issue(Core core, MultiIssueInorderExecutionEngine executionEngine) {
 		this.executionEngine = executionEngine;
 		// toma_fetchBuffer = executionEngine.getToma_fetchBuffer();
-		ifIdLatch = executionEngine.getIfIdLatch();
+		this.ifIdLatch = executionEngine.getIfIdLatch();
+		this.core = core;
 	}
 
 	public void performIssue() {
@@ -34,7 +39,6 @@ public class Toma_Issue {
 		}
 
 		while (ifIdLatch.isEmpty() == false) {
-
 			Instruction ins = ifIdLatch.peek(0);
 
 			if (ins == null) {
@@ -44,7 +48,7 @@ public class Toma_Issue {
 			if (ins.getOperationType() == OperationType.load || ins.getOperationType() == OperationType.store) {
 				if (executionEngine.getCoreMemorySystem().getToma_LSQ().isFull()) {
 					// executionEngine.setToStall3(true);
-					continue;
+					break;
 				}
 			}
 
@@ -63,11 +67,17 @@ public class Toma_Issue {
 				break;
 			}
 
-			// TODO: some change will be needed here in case of load & store
-			if (ins.getSourceOperand1() != null) {
-				int register_source1 = (int) ins.getSourceOperand1().getValue(); // rs
-
-				Toma_RegisterFile toma_RF_source1 = executionEngine.getToma_RegisterFile(ins.getSourceOperand1());
+			if (ins.getSourceOperand1() != null && !isImmediateOperand(ins.getSourceOperand1())) {
+				int register_source1;
+				Toma_RegisterFile toma_RF_source1;
+				if (ins.getSourceOperand1().getOperandType() == OperandType.memory) {
+					register_source1 = (int) ins.getSourceOperand1().getMemoryLocationFirstOperand().getValue(); // rs
+					toma_RF_source1 = executionEngine.getToma_RegisterFile(ins.getSourceOperand1()
+							.getMemoryLocationFirstOperand());
+				} else {
+					register_source1 = (int) ins.getSourceOperand1().getValue(); // rs
+					toma_RF_source1 = executionEngine.getToma_RegisterFile(ins.getSourceOperand1());
+				}
 
 				if (toma_RF_source1.isBusy(register_source1)) {
 					int h = toma_RF_source1.getToma_ROBEntry(register_source1);
@@ -99,8 +109,7 @@ public class Toma_Issue {
 				rs_freeEntry.setSourceOperand1_availability(0);
 			}
 
-			// TODO: some change will be needed here in case of store
-			if (ins.getSourceOperand2() != null) {
+			if (ins.getSourceOperand2() != null && !isImmediateOperand(ins.getSourceOperand2())) {
 
 				Toma_RegisterFile toma_RF_source2 = executionEngine.getToma_RegisterFile(ins.getSourceOperand2());
 				int register_source2 = (int) ins.getSourceOperand2().getValue(); // rt
@@ -157,14 +166,7 @@ public class Toma_Issue {
 			rob_freeTail_entry.setReady(false);
 
 			if (ins.getOperationType() == OperationType.load) {
-				Operand operand_load_from = ins.getSourceOperand1().getMemoryLocationSecondOperand();
-				int register_load_from = (int) operand_load_from.getValue();
-
-				Toma_RegisterFile toma_RF_load = executionEngine.getToma_RegisterFile(operand_load_from);
 				rs_freeEntry.setAddress(ins.getSourceOperand1MemValue());
-				toma_RF_load.setToma_ROBEntry(rob_freeTail, register_load_from);
-				toma_RF_load.setBusy(true, register_load_from);
-				rob_freeTail_entry.setDestinationRegNumber(register_load_from);
 			}
 
 			if (ins.getOperationType() == OperationType.store) {
@@ -184,8 +186,16 @@ public class Toma_Issue {
 						rs_freeEntry);
 			}
 
+			if (SimulationConfig.debugMode) {
+				System.out.println("Issue | Issued : " + " \n " + ins);
+			}
+
 			ifIdLatch.poll();
 		}
+	}
+
+	private boolean isImmediateOperand(Operand operand) {
+		return operand.getOperandType() == OperandType.immediate;
 	}
 
 }

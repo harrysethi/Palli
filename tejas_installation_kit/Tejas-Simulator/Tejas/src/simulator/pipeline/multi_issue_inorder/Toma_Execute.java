@@ -3,8 +3,10 @@
  */
 package pipeline.multi_issue_inorder;
 
+import config.SimulationConfig;
 import generic.Core;
 import generic.GlobalClock;
+import generic.Instruction;
 import generic.OperationType;
 import generic.RequestType;
 import memorysystem.Toma_LSQ;
@@ -49,6 +51,8 @@ public class Toma_Execute {
 			Toma_LSQentry toma_LSQentry = toma_ROB.getRobEntries()[toma_RSentry.getInst_entryNumber_ROB()]
 					.getToma_lsqEntry();
 
+			Instruction ins = toma_RSentry.getInstruction();
+
 			if (toma_RSentry.getInstruction().getOperationType() == OperationType.load) {
 
 				if (toma_RSentry.getSourceOperand1_availability() != 0) {
@@ -73,6 +77,9 @@ public class Toma_Execute {
 					}
 
 					toma_RSentry.setStartedExecution(true);
+					if (SimulationConfig.debugMode) {
+						System.out.println("Execute | Started Executing : " + " \n " + ins);
+					}
 					continue;
 				}
 
@@ -81,6 +88,9 @@ public class Toma_Execute {
 					if (GlobalClock.getCurrentTime() >= toma_LSQentry.getTimeToCompleteAddressCalculation()) {
 						// address calculated
 						toma_LSQentry.setAddressCalculated(true);
+						if (SimulationConfig.debugMode) {
+							System.out.println("Execute | Address Calculated : " + " \n " + ins);
+						}
 					}
 					continue;
 				}
@@ -95,9 +105,15 @@ public class Toma_Execute {
 
 				if (toma_LSQentry.isAddressCalculated()) {
 					toma_RSentry.setStartedExecution(true);
+					if (SimulationConfig.debugMode) {
+						System.out.println("Execute | Started Executing : " + " \n " + ins);
+					}
 
 					// setting completed execution since no event is called for store
 					toma_RSentry.setCompletedExecution(true);
+					if (SimulationConfig.debugMode) {
+						System.out.println("Execute | Completed Executing : " + " \n " + ins);
+					}
 					continue;
 				}
 
@@ -106,6 +122,9 @@ public class Toma_Execute {
 					if (GlobalClock.getCurrentTime() >= toma_LSQentry.getTimeToCompleteAddressCalculation()) {
 						// address calculated
 						toma_LSQentry.setAddressCalculated(true);
+						if (SimulationConfig.debugMode) {
+							System.out.println("Execute | Address Calculated : " + " \n " + ins);
+						}
 					}
 					continue;
 				}
@@ -123,6 +142,9 @@ public class Toma_Execute {
 					if (GlobalClock.getCurrentTime() >= toma_RSentry.getTimeToCompleteExecution()) {
 						// execution completed
 						toma_RSentry.setCompletedExecution(true);
+						if (SimulationConfig.debugMode) {
+							System.out.println("Execute | Completed Executing : " + " \n " + ins);
+						}
 					}
 					continue;
 				}
@@ -135,6 +157,9 @@ public class Toma_Execute {
 				}
 
 				toma_RSentry.setStartedExecution(true);
+				if (SimulationConfig.debugMode) {
+					System.out.println("Execute | Started Executing : " + " \n " + ins);
+				}
 
 				long lat = getFUlatency(fuType);
 
@@ -194,6 +219,10 @@ public class Toma_Execute {
 		}
 
 		toma_LSQentry.setStartedCalculatingAddress(true);
+		Instruction ins = toma_RSentry.getInstruction();
+		if (SimulationConfig.debugMode) {
+			System.out.println("Execute | Started Calculating Address : " + " \n " + ins);
+		}
 
 		long lat = getFUlatency(fuType);
 

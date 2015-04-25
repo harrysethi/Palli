@@ -96,7 +96,7 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 
 		this.toma_issue = new Toma_Issue(core, this);
 		this.toma_execute = new Toma_Execute(this, core);
-		this.toma_writeResult = new Toma_WriteResult(this);
+		this.toma_writeResult = new Toma_WriteResult(this, core);
 
 		this.toma_ROB = new Toma_ROB(this, core);
 
@@ -294,7 +294,7 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 
 	public void setExecutionComplete(boolean execComplete) {
 		this.executionComplete = execComplete;
-		System.out.println("Core " + core.getCore_number() + " numCycles = " + GlobalClock.getCurrentTime());
+		// System.out.println("Core " + core.getCore_number() + " numCycles = " + GlobalClock.getCurrentTime());
 
 		if (execComplete == true) {
 			core.setCoreCyclesTaken(GlobalClock.getCurrentTime() / core.getStepSize());

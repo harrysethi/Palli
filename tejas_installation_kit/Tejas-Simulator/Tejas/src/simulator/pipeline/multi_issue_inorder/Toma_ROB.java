@@ -184,11 +184,14 @@ public class Toma_ROB extends SimulationElement {
 
 	private void handleInstructionRetirement(Toma_ROBentry firstRobEntry, Instruction firstInst, int destinationRegNum) {
 		firstRobEntry.setBusy(false);
+		firstRobEntry.setReady(false);
 		firstRobEntry.setInstruction(null);
+		firstRobEntry.setDestinationRegNumber(-1);
 
 		if (firstInst.getOperationType() == OperationType.load || firstInst.getOperationType() == OperationType.store) {
 			Toma_LSQ toma_LSQ = containingExecutionEngine.getCoreMemorySystem().getToma_LSQ();
 			toma_LSQ.removeEntry(firstRobEntry.getToma_lsqEntry());
+			firstRobEntry.setToma_lsqEntry(null);
 		}
 
 		// increment number of instructions executed
@@ -198,26 +201,34 @@ public class Toma_ROB extends SimulationElement {
 					+ core.getCore_number());
 		}
 
-		// debug print
-		if (SimulationConfig.debugMode) {
-			System.out.println("committed : " + GlobalClock.getCurrentTime() / core.getStepSize() + " : " + firstInst);
-		}
-
 		Toma_RegisterFile toma_RF = containingExecutionEngine.getToma_RegisterFile(firstInst.getDestinationOperand());
 		if (destinationRegNum != -1 && toma_RF.getToma_ROBEntry(destinationRegNum) == head) {
 			toma_RF.setBusy(false, destinationRegNum);
+			toma_RF.setToma_ROBEntry(-1, destinationRegNum);
 		}
 
 		if (firstInst.getOperationType() == OperationType.xchg) {
+
+			Toma_RegisterFile toma_RF_source1 = containingExecutionEngine.getToma_RegisterFile(firstInst
+					.getSourceOperand1());
 			int register_source1 = (int) firstInst.getSourceOperand1().getValue();
-			if (register_source1 != -1 && toma_RF.getToma_ROBEntry(register_source1) == head) {
-				toma_RF.setBusy(false, register_source1);
+			if (register_source1 != -1 && toma_RF_source1.getToma_ROBEntry(register_source1) == head) {
+				toma_RF_source1.setBusy(false, register_source1);
+				toma_RF_source1.setToma_ROBEntry(-1, register_source1);
 			}
 
+			Toma_RegisterFile toma_RF_source2 = containingExecutionEngine.getToma_RegisterFile(firstInst
+					.getSourceOperand2());
 			int register_source2 = (int) firstInst.getSourceOperand2().getValue();
-			if (register_source2 != -1 && toma_RF.getToma_ROBEntry(register_source2) == head) {
-				toma_RF.setBusy(false, register_source2);
+			if (register_source2 != -1 && toma_RF_source2.getToma_ROBEntry(register_source2) == head) {
+				toma_RF_source2.setBusy(false, register_source2);
+				toma_RF_source2.setToma_ROBEntry(-1, register_source2);
 			}
+		}
+
+		// debug print
+		if (SimulationConfig.debugMode) {
+			System.out.println("COMMIT | committed : " + " \n " + firstInst);
 		}
 
 		returnInstructionToPool(firstInst);

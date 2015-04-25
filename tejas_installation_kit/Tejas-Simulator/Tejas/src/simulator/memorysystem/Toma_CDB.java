@@ -3,17 +3,17 @@
  */
 package memorysystem;
 
-import pipeline.multi_issue_inorder.MultiIssueInorderExecutionEngine;
-import pipeline.multi_issue_inorder.Toma_ROB;
-import pipeline.multi_issue_inorder.Toma_RegisterFile;
-import pipeline.multi_issue_inorder.Toma_ReservationStation;
-import pipeline.multi_issue_inorder.Toma_ReservationStationEntry;
+import generic.Core;
 import generic.Event;
 import generic.EventQueue;
+import generic.GlobalClock;
 import generic.Instruction;
-import generic.OperationType;
 import generic.PortType;
 import generic.SimulationElement;
+import pipeline.multi_issue_inorder.Toma_ROB;
+import pipeline.multi_issue_inorder.Toma_ReservationStation;
+import pipeline.multi_issue_inorder.Toma_ReservationStationEntry;
+import config.SimulationConfig;
 
 /**
  * @author dell
@@ -28,18 +28,20 @@ public class Toma_CDB extends SimulationElement {
 	@Override
 	public void handleEvent(EventQueue eventQ, Event event) {
 		Toma_CDBentry toma_CDBentry = ((Toma_CDBevent) event).getToma_CDBentry();
-		MultiIssueInorderExecutionEngine executionEngine = ((Toma_CDBevent) event).getExecutionEngine();
+		// MultiIssueInorderExecutionEngine executionEngine = ((Toma_CDBevent) event).getExecutionEngine();
+		// Core core = ((Toma_CDBevent) event).getCore();
 
 		Toma_ReservationStationEntry toma_RSentry = toma_CDBentry.getToma_ReservationStationEntry();
 		Toma_ReservationStation rs = toma_CDBentry.getExecutionEngine().getToma_ReservationStation();
 		Toma_ROB rob = toma_CDBentry.getExecutionEngine().getToma_ROB();
+		Instruction ins = toma_RSentry.getInstruction();
 
 		int b = toma_RSentry.getInst_entryNumber_ROB();
-		toma_RSentry.setBusy(false);
-		toma_RSentry.setCompletedExecution(false);
-		toma_RSentry.setStartedExecution(false);
-		toma_RSentry.setSourceOperand1_availability(-1);
-		toma_RSentry.setSourceOperand2_availability(-1);
+		toma_RSentry.clearEntry();
+
+		if (SimulationConfig.debugMode) {
+			System.out.println("WriteResult (CDB) | RS free & ROB ready : " + " \n " + ins);
+		}
 
 		Toma_ReservationStationEntry[] reservationStationEntries = rs.getReservationStationEntries();
 
@@ -48,7 +50,11 @@ public class Toma_CDB extends SimulationElement {
 
 		for (Toma_ReservationStationEntry toma_RSentryentry : reservationStationEntries) {
 
-			Instruction ins = toma_RSentryentry.getInstruction();
+			if (!toma_RSentryentry.isBusy()) {
+				continue;
+			}
+
+			Instruction _ins = toma_RSentryentry.getInstruction();
 
 			if (toma_RSentryentry.getSourceOperand1_availability() == b) {
 				// Toma_RegisterFile toma_RF_source1 = executionEngine.getToma_RegisterFile(ins.getSourceOperand1());
@@ -61,6 +67,10 @@ public class Toma_CDB extends SimulationElement {
 
 				toma_RSentryentry.setSourceOperand1_value(result);
 				toma_RSentryentry.setSourceOperand1_availability(0);
+
+				if (SimulationConfig.debugMode) {
+					System.out.println("WriteResult | source1 now available : " + " \n " + _ins);
+				}
 
 				/*
 				 * if (ins.getOperationType() == OperationType.xchg) {
@@ -80,6 +90,10 @@ public class Toma_CDB extends SimulationElement {
 
 				toma_RSentryentry.setSourceOperand2_value(result);
 				toma_RSentryentry.setSourceOperand2_availability(0);
+
+				if (SimulationConfig.debugMode) {
+					System.out.println("WriteResult | source2 now available : " + " \n " + _ins);
+				}
 
 				/*
 				 * if (ins.getOperationType() == OperationType.xchg) {

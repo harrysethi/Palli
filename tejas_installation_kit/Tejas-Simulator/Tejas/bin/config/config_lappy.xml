@@ -161,7 +161,7 @@
 			</Toma_params>
 
 			<Toma_CDB>
-				<Toma_CDBLatency>1</Toma_CDBLatency>
+				<Toma_CDBLatency>2</Toma_CDBLatency>
 				<Toma_CDBPortType>FCFS</Toma_CDBPortType>
 				<Toma_CDBAccessPorts>2</Toma_CDBAccessPorts>
 				<Toma_CDBPortOccupancy>1</Toma_CDBPortOccupancy>

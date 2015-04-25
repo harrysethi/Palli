@@ -65,7 +65,7 @@ public class InorderCoreMemorySystem_MII extends CoreMemorySystem {
 	public void issueRequestToToma_CDB(Toma_ReservationStationEntry toma_ReservationStationEntry) {
 		Toma_CDBentry toma_CDBentry = new Toma_CDBentry(containingExecEngine, toma_ReservationStationEntry);
 		Toma_CDBevent toma_CDB_event = new Toma_CDBevent(getCore().getEventQueue(), toma_CDB.getLatency(), null,
-				toma_CDB, RequestType.TOMA_CDB, toma_CDBentry, containingExecEngine);
+				toma_CDB, RequestType.TOMA_CDB, toma_CDBentry, containingExecEngine, core);
 
 		this.toma_CDB.getPort().put(toma_CDB_event);
 	}

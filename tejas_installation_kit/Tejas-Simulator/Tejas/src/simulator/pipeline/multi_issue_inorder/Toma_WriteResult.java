@@ -3,6 +3,10 @@
  */
 package pipeline.multi_issue_inorder;
 
+import config.SimulationConfig;
+import generic.Core;
+import generic.GlobalClock;
+import generic.Instruction;
 import generic.OperationType;
 
 /**
@@ -12,9 +16,25 @@ import generic.OperationType;
 public class Toma_WriteResult {
 
 	MultiIssueInorderExecutionEngine executionEngine;
+	Core core;
 
-	public Toma_WriteResult(MultiIssueInorderExecutionEngine executionEngine) {
+	public Toma_WriteResult(MultiIssueInorderExecutionEngine executionEngine, Core core) {
 		this.executionEngine = executionEngine;
+		this.core = core;
+	}
+
+	private void rsFreeRobReady(Toma_ReservationStationEntry toma_RSentry) {
+		int b = toma_RSentry.getInst_entryNumber_ROB();
+		Toma_ROB rob = executionEngine.getToma_ROB();
+		rob.getRobEntries()[b].setReady(true);
+
+		Instruction ins = toma_RSentry.getInstruction();
+
+		toma_RSentry.clearEntry();
+
+		if (SimulationConfig.debugMode) {
+			System.out.println("WriteResult | RS free & ROB ready : " + " \n " + ins);
+		}
 	}
 
 	public void performWriteResult() {
@@ -28,7 +48,7 @@ public class Toma_WriteResult {
 
 		for (Toma_ReservationStationEntry toma_RSentry : rs.getReservationStationEntries()) {
 
-			if (!toma_RSentry.isCompletedExecution() && !toma_RSentry.isBusy()) {
+			if (!toma_RSentry.isCompletedExecution() || !toma_RSentry.isBusy() || toma_RSentry.isIssuedRequestToCDB()) {
 				continue;
 			}
 
@@ -38,16 +58,8 @@ public class Toma_WriteResult {
 				continue;
 			}
 
-			if (opType == OperationType.inValid || opType == OperationType.nop) {
-				int b = toma_RSentry.getInst_entryNumber_ROB();
-				Toma_ROB rob = executionEngine.getToma_ROB();
-				rob.getRobEntries()[b].setReady(true);
-
-				toma_RSentry.setBusy(false);
-				toma_RSentry.setCompletedExecution(false);
-				toma_RSentry.setStartedExecution(false);
-				toma_RSentry.setSourceOperand1_availability(-1);
-				toma_RSentry.setSourceOperand2_availability(-1);
+			if (opType == OperationType.inValid || opType == OperationType.nop || opType == OperationType.jump) {
+				rsFreeRobReady(toma_RSentry);
 
 				continue;
 			}
@@ -55,6 +67,11 @@ public class Toma_WriteResult {
 			if (opType != OperationType.store) {
 				// issuing request to CDB
 				executionEngine.getCoreMemorySystem().issueRequestToToma_CDB(toma_RSentry);
+				toma_RSentry.setIssuedRequestToCDB(true);
+				if (SimulationConfig.debugMode) {
+					System.out.println("WriteResult | Issued Request to CDB : " + " \n "
+							+ toma_RSentry.getInstruction());
+				}
 				continue;
 			}
 
@@ -63,6 +80,7 @@ public class Toma_WriteResult {
 				return;
 			}
 
+			rsFreeRobReady(toma_RSentry);
 			// TODO:-imp => ROB[h].value = RS[r].VK;...not required
 
 		}
