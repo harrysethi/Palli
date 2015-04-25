@@ -28,16 +28,27 @@ public class Toma_WriteResult {
 
 		for (Toma_ReservationStationEntry toma_RSentry : rs.getReservationStationEntries()) {
 
-			if (!toma_RSentry.isCompletedExecution()) {
+			if (!toma_RSentry.isCompletedExecution() && !toma_RSentry.isBusy()) {
 				continue;
 			}
 
 			OperationType opType = toma_RSentry.getInstruction().getOperationType();
 
+			if (opType == null) {
+				continue;
+			}
+
 			if (opType == OperationType.inValid || opType == OperationType.nop) {
 				int b = toma_RSentry.getInst_entryNumber_ROB();
 				Toma_ROB rob = executionEngine.getToma_ROB();
 				rob.getRobEntries()[b].setReady(true);
+
+				toma_RSentry.setBusy(false);
+				toma_RSentry.setCompletedExecution(false);
+				toma_RSentry.setStartedExecution(false);
+				toma_RSentry.setSourceOperand1_availability(-1);
+				toma_RSentry.setSourceOperand2_availability(-1);
+
 				continue;
 			}
 

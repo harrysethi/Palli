@@ -164,30 +164,34 @@ public class PipelineTests {
 			break;
 
 		case 11:
-			toma_test_simple_intALU();
+			toma_test_simple_noInst();
 			break;
 
 		case 12:
-			toma_test_simple_nop();
+			toma_test_simple_intALU();
 			break;
 
 		case 13:
-			toma_test_simple_mov();
+			toma_test_simple_nop();
 			break;
 
 		case 14:
-			toma_test_simple_floatDIV();
+			toma_test_simple_mov();
 			break;
 
 		case 15:
-			toma_test_simple_xchg();
+			toma_test_simple_floatDIV();
 			break;
 
 		case 16:
-			toma_test_simple_jump();
+			toma_test_simple_xchg();
 			break;
 
 		case 17:
+			toma_test_simple_jump();
+			break;
+
+		case 18:
 			toma_test_simple_branch();
 			break;
 
@@ -202,9 +206,7 @@ public class PipelineTests {
 		Instruction newInst = null;
 		for (int i = 0; i < 1; i++) {
 			switch (opType) {
-			case inValid:// TODO: check kya likha & kyun
-				newInst = Instruction.getIntALUInstruction(Operand.getIntegerRegister(0),
-						Operand.getIntegerRegister(0), Operand.getIntegerRegister(2));
+			case inValid:
 				break;
 
 			case integerALU:
@@ -242,7 +244,9 @@ public class PipelineTests {
 				break;
 			}
 
-			inputToPipeline.enqueue(newInst);
+			if (opType != OperationType.inValid) {
+				inputToPipeline.enqueue(newInst);
+			}
 		}
 		inputToPipeline.enqueue(Instruction.getInvalidInstruction());
 

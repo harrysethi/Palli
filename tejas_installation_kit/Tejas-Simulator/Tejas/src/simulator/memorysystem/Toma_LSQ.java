@@ -23,6 +23,7 @@ public class Toma_LSQ {
 
 	public Toma_LSQ(int lsq_Size) {
 		this.lsq_Size = lsq_Size;
+		toma_lsqueue = new Toma_LSQentry[lsq_Size];
 
 		head = -1;
 		tail = -1;

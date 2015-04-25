@@ -27,7 +27,7 @@
 		<IndexAddrModeEnable>0</IndexAddrModeEnable>
 		<EmuCores>0</EmuCores>
 		<JavaCores>1</JavaCores>
-		<DebugMode>false</DebugMode>
+		<DebugMode>true</DebugMode>
 		<DetachMemSysData>false</DetachMemSysData>
 		<DetachMemSysInsn>false</DetachMemSysInsn>
 		<PrintPowerStats>true</PrintPowerStats>
