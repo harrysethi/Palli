@@ -27,6 +27,10 @@ public class Toma_Execute {
 	}
 
 	public void performExecute() {
+		if (executionEngine.isToma_stall_branchMisprediction()) {
+			return;
+		}
+
 		Toma_ReservationStation rs = executionEngine.getToma_ReservationStation();
 
 		for (Toma_ReservationStationEntry toma_RSentry : rs.getReservationStationEntries()) {
@@ -47,7 +51,7 @@ public class Toma_Execute {
 
 			if (toma_RSentry.getInstruction().getOperationType() == OperationType.load) {
 
-				if (toma_RSentry.getSourceOperand1_avaliability() != 0) {
+				if (toma_RSentry.getSourceOperand1_availability() != 0) {
 					continue;
 				}
 
@@ -85,7 +89,7 @@ public class Toma_Execute {
 			}
 
 			else if (toma_RSentry.getInstruction().getOperationType() == OperationType.store) {
-				if (toma_RSentry.getSourceOperand1_avaliability() != 0) {
+				if (toma_RSentry.getSourceOperand1_availability() != 0) {
 					continue;
 				}
 

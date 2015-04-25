@@ -15,8 +15,8 @@ public class Toma_ReservationStationEntry {
 	private boolean isBusy;
 	private int inst_entryNumber_ROB; // Qi
 
-	private int sourceOperand1_avaliability;// Qj
-	private int sourceOperand2_avaliability;// Qk
+	private int sourceOperand1_availability;// Qj
+	private int sourceOperand2_availability;// Qk
 
 	// TO-DO:-------check if value actually required
 	private Object sourceOperand1_value;// Vj
@@ -27,12 +27,12 @@ public class Toma_ReservationStationEntry {
 	private boolean isStartedExecution;
 	private boolean isCompletedExecution;
 	private long timeToCompleteExecution;
-	
+
 	public Toma_ReservationStationEntry() {
 		isBusy = false;
 
-		this.sourceOperand1_avaliability = -1;
-		this.sourceOperand2_avaliability = -1;
+		this.sourceOperand1_availability = -1;
+		this.sourceOperand2_availability = -1;
 		this.inst_entryNumber_ROB = -1;
 		this.isStartedExecution = false;
 		this.isCompletedExecution = false;
@@ -129,33 +129,33 @@ public class Toma_ReservationStationEntry {
 	}
 
 	/**
-	 * @return the sourceOperand1_avaliability
+	 * @return the sourceOperand1_availability
 	 */
-	public int getSourceOperand1_avaliability() {
-		return sourceOperand1_avaliability;
+	public int getSourceOperand1_availability() {
+		return sourceOperand1_availability;
 	}
 
 	/**
-	 * @param sourceOperand1_avaliability
-	 *            the sourceOperand1_avaliability to set
+	 * @param sourceOperand1_availability
+	 *            the sourceOperand1_availability to set
 	 */
-	public void setSourceOperand1_avaliability(int sourceOperand1_avaliability) {
-		this.sourceOperand1_avaliability = sourceOperand1_avaliability;
+	public void setSourceOperand1_availability(int sourceOperand1_availability) {
+		this.sourceOperand1_availability = sourceOperand1_availability;
 	}
 
 	/**
-	 * @return the sourceOperand2_avaliability
+	 * @return the sourceOperand2_availability
 	 */
-	public int getSourceOperand2_avaliability() {
-		return sourceOperand2_avaliability;
+	public int getSourceOperand2_availability() {
+		return sourceOperand2_availability;
 	}
 
 	/**
-	 * @param sourceOperand2_avaliability
-	 *            the sourceOperand2_avaliability to set
+	 * @param sourceOperand2_availability
+	 *            the sourceOperand2_availability to set
 	 */
-	public void setSourceOperand2_avaliability(int sourceOperand2_avaliability) {
-		this.sourceOperand2_avaliability = sourceOperand2_avaliability;
+	public void setSourceOperand2_availability(int sourceOperand2_availability) {
+		this.sourceOperand2_availability = sourceOperand2_availability;
 	}
 
 	/**
@@ -204,7 +204,7 @@ public class Toma_ReservationStationEntry {
 	}
 
 	public boolean isEntryAvailableIn_RS() {
-		if (this.getSourceOperand1_avaliability() == 0 && this.getSourceOperand2_avaliability() == 0) {
+		if (this.getSourceOperand1_availability() == 0 && this.getSourceOperand2_availability() == 0) {
 			return true;
 		}
 

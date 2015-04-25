@@ -18,6 +18,12 @@ public class Toma_WriteResult {
 	}
 
 	public void performWriteResult() {
+		if (executionEngine.isToma_stall_branchMisprediction())
+		// || ROB.head == -1 /*ROB empty*/)//TODO: check if required
+		{
+			return;
+		}
+
 		Toma_ReservationStation rs = executionEngine.getToma_ReservationStation();
 
 		for (Toma_ReservationStationEntry toma_RSentry : rs.getReservationStationEntries()) {
@@ -42,7 +48,7 @@ public class Toma_WriteResult {
 			}
 
 			// store instruction
-			if (toma_RSentry.getSourceOperand2_avaliability() != 0) {
+			if (toma_RSentry.getSourceOperand2_availability() != 0) {
 				return;
 			}
 

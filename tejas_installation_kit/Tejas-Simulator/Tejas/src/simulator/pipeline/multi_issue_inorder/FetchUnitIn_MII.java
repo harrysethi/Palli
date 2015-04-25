@@ -45,7 +45,8 @@ public class FetchUnitIn_MII extends SimulationElement {
 
 		this.ifId_latch = execEngine.getIfIdLatch();
 
-		this.fetchBufferCapacity = (int) (core.getIssueWidth() * (SystemConfig.core[core.getCore_number()].getICacheLatency()));
+		this.fetchBufferCapacity = (int) (core.getIssueWidth() * (SystemConfig.core[core.getCore_number()]
+				.getICacheLatency()));
 		this.fetchBuffer = new Instruction[this.fetchBufferCapacity];
 		this.fetchFillCount = 0;
 		this.fetchBufferIndex = 0;
@@ -97,7 +98,8 @@ public class FetchUnitIn_MII extends SimulationElement {
 					this.fetchBufferStatus[i] = true;
 				} else {
 					this.fetchBufferStatus[i] = false;
-					containingExecutionEngine.multiIssueInorderCoreMemorySystem.issueRequestToInstrCache(newInstruction.getCISCProgramCounter());
+					containingExecutionEngine.multiIssueInorderCoreMemorySystem.issueRequestToInstrCache(newInstruction
+							.getCISCProgramCounter());
 				}
 			}
 		}
@@ -111,12 +113,19 @@ public class FetchUnitIn_MII extends SimulationElement {
 
 		Instruction ins;
 
+		// ------Toma Change Start-------------
+		if (containingExecutionEngine.isToma_stall_branchMisprediction()) {
+			return;
+		}
+		// ------Toma Change End-------------
+
 		if (!this.fetchBufferStatus[this.fetchBufferIndex])
 			containingExecutionEngine.incrementInstructionMemStall(1);
 
 		// move to the IF-ID latch those instructions that have completed
 		// fetch from the i-cache
-		while (!this.sleep && this.fetchFillCount > 0 && this.fetchBufferStatus[this.fetchBufferIndex] && this.ifId_latch.isFull() == false) {
+		while (!this.sleep && this.fetchFillCount > 0 && this.fetchBufferStatus[this.fetchBufferIndex]
+				&& this.ifId_latch.isFull() == false) {
 			ins = this.fetchBuffer[this.fetchBufferIndex];
 
 			if (ins.getOperationType() == OperationType.sync) {
@@ -129,8 +138,9 @@ public class FetchUnitIn_MII extends SimulationElement {
 					setSleep(true);
 					int coreId = this.core.getCore_number();
 					ArchitecturalComponent.coreBroadcastBus.getPort().put(
-							new AddressCarryingEvent(0, this.core.eventQueue, this.core.barrier_latency, ArchitecturalComponent.coreBroadcastBus,
-									ArchitecturalComponent.coreBroadcastBus, RequestType.TREE_BARRIER, barrierAddress, coreId));
+							new AddressCarryingEvent(0, this.core.eventQueue, this.core.barrier_latency,
+									ArchitecturalComponent.coreBroadcastBus, ArchitecturalComponent.coreBroadcastBus,
+									RequestType.TREE_BARRIER, barrierAddress, coreId));
 				} else {
 					if (bar.timeToCross()) {
 						sleepThePipeline();
@@ -148,11 +158,13 @@ public class FetchUnitIn_MII extends SimulationElement {
 								bar_lat = this.core.barrier_latency;
 						}
 						for (int i = 0; i < bar.getNumThreads(); i++) {
-							ArchitecturalComponent.coreBroadcastBus.addToResumeCore(bar.getBlockedThreads().elementAt(i));
+							ArchitecturalComponent.coreBroadcastBus.addToResumeCore(bar.getBlockedThreads()
+									.elementAt(i));
 						}
 						ArchitecturalComponent.coreBroadcastBus.getPort().put(
-								new AddressCarryingEvent(this.core.eventQueue, bar_lat, ArchitecturalComponent.coreBroadcastBus, ArchitecturalComponent.coreBroadcastBus,
-										RequestType.PIPELINE_RESUME, 0));
+								new AddressCarryingEvent(this.core.eventQueue, bar_lat,
+										ArchitecturalComponent.coreBroadcastBus,
+										ArchitecturalComponent.coreBroadcastBus, RequestType.PIPELINE_RESUME, 0));
 
 					} else {
 						sleepThePipeline();
@@ -167,7 +179,8 @@ public class FetchUnitIn_MII extends SimulationElement {
 				this.fetchBufferIndex = (this.fetchBufferIndex + 1) % this.fetchBufferCapacity;
 
 				if (SimulationConfig.debugMode) {
-					System.out.println("fetched : " + GlobalClock.getCurrentTime() / core.getStepSize() + "\n" + ins + "\n");
+					System.out.println("fetched : " + GlobalClock.getCurrentTime() / core.getStepSize() + "\n" + ins
+							+ "\n");
 				}
 			}
 		}
@@ -211,7 +224,8 @@ public class FetchUnitIn_MII extends SimulationElement {
 
 	public void processCompletionOfMemRequest(long requestedAddress) {
 		for (int i = 0; i < this.fetchBufferCapacity; i++) {
-			if (this.fetchBuffer[i] != null && this.fetchBuffer[i].getCISCProgramCounter() == requestedAddress && this.fetchBufferStatus[i] == false) {
+			if (this.fetchBuffer[i] != null && this.fetchBuffer[i].getCISCProgramCounter() == requestedAddress
+					&& this.fetchBufferStatus[i] == false) {
 				this.fetchBufferStatus[i] = true;
 			}
 		}

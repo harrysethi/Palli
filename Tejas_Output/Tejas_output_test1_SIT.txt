@@ -2,30 +2,19 @@ creating instruction pool..
 The executable has 160 assembly lines
 Total number of assembly lines = 149
 Total number of micro-operations = 234
-Newmain : pid = 5890
-coremap 2
-subset sim size = -1	false
-marker functions = false	 start marker = 	 end marker = 
-command is : /home/harinder/Documents/Dropbox/IITD_CurrentSem/CSL718/workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/PIN/pin-2.14-67254-gcc.4.4.7-linux/pin.sh -t /home/harinder/Documents/Dropbox/IITD_CurrentSem/CSL718/workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/Tejas/src/emulator/pin/obj-pin/causalityTool.so -maxNumActiveThreads 32 -map 1 -numIgn 0 -numSim -1 -id 5890 -traceMethod sharedMemory --    /home/harinder/Documents/Dropbox/IITD_CurrentSem/CSL718/workspace/Asgn3/Palli/Test_inputs/test1
---  starting java thread0
-[stdin] numIgn = 0
-[stdin] numSim = -1
-[stdin] id received = 5890
-[stdin] pinpoints file received = nofile
-[stdin] maxNumActiveThreads = 32
-[stdin] numIgn = 0
-[stdin] numSim = -1
-[stdin] id received = 5890
-[stdin] pinpoints file received = nofile
-[stdin] start marker = 
-[stdin] end marker = 
-[stdin] threads till now 1
-num of threads on core 0 = 1
-Core 0 numCycles = 0
-Exception in thread "thread0" java.lang.NullPointerException
-	at pipeline.multi_issue_inorder.Toma_Issue.performIssue(Toma_Issue.java:84)
-	at pipeline.multi_issue_inorder.MultiIssueInorderPipeline.toma_issue(MultiIssueInorderPipeline.java:66)
-	at pipeline.multi_issue_inorder.MultiIssueInorderPipeline.oneCycleOperation(MultiIssueInorderPipeline.java:46)
-	at emulatorinterface.RunnableThread.runPipelines(RunnableThread.java:363)
-	at emulatorinterface.RunnableThread.run(RunnableThread.java:233)
-	at java.lang.Thread.run(Thread.java:745)
+Exception in thread "main" java.lang.NullPointerException
+	at memorysystem.Toma_LSQ.<init>(Toma_LSQ.java:30)
+	at memorysystem.CoreMemorySystem.<init>(CoreMemorySystem.java:111)
+	at pipeline.multi_issue_inorder.InorderCoreMemorySystem_MII.<init>(InorderCoreMemorySystem_MII.java:19)
+	at generic.Core.<init>(Core.java:96)
+	at main.ArchitecturalComponent.createCore(ArchitecturalComponent.java:148)
+	at main.ArchitecturalComponent.createElementsOfNOC(ArchitecturalComponent.java:130)
+	at main.ArchitecturalComponent.createChip(ArchitecturalComponent.java:58)
+	at main.Main.main(Main.java:88)
+shut down
+unable to create specified output file
+statistics written to DEFAULT_2015_04_25_12_54_50
+Exception in thread "Thread-0" java.lang.ArrayIndexOutOfBoundsException: 0
+	at generic.Statistics.printTimingStatistics(Statistics.java:139)
+	at generic.Statistics.printAllStatistics(Statistics.java:858)
+	at misc.ShutDownHook.run(ShutDownHook.java:22)

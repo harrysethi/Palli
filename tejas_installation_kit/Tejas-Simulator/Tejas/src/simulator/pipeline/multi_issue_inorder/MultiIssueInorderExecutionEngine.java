@@ -41,6 +41,8 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	private Toma_RegisterFile toma_RegisterFile_floating;
 
 	private GenericCircularQueue<Instruction> toma_fetchBuffer;
+
+	private boolean toma_stall_branchMisprediction;
 	// ------Toma Change End-------------
 
 	private boolean executionComplete;
@@ -223,6 +225,21 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	 */
 	public InorderCoreMemorySystem_MII getCoreMemorySystem() {
 		return multiIssueInorderCoreMemorySystem;
+	}
+
+	/**
+	 * @return the toma_stall_branchMisprediction
+	 */
+	public boolean isToma_stall_branchMisprediction() {
+		return toma_stall_branchMisprediction;
+	}
+
+	/**
+	 * @param toma_stall_branchMisprediction
+	 *            the toma_stall_branchMisprediction to set
+	 */
+	public void setToma_stall_branchMisprediction(boolean toma_stall_branchMisprediction) {
+		this.toma_stall_branchMisprediction = toma_stall_branchMisprediction;
 	}
 
 	// ------Toma Change End-------------

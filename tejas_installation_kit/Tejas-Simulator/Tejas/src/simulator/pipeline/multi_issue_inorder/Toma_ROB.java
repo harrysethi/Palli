@@ -4,10 +4,14 @@
 package pipeline.multi_issue_inorder;
 
 import generic.Core;
+import generic.Event;
+import generic.EventQueue;
 import generic.GlobalClock;
 import generic.Instruction;
 import generic.OperationType;
+import generic.PortType;
 import generic.RequestType;
+import generic.SimulationElement;
 import main.CustomObjectPool;
 import memorysystem.Toma_LSQ;
 import config.SimulationConfig;
@@ -16,7 +20,7 @@ import config.SimulationConfig;
  * @author dell
  *
  */
-public class Toma_ROB {
+public class Toma_ROB extends SimulationElement {
 
 	private MultiIssueInorderExecutionEngine containingExecutionEngine;
 	private Core core;
@@ -33,6 +37,8 @@ public class Toma_ROB {
 	private long lastValidIPSeen;
 
 	public Toma_ROB(MultiIssueInorderExecutionEngine containingExecutionEngine, Core core) {
+		super(PortType.Unlimited, -1, -1, -1, -1);
+
 		this.maxROBSize = core.getToma_robBufferSize() + 1;
 		// '1' added since we are starting the counter with 1
 		head = -1;
@@ -54,6 +60,11 @@ public class Toma_ROB {
 
 	public void performCommits() {
 
+		if (containingExecutionEngine.isToma_stall_branchMisprediction()) {
+			return;
+		}
+
+		boolean isAnyMispredictedBranch = false;
 		while (true) {
 
 			if (head == -1) {
@@ -93,7 +104,7 @@ public class Toma_ROB {
 				lastValidIPSeen = firstInst.getCISCProgramCounter();
 			}
 
-			// TODO:---- check whether something like below required
+			// TO-DO:---- check whether something like below required...chhod de naaa (pallavi said)
 
 			/*
 			 * //if store, and if store not yet validated if(firstOpType == OperationType.store &&
@@ -101,7 +112,12 @@ public class Toma_ROB {
 			 */
 
 			if (operationType == OperationType.branch) {
-				commitBranch(firstRobEntry, firstInst, destinationRegNum);
+				isAnyMispredictedBranch = !(commitBranch(firstRobEntry, firstInst, destinationRegNum));
+
+				// TODO:check whether we need to stop commit if any branch misPredicted
+				/*
+				 * if(isAnyMispredictedBranch){ break; }
+				 */
 			}
 
 			else if (operationType == OperationType.store) {
@@ -134,9 +150,35 @@ public class Toma_ROB {
 		}
 
 		// TODO: check if below required
-		/*
-		 * if(anyMispredictedBranch) { handleBranchMisprediction(); }
-		 */
+
+		if (isAnyMispredictedBranch) {
+			handleBranchMisprediction();
+		}
+
+	}
+
+	@Override
+	public void handleEvent(EventQueue eventQ, Event event) {
+
+		if (event.getRequestType() == RequestType.MISPRED_PENALTY_COMPLETE) {
+			completeMispredictionPenalty();
+		}
+
+	}
+
+	void completeMispredictionPenalty() {
+		containingExecutionEngine.setToma_stall_branchMisprediction(false);
+	}
+
+	private void handleBranchMisprediction() {
+		// impose branch mis-prediction penalty
+		containingExecutionEngine.setToma_stall_branchMisprediction(true);
+
+		// set-up event that signals end of misprediction penalty period
+		core.getEventQueue().addEvent(
+				new Toma_branch_misprediction_completeEvent(GlobalClock.getCurrentTime()
+						+ core.getBranchMispredictionPenalty() * core.getStepSize(), null, this,
+						RequestType.MISPRED_PENALTY_COMPLETE));
 
 	}
 
@@ -166,6 +208,18 @@ public class Toma_ROB {
 			toma_RF.setBusy(false, destinationRegNum);
 		}
 
+		if (firstInst.getOperationType() == OperationType.xchg) {
+			int register_source1 = (int) firstInst.getSourceOperand1().getValue();
+			if (register_source1 != -1 && toma_RF.getToma_ROBEntry(register_source1) == head) {
+				toma_RF.setBusy(false, register_source1);
+			}
+
+			int register_source2 = (int) firstInst.getSourceOperand2().getValue();
+			if (register_source2 != -1 && toma_RF.getToma_ROBEntry(register_source2) == head) {
+				toma_RF.setBusy(false, register_source2);
+			}
+		}
+
 		returnInstructionToPool(firstInst);
 	}
 
@@ -188,14 +242,14 @@ public class Toma_ROB {
 		return prediction;
 	}
 
-	private void commitBranch(Toma_ROBentry firstRobEntry, Instruction firstInst, int destinationRegNum) {
+	private boolean commitBranch(Toma_ROBentry firstRobEntry, Instruction firstInst, int destinationRegNum) {
 
 		// branchCount++;
 
 		boolean prediction = performPredictionNtrain(firstInst);
 		if (prediction != firstInst.isBranchTaken()) { // branch mispredicted
 
-			// TODO: check branchmispredicted pe stalls aayein
+			return false;
 
 			// no need to clear the ROB or RF_ROBentries..just use stalls
 
@@ -205,12 +259,14 @@ public class Toma_ROB {
 			 * toma_RF.clearROBentries();
 			 */
 
-			// TODO: algo says --- "fetch branch destination"... I say::: it may not be required
+			// TO-DO: algo says --- "fetch branch destination"... I say::: it may not be required
 		}
 
 		else { // branch is not mis-predicted
 			handleInstructionRetirement(firstRobEntry, firstInst, destinationRegNum);
 		}
+
+		return true;
 	}
 
 	private void commitNonBranch(Toma_ROBentry firstRobEntry, Instruction firstInst, int destinationRegNum) {
