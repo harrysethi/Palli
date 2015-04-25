@@ -58,7 +58,8 @@ public class Toma_WriteResult {
 				continue;
 			}
 
-			if (opType == OperationType.inValid || opType == OperationType.nop || opType == OperationType.jump) {
+			if (opType == OperationType.inValid || opType == OperationType.nop || opType == OperationType.jump
+					|| opType == OperationType.branch) {
 				rsFreeRobReady(toma_RSentry);
 
 				continue;

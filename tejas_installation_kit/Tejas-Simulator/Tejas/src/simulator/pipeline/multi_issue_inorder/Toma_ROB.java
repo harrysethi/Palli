@@ -69,7 +69,7 @@ public class Toma_ROB extends SimulationElement {
 
 			if (head == -1) {
 				// ROB empty .. does not mean execution has completed
-				return;
+				break;
 			}
 
 			Toma_ROBentry firstRobEntry = robEntries[head];
@@ -112,12 +112,7 @@ public class Toma_ROB extends SimulationElement {
 			 */
 
 			if (operationType == OperationType.branch) {
-				isAnyMispredictedBranch = !(commitBranch(firstRobEntry, firstInst, destinationRegNum));
-
-				// TODO:check whether we need to stop commit if any branch misPredicted
-				/*
-				 * if(isAnyMispredictedBranch){ break; }
-				 */
+				isAnyMispredictedBranch = commitBranch(firstRobEntry, firstInst, destinationRegNum);
 			}
 
 			else if (operationType == OperationType.store) {
@@ -152,6 +147,7 @@ public class Toma_ROB extends SimulationElement {
 		// TODO: check if below required
 
 		if (isAnyMispredictedBranch) {
+			System.out.println("=====Mispredicted Branch===== :( :(");
 			handleBranchMisprediction();
 		}
 
@@ -161,6 +157,7 @@ public class Toma_ROB extends SimulationElement {
 	public void handleEvent(EventQueue eventQ, Event event) {
 
 		if (event.getRequestType() == RequestType.MISPRED_PENALTY_COMPLETE) {
+			System.out.println("=====Branch Penalty Complete===== :) :)");
 			completeMispredictionPenalty();
 		}
 
@@ -256,11 +253,12 @@ public class Toma_ROB extends SimulationElement {
 	private boolean commitBranch(Toma_ROBentry firstRobEntry, Instruction firstInst, int destinationRegNum) {
 
 		// branchCount++;
+		boolean isMispredictedBranch = false;
 
 		boolean prediction = performPredictionNtrain(firstInst);
 		if (prediction != firstInst.isBranchTaken()) { // branch mispredicted
 
-			return false;
+			isMispredictedBranch = true;
 
 			// no need to clear the ROB or RF_ROBentries..just use stalls
 
@@ -273,11 +271,9 @@ public class Toma_ROB extends SimulationElement {
 			// TO-DO: algo says --- "fetch branch destination"... I say::: it may not be required
 		}
 
-		else { // branch is not mis-predicted
-			handleInstructionRetirement(firstRobEntry, firstInst, destinationRegNum);
-		}
+		handleInstructionRetirement(firstRobEntry, firstInst, destinationRegNum);
 
-		return true;
+		return isMispredictedBranch;
 	}
 
 	private void commitNonBranch(Toma_ROBentry firstRobEntry, Instruction firstInst, int destinationRegNum) {

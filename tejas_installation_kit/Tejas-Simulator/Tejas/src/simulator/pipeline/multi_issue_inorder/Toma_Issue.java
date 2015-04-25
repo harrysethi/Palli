@@ -3,13 +3,12 @@
  */
 package pipeline.multi_issue_inorder;
 
-import config.SimulationConfig;
 import generic.Core;
-import generic.GlobalClock;
 import generic.Instruction;
 import generic.Operand;
 import generic.OperandType;
 import generic.OperationType;
+import config.SimulationConfig;
 
 /**
  * @author dell
@@ -37,6 +36,8 @@ public class Toma_Issue {
 		if (executionEngine.isToma_stall_branchMisprediction()) {
 			return;
 		}
+
+		executionEngine.getExecutionCore().clearPortUsage();
 
 		while (ifIdLatch.isEmpty() == false) {
 			Instruction ins = ifIdLatch.peek(0);

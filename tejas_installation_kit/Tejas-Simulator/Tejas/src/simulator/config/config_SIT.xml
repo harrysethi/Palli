@@ -46,7 +46,7 @@
 
 	<System>
 		<MainMemory>
-			<MainMemoryLatency>200</MainMemoryLatency>
+			<MainMemoryLatency>5</MainMemoryLatency>
 			<MainMemoryFrequency>3600</MainMemoryFrequency>
 			<MainMemoryPortType>FCFS</MainMemoryPortType>
 			<MainMemoryAccessPorts>1</MainMemoryAccessPorts>
