@@ -178,7 +178,7 @@ public class Toma_Execute {
 	}
 
 	private void calculateAddressForLoadStore(Toma_ReservationStationEntry toma_RSentry, Toma_LSQentry toma_LSQentry) {
-		// TODO: check why condn in algo.. before address calculate ..both in case of load & store
+		// TO-DO: check why condn in algo.. before address calculate ..both in case of load & store..chhado
 
 		// calculating address
 		long address = toma_RSentry.getAddress();
@@ -195,7 +195,7 @@ public class Toma_Execute {
 
 		toma_RSentry.setTimeToCompleteExecution(GlobalClock.getCurrentTime() + lat * core.getStepSize());
 
-		// TODO: check do we need to actually calculate the address
+		// TO-DO: check do we need to actually calculate the address...NO
 		// address += (Long) toma_RSentry.getSourceOperand1_value();
 
 		toma_RSentry.setAddress(address);

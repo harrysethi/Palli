@@ -5,6 +5,7 @@ package pipeline.multi_issue_inorder;
 
 import generic.Core;
 import generic.Instruction;
+import generic.Operand;
 import generic.OperationType;
 
 /**
@@ -46,9 +47,6 @@ public class Toma_Issue {
 			Toma_ReservationStation rs = executionEngine.getToma_ReservationStation();
 			Toma_ROB rob = executionEngine.getToma_ROB();
 
-			Toma_RegisterFile toma_RF = executionEngine.getToma_RegisterFile(ins.getSourceOperand1(),
-					ins.getSourceOperand2());
-
 			Toma_ReservationStationEntry rs_freeEntry = rs.getFreeEntryIn_RS();
 			if (rs_freeEntry == null) {
 				// TO-DO: check yahaan pe memStall ka kuch karna hai kya?
@@ -68,8 +66,11 @@ public class Toma_Issue {
 			// TODO: some change will be needed here in case of load & store
 			if (ins.getSourceOperand1() != null) {
 				register_source1 = (int) ins.getSourceOperand1().getValue(); // rs
-				if (toma_RF.isBusy(register_source1)) {
-					int h = toma_RF.getToma_ROBEntry(register_source1);
+
+				Toma_RegisterFile toma_RF_source1 = executionEngine.getToma_RegisterFile(ins.getSourceOperand1());
+
+				if (toma_RF_source1.isBusy(register_source1)) {
+					int h = toma_RF_source1.getToma_ROBEntry(register_source1);
 
 					Toma_ROBentry rob_h = rob.getRobEntries()[h];
 
@@ -83,7 +84,7 @@ public class Toma_Issue {
 					}
 
 				} else {// else for "if (rf.isBusy(register_source1)) {"
-					rs_freeEntry.setSourceOperand1_value(toma_RF.getValue(register_source1));
+					rs_freeEntry.setSourceOperand1_value(toma_RF_source1.getValue(register_source1));
 					rs_freeEntry.setSourceOperand1_avaliability(0);
 				}
 			}
@@ -95,10 +96,12 @@ public class Toma_Issue {
 
 			// TODO: some change will be needed here in case of store
 			if (ins.getSourceOperand2() != null) {
+
+				Toma_RegisterFile toma_RF_source2 = executionEngine.getToma_RegisterFile(ins.getSourceOperand2());
 				register_source2 = (int) ins.getSourceOperand2().getValue(); // rt
 
-				if (toma_RF.isBusy(register_source2)) {
-					int h = toma_RF.getToma_ROBEntry(register_source2);
+				if (toma_RF_source2.isBusy(register_source2)) {
+					int h = toma_RF_source2.getToma_ROBEntry(register_source2);
 
 					Toma_ROBentry rob_h = rob.getRobEntries()[h];
 
@@ -112,7 +115,7 @@ public class Toma_Issue {
 					}
 
 				} else {
-					rs_freeEntry.setSourceOperand2_value(toma_RF.getValue(register_source2));
+					rs_freeEntry.setSourceOperand2_value(toma_RF_source2.getValue(register_source2));
 					rs_freeEntry.setSourceOperand2_avaliability(0);
 				}
 			} else { // else for "if (ins.getSourceOperand2() != null) {"
@@ -121,10 +124,12 @@ public class Toma_Issue {
 			}
 
 			if (ins.getDestinationOperand() != null) {
+				Toma_RegisterFile toma_RF_dest = executionEngine.getToma_RegisterFile(ins.getDestinationOperand());
+
 				register_dest = (int) ins.getDestinationOperand().getValue(); // rd
 
-				toma_RF.setToma_ROBEntry(rob_freeTail, register_dest);
-				toma_RF.setBusy(true, register_dest);
+				toma_RF_dest.setToma_ROBEntry(rob_freeTail, register_dest);
+				toma_RF_dest.setBusy(true, register_dest);
 			}
 
 			rs_freeEntry.setInstruction(ins);
@@ -141,10 +146,14 @@ public class Toma_Issue {
 			rob_freeTail_entry.setReady(false);
 
 			if (ins.getOperationType() == OperationType.load) {
+				Operand operand_load_from = ins.getSourceOperand1().getMemoryLocationSecondOperand();
+				int register_load_from = (int) operand_load_from.getValue();
+
+				Toma_RegisterFile toma_RF_load = executionEngine.getToma_RegisterFile(operand_load_from);
 				rs_freeEntry.setAddress(ins.getSourceOperand1MemValue());
-				toma_RF.setToma_ROBEntry(rob_freeTail, register_source2);
-				toma_RF.setBusy(true, register_source2);
-				rob_freeTail_entry.setDestinationRegNumber(register_source2);
+				toma_RF_load.setToma_ROBEntry(rob_freeTail, register_load_from);
+				toma_RF_load.setBusy(true, register_load_from);
+				rob_freeTail_entry.setDestinationRegNumber(register_load_from);
 			}
 
 			if (ins.getOperationType() == OperationType.store) {

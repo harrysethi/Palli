@@ -156,23 +156,18 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 		return toma_RegisterFile_floating;
 	}
 
-	public Toma_RegisterFile getToma_RegisterFile(Operand operand1, Operand operand2) {
-		// TODO:IMP the below logic is written assuming an instruction can have either int or float operands
-		Operand availableOperand = null;
-
-		if (operand1 != null) {
-			availableOperand = operand1;
-		}
-
-		if (operand2 != null) {
-			availableOperand = operand2;
-		}
-
-		return getToma_RF_type(availableOperand);
-	}
+	/*
+	 * public Toma_RegisterFile getToma_RegisterFile(Operand operand1, Operand operand2) { // TODO:IMP the below logic
+	 * is written assuming an instruction can have either int or float operands Operand availableOperand = null;
+	 * 
+	 * if (operand1 != null) { availableOperand = operand1; }
+	 * 
+	 * if (operand2 != null) { availableOperand = operand2; }
+	 * 
+	 * return getToma_RF_type(availableOperand); }
+	 */
 
 	public Toma_RegisterFile getToma_RegisterFile(Operand operand) {
-		// TODO:IMP the below logic is written assuming an instruction can have either int or float operands
 		Operand availableOperand = operand;
 
 		return getToma_RF_type(availableOperand);
