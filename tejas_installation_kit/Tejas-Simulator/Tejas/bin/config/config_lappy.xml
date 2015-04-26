@@ -27,7 +27,7 @@
 		<IndexAddrModeEnable>0</IndexAddrModeEnable>
 		<EmuCores>0</EmuCores>
 		<JavaCores>1</JavaCores>
-		<DebugMode>false</DebugMode>
+		<DebugMode>true</DebugMode>
 		<DetachMemSysData>true</DetachMemSysData>
 		<DetachMemSysInsn>false</DetachMemSysInsn>
 		<PrintPowerStats>true</PrintPowerStats>
@@ -155,8 +155,8 @@
 			<!-- Toma Change Start -->
 
 			<Toma_params>
-				<rs_buffersize>2</rs_buffersize>
-				<rob_buffersize>2</rob_buffersize>
+				<rs_buffersize>3</rs_buffersize>
+				<rob_buffersize>3</rob_buffersize>
 				<Toma_LSQSize>64</Toma_LSQSize>
 			</Toma_params>
 
