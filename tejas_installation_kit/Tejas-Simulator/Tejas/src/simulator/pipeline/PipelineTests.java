@@ -44,8 +44,8 @@ public class PipelineTests {
 	/*
 	 * simulates a sequence of intALU instructions that have no data dependencies
 	 */
-	public static void minimumDataDependencies() {
-
+	private static void minimumDataDependencies() {
+		System.out.println("---------minimumDataDependencies-------------");
 		// generate instruction sequence
 		Instruction newInst;
 		int temp = 1;
@@ -68,8 +68,8 @@ public class PipelineTests {
 	/*
 	 * simulates a sequence of intALU instructions, with (i+1)th instruction dependent on ith
 	 */
-	public static void maximumDataDependencies() {
-
+	private static void maximumDataDependencies() {
+		System.out.println("---------maximumDataDependencies-------------");
 		// generate instruction sequence
 		Instruction newInst;
 		for (int i = 0; i < 100; i++) {
@@ -86,8 +86,8 @@ public class PipelineTests {
 	/*
 	 * simulates a sequence of floatDiv instructions, with no data dependencies
 	 */
-	public static void structuralHazards() {
-
+	private static void structuralHazards() {
+		System.out.println("---------structuralHazards-------------");
 		// generate instruction sequence
 		Instruction newInst;
 		int temp = 1;
@@ -110,8 +110,8 @@ public class PipelineTests {
 	/*
 	 * simulates a sequence of floatDiv instructions, all operating on R0, and writing to R0
 	 */
-	public static void renameTest() {
-
+	private static void renameTest() {
+		System.out.println("---------renameTest-------------");
 		// generate instruction sequence
 		Instruction newInst;
 		for (int i = 0; i < 100; i++) {
@@ -290,6 +290,8 @@ public class PipelineTests {
 			ArchitecturalComponent.getCores()[0].getPipelineInterface().oneCycleOperation();
 			GlobalClock.incrementClock();
 		}
+
+		System.out.println("\n---------------Simulation Completed------------");
 	}
 
 	private static void toma_printIPC(int numOfInstr) {

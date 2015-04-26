@@ -87,7 +87,6 @@ public class Toma_ROB extends SimulationElement {
 
 				if (this.core.currentThreads < 0) {
 					this.core.currentThreads = 0;
-					System.out.println("num threads < 0");
 				}
 
 				if (this.core.currentThreads == 0) {
