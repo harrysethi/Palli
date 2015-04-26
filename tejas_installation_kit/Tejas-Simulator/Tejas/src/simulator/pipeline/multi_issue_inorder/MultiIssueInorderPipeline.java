@@ -35,11 +35,6 @@ public class MultiIssueInorderPipeline implements PipelineInterface {
 		// ------Toma Change Start-------------
 		long currentTime = GlobalClock.getCurrentTime();
 
-		if (SimulationConfig.debugMode) {
-			System.out.println("\n----------------------------executing cycle: " + currentTime
-					+ "-----------------------------");
-		}
-
 		if (currentTime % coreStepSize == 0 && containingExecutionEngine.isExecutionBegun() == true
 				&& containingExecutionEngine.isExecutionComplete() == false) {
 			toma_commit();

@@ -3,6 +3,7 @@
  */
 package memorysystem;
 
+import generic.GlobalClock;
 import config.SimulationConfig;
 import memorysystem.Toma_LSQentry.Toma_LSQEntryType;
 import pipeline.multi_issue_inorder.Toma_ROBentry;
@@ -113,8 +114,8 @@ public class Toma_LSQ {
 					&& toma_LSQentry.getAddress() == address && toma_LSQentry.isOccupied()) {
 				toma_RSentry.setCompletedExecution(true);
 				if (SimulationConfig.debugMode) {
-					System.out.println("Execute (LSQ) | Completed Executing : " + " \n "
-							+ toma_RSentry.getInstruction());
+					System.out.println("\n" + GlobalClock.getCurrentTime() + ": "
+							+ "Execute (LSQ) | Completed Executing : " + " \n " + toma_RSentry.getInstruction());
 				}
 				return;
 			}

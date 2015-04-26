@@ -3,7 +3,6 @@
  */
 package memorysystem;
 
-import generic.Core;
 import generic.Event;
 import generic.EventQueue;
 import generic.GlobalClock;
@@ -40,7 +39,7 @@ public class Toma_CDB extends SimulationElement {
 		toma_RSentry.clearEntry();
 
 		if (SimulationConfig.debugMode) {
-			System.out.println("WriteResult (CDB) | RS free & ROB ready : " + " \n " + ins);
+			System.out.println("\n" + GlobalClock.getCurrentTime() + ": " + "WriteResult (CDB) | RS free & ROB ready : " + " \n " + ins);
 		}
 
 		Toma_ReservationStationEntry[] reservationStationEntries = rs.getReservationStationEntries();
@@ -61,7 +60,7 @@ public class Toma_CDB extends SimulationElement {
 				toma_RSentryentry.setSourceOperand1_availability(0);
 
 				if (SimulationConfig.debugMode) {
-					System.out.println("WriteResult | source1 now available : " + " \n " + _ins);
+					System.out.println("\n" + GlobalClock.getCurrentTime() + ": " + "WriteResult | source1 now available : " + " \n " + _ins);
 				}
 			}
 
@@ -70,7 +69,7 @@ public class Toma_CDB extends SimulationElement {
 				toma_RSentryentry.setSourceOperand2_availability(0);
 
 				if (SimulationConfig.debugMode) {
-					System.out.println("WriteResult | source2 now available : " + " \n " + _ins);
+					System.out.println("\n" + GlobalClock.getCurrentTime() + ": " + "WriteResult | source2 now available : " + " \n " + _ins);
 				}
 			}
 		}

@@ -144,7 +144,7 @@ public class Toma_ROB extends SimulationElement {
 		}
 
 		if (isAnyMispredictedBranch) {
-			System.out.println("=====Mispredicted Branch===== :( :(");
+			System.out.println("\n" + GlobalClock.getCurrentTime() + ": " + "=====Mispredicted Branch===== :( :(");
 			handleBranchMisprediction();
 		}
 
@@ -154,7 +154,7 @@ public class Toma_ROB extends SimulationElement {
 	public void handleEvent(EventQueue eventQ, Event event) {
 
 		if (event.getRequestType() == RequestType.MISPRED_PENALTY_COMPLETE) {
-			System.out.println("=====Branch Penalty Complete===== :) :)");
+			System.out.println("\n" + GlobalClock.getCurrentTime() + ": " + "=====Branch Penalty Complete===== :) :)");
 			completeMispredictionPenalty();
 		}
 
@@ -222,7 +222,7 @@ public class Toma_ROB extends SimulationElement {
 
 		// debug print
 		if (SimulationConfig.debugMode) {
-			System.out.println("COMMIT | committed : " + " \n " + firstInst);
+			System.out.println("\n" + GlobalClock.getCurrentTime() + ": " + "COMMIT | committed : " + " \n " + firstInst);
 		}
 
 		returnInstructionToPool(firstInst);

@@ -37,9 +37,9 @@
 		<NumInsToIgnore>0000000</NumInsToIgnore>
 		<subsetSim>false</subsetSim>
 		<subsetSimSize>10000000</subsetSimSize>
-		<markerFunctions>false</markerFunctions>
-		<startSimMarker>XXX_startInstrumentation</startSimMarker>
-		<endSimMarker>XXX_endInstrumentation</endSimMarker>
+		<markerFunctions>true</markerFunctions>
+		<startSimMarker>foo</startSimMarker>
+		<endSimMarker>bar</endSimMarker>
 		<NumCores>32</NumCores>
 	</Simulation>
 

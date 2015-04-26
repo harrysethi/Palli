@@ -3,6 +3,6 @@ void bar(){}
 
 int main(){
 foo();
-int i=2;
+int i=1;
 bar();
 }

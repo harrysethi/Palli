@@ -179,7 +179,7 @@ public class FetchUnitIn_MII extends SimulationElement {
 				this.fetchBufferIndex = (this.fetchBufferIndex + 1) % this.fetchBufferCapacity;
 
 				if (SimulationConfig.debugMode) {
-					System.out.println("FETCH | fetched : " + "\n" + ins);
+					System.out.println("\n" + GlobalClock.getCurrentTime() + ": " + "FETCH | fetched : " + "\n" + ins);
 				}
 			}
 		}

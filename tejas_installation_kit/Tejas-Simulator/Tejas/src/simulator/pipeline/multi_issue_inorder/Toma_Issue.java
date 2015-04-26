@@ -4,6 +4,7 @@
 package pipeline.multi_issue_inorder;
 
 import generic.Core;
+import generic.GlobalClock;
 import generic.Instruction;
 import generic.Operand;
 import generic.OperandType;
@@ -69,34 +70,44 @@ public class Toma_Issue {
 			}
 
 			if (ins.getSourceOperand1() != null && !isImmediateOperand(ins.getSourceOperand1())) {
-				int register_source1;
-				Toma_RegisterFile toma_RF_source1;
+				int register_source1 = -1;
+				Toma_RegisterFile toma_RF_source1 = null;
 				if (ins.getSourceOperand1().getOperandType() == OperandType.memory) {
-					register_source1 = (int) ins.getSourceOperand1().getMemoryLocationFirstOperand().getValue(); // rs
-					toma_RF_source1 = executionEngine.getToma_RegisterFile(ins.getSourceOperand1()
-							.getMemoryLocationFirstOperand());
+
+					Operand memory_operand_register = getRegister_MemoryOperand1(ins);
+
+					if (memory_operand_register == null) {
+						rs_freeEntry.setSourceOperand1_availability(0);
+					}
+
+					else {
+						register_source1 = (int) memory_operand_register.getValue(); // rs
+						toma_RF_source1 = executionEngine.getToma_RegisterFile(memory_operand_register);
+					}
 				} else {
 					register_source1 = (int) ins.getSourceOperand1().getValue(); // rs
 					toma_RF_source1 = executionEngine.getToma_RegisterFile(ins.getSourceOperand1());
 				}
 
-				if (toma_RF_source1.isBusy(register_source1)) {
-					int h = toma_RF_source1.getToma_ROBEntry(register_source1);
+				if (toma_RF_source1 != null) {
+					if (toma_RF_source1.isBusy(register_source1)) {
+						int h = toma_RF_source1.getToma_ROBEntry(register_source1);
 
-					Toma_ROBentry rob_h = rob.getRobEntries()[h];
+						Toma_ROBentry rob_h = rob.getRobEntries()[h];
 
-					if (rob_h.isReady()) {
-						rs_freeEntry.setSourceOperand1_value(rob_h.getResultValue());
+						if (rob_h.isReady()) {
+							rs_freeEntry.setSourceOperand1_value(rob_h.getResultValue());
+							rs_freeEntry.setSourceOperand1_availability(0);
+						}
+
+						else {
+							rs_freeEntry.setSourceOperand1_availability(h);
+						}
+
+					} else {// else for "if (rf.isBusy(register_source1)) {"
+						rs_freeEntry.setSourceOperand1_value(toma_RF_source1.getValue(register_source1));
 						rs_freeEntry.setSourceOperand1_availability(0);
 					}
-
-					else {
-						rs_freeEntry.setSourceOperand1_availability(h);
-					}
-
-				} else {// else for "if (rf.isBusy(register_source1)) {"
-					rs_freeEntry.setSourceOperand1_value(toma_RF_source1.getValue(register_source1));
-					rs_freeEntry.setSourceOperand1_availability(0);
 				}
 
 				if (ins.getOperationType() == OperationType.xchg) {
@@ -188,11 +199,31 @@ public class Toma_Issue {
 			}
 
 			if (SimulationConfig.debugMode) {
-				System.out.println("Issue | Issued : " + " \n " + ins);
+				System.out.println("\n" + GlobalClock.getCurrentTime() + ": " + "Issue | Issued : " + " \n " + ins);
 			}
 
 			ifIdLatch.poll();
 		}
+	}
+
+	private Operand getRegister_MemoryOperand1(Instruction ins) {
+		Operand memory_operand_register = null;
+		Operand memory_first_operand = ins.getSourceOperand1().getMemoryLocationFirstOperand();
+		Operand memory_second_operand = ins.getSourceOperand1().getMemoryLocationSecondOperand();
+
+		if (memory_first_operand != null
+				&& (memory_first_operand.getOperandType() == OperandType.integerRegister || memory_first_operand
+						.getOperandType() == OperandType.floatRegister)) {
+			memory_operand_register = memory_first_operand;
+		}
+
+		if (memory_second_operand != null
+				&& (memory_second_operand.getOperandType() == OperandType.integerRegister || memory_second_operand
+						.getOperandType() == OperandType.floatRegister)) {
+			memory_operand_register = memory_second_operand;
+		}
+
+		return memory_operand_register;
 	}
 
 	private boolean isImmediateOperand(Operand operand) {

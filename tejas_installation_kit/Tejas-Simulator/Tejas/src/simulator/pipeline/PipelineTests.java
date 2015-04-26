@@ -218,6 +218,26 @@ public class PipelineTests {
 			toma_test_mov_imm();
 			break;
 
+		case 28:
+			toma_test_dependency_load();
+			break;
+
+		case 29:
+			toma_test_dependency_store();
+			break;
+
+		case 30:
+			toma_test_dependency_load_store();
+			break;
+
+		case 31:
+			toma_test_mispredicted_branch();
+			break;
+
+		case 32:
+			toma_test_predicted_branch();
+			break;
+
 		default:
 			misc.Error.showErrorAndExit("unknown test type");
 		}
@@ -254,21 +274,20 @@ public class PipelineTests {
 				break;
 
 			case load:
-				newInst = Instruction.getLoadInstruction(Operand.getIntegerRegister(0), Operand.getIntegerRegister(1));
-				newInst.setSourceOperand1MemValue(1234);
+				newInst = getLoadInstruction(0, 1, 1234);
 				break;
 
 			case store:
-				newInst = Instruction.getStoreInstruction(Operand.getIntegerRegister(0), Operand.getIntegerRegister(0));
-				newInst.setSourceOperand1MemValue(1234);
+				newInst = getStoreInstruction(0, 1, 1234);
 				break;
 
 			case jump:
-				// newInst = Instruction.getUnconditionalJumpInstruction(newInstructionAddress);//TODO:vekho ainu
+				newInst = Instruction.getUnconditionalJumpInstruction(Operand.getIntegerRegister(0));
 				break;
 
 			case branch:
-				// newInst = Instruction.getBranchInstruction(newInstructionAddress);//TODO: vekho ainu
+				newInst = Instruction.getBranchInstruction(Operand.getIntegerRegister(0));
+				newInst.setBranchTaken(true);
 				break;
 
 			default:
@@ -281,6 +300,24 @@ public class PipelineTests {
 		}
 
 		simulatePipeline();
+	}
+
+	private static Instruction getStoreInstruction(int memReg, int srcReg, int addr) {
+		Instruction newInst;
+		Operand memory_first_operand_store_source1 = Operand.getIntegerRegister(memReg);
+		Operand operand_store_source1 = Operand.getMemoryOperand(memory_first_operand_store_source1, null);
+		newInst = Instruction.getStoreInstruction(operand_store_source1, Operand.getIntegerRegister(srcReg));
+		newInst.setSourceOperand1MemValue(addr);
+		return newInst;
+	}
+
+	private static Instruction getLoadInstruction(int memReg, int destReg, int addr) {
+		Instruction newInst;
+		Operand memory_first_operand_load_source1 = Operand.getIntegerRegister(memReg);
+		Operand operand_load_source1 = Operand.getMemoryOperand(memory_first_operand_load_source1, null);
+		newInst = Instruction.getLoadInstruction(operand_load_source1, Operand.getIntegerRegister(destReg));
+		newInst.setSourceOperand1MemValue(addr);
+		return newInst;
 	}
 
 	private static void simulatePipeline() {
@@ -403,7 +440,7 @@ public class PipelineTests {
 		inputToPipeline.enqueue(ins);
 
 		simulatePipeline();
-		toma_printIPC(2);
+		toma_printIPC(3);
 	}
 
 	public static void toma_test_dependency_xchg() {
@@ -435,7 +472,7 @@ public class PipelineTests {
 		inputToPipeline.enqueue(ins);
 
 		simulatePipeline();
-		toma_printIPC(2);
+		toma_printIPC(4);
 	}
 
 	public static void toma_test_dependency_int_float() {
@@ -462,6 +499,81 @@ public class PipelineTests {
 
 		simulatePipeline();
 		toma_printIPC(1);
+	}
+
+	public static void toma_test_dependency_load() {
+		System.out.println("---------toma_test_dependency_load-------------");
+		Instruction ins = null;
+
+		ins = getLoadInstruction(0, 1, 1234);
+		inputToPipeline.enqueue(ins);
+		ins = Instruction.getIntALUInstruction(Operand.getIntegerRegister(1), Operand.getIntegerRegister(2),
+				Operand.getIntegerRegister(5));
+		inputToPipeline.enqueue(ins);
+
+		simulatePipeline();
+		toma_printIPC(2);
+	}
+
+	public static void toma_test_dependency_store() {
+		System.out.println("---------toma_test_dependency_store-------------");
+		Instruction ins = null;
+
+		ins = Instruction.getIntALUInstruction(Operand.getIntegerRegister(1), Operand.getIntegerRegister(2),
+				Operand.getIntegerRegister(1));
+		inputToPipeline.enqueue(ins);
+		ins = getStoreInstruction(1, 0, 1234);
+		inputToPipeline.enqueue(ins);
+
+		simulatePipeline();
+		toma_printIPC(2);
+	}
+
+	public static void toma_test_dependency_load_store() {
+		System.out.println("---------toma_test_dependency_load_store-------------");
+		Instruction ins = null;
+
+		ins = getStoreInstruction(0, 1, 1234);
+		inputToPipeline.enqueue(ins);
+		ins = getLoadInstruction(2, 3, 1234);
+		inputToPipeline.enqueue(ins);
+		ins = getStoreInstruction(4, 5, 1234);
+		inputToPipeline.enqueue(ins);
+		ins = getStoreInstruction(6, 7, 1235);
+		inputToPipeline.enqueue(ins);
+
+		simulatePipeline();
+		toma_printIPC(4);
+	}
+
+	public static void toma_test_mispredicted_branch() {
+		System.out.println("---------toma_test_mispredicted_branch-------------");
+		Instruction ins = null;
+
+		ins = Instruction.getBranchInstruction(Operand.getIntegerRegister(0));
+		ins.setBranchTaken(false);
+		inputToPipeline.enqueue(ins);
+		ins = Instruction.getIntALUInstruction(Operand.getIntegerRegister(1), Operand.getIntegerRegister(2),
+				Operand.getIntegerRegister(1));
+		inputToPipeline.enqueue(ins);
+
+		simulatePipeline();
+		toma_printIPC(4);
+	}
+
+	public static void toma_test_predicted_branch() {
+		System.out.println("---------toma_test_predicted_branch-------------");
+		Instruction ins = null;
+
+		ins = Instruction.getBranchInstruction(Operand.getIntegerRegister(0));
+		ins.setBranchTaken(true);
+		inputToPipeline.enqueue(ins);
+		ins = Instruction.getIntALUInstruction(Operand.getIntegerRegister(1), Operand.getIntegerRegister(2),
+				Operand.getIntegerRegister(1));
+		inputToPipeline.enqueue(ins);
+
+		simulatePipeline();
+		toma_printIPC(4);
 	}
 
 	// ------Toma Change End-------------

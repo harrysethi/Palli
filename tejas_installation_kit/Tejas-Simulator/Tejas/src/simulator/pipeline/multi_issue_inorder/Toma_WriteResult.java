@@ -33,7 +33,8 @@ public class Toma_WriteResult {
 		toma_RSentry.clearEntry();
 
 		if (SimulationConfig.debugMode) {
-			System.out.println("WriteResult | RS free & ROB ready : " + " \n " + ins);
+			System.out.println("\n" + GlobalClock.getCurrentTime() + ": " + "WriteResult | RS free & ROB ready : "
+					+ " \n " + ins);
 		}
 	}
 
@@ -70,8 +71,8 @@ public class Toma_WriteResult {
 				executionEngine.getCoreMemorySystem().issueRequestToToma_CDB(toma_RSentry);
 				toma_RSentry.setIssuedRequestToCDB(true);
 				if (SimulationConfig.debugMode) {
-					System.out.println("WriteResult | Issued Request to CDB : " + " \n "
-							+ toma_RSentry.getInstruction());
+					System.out.println("\n" + GlobalClock.getCurrentTime() + ": "
+							+ "WriteResult | Issued Request to CDB : " + " \n " + toma_RSentry.getInstruction());
 				}
 				continue;
 			}
