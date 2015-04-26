@@ -143,8 +143,6 @@ public class Toma_ROB extends SimulationElement {
 			}
 		}
 
-		// TODO: check if below required
-
 		if (isAnyMispredictedBranch) {
 			System.out.println("=====Mispredicted Branch===== :( :(");
 			handleBranchMisprediction();

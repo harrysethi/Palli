@@ -29,7 +29,7 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	private WriteBackUnitIn_MII writeBackUnitIn;
 
 	// ------Toma Change Start-------------
-	// TODO: since we have made new files, check if prev files are referenced somewhere
+	// TO-DO: since we have made new files, check if prev files are referenced somewhere
 	private Toma_Issue toma_issue;
 	private Toma_Execute toma_execute;
 	private Toma_WriteResult toma_writeResult;
@@ -157,17 +157,6 @@ public class MultiIssueInorderExecutionEngine extends ExecutionEngine {
 	private Toma_RegisterFile getToma_RegisterFile_floating() {
 		return toma_RegisterFile_floating;
 	}
-
-	/*
-	 * public Toma_RegisterFile getToma_RegisterFile(Operand operand1, Operand operand2) { // TODO:IMP the below logic
-	 * is written assuming an instruction can have either int or float operands Operand availableOperand = null;
-	 * 
-	 * if (operand1 != null) { availableOperand = operand1; }
-	 * 
-	 * if (operand2 != null) { availableOperand = operand2; }
-	 * 
-	 * return getToma_RF_type(availableOperand); }
-	 */
 
 	public Toma_RegisterFile getToma_RegisterFile(Operand operand) {
 		Operand availableOperand = operand;

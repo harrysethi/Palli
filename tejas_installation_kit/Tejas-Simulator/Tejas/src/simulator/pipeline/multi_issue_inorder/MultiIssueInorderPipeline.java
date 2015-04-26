@@ -1,5 +1,6 @@
 package pipeline.multi_issue_inorder;
 
+import config.SimulationConfig;
 import pipeline.PipelineInterface;
 import generic.Core;
 import generic.EventQueue;
@@ -34,7 +35,10 @@ public class MultiIssueInorderPipeline implements PipelineInterface {
 		// ------Toma Change Start-------------
 		long currentTime = GlobalClock.getCurrentTime();
 
-		System.out.println("\n----------------------------executing cycle: " + currentTime + "-----------------------------");// TODO: remove later
+		if (SimulationConfig.debugMode) {
+			System.out.println("\n----------------------------executing cycle: " + currentTime
+					+ "-----------------------------");
+		}
 
 		if (currentTime % coreStepSize == 0 && containingExecutionEngine.isExecutionBegun() == true
 				&& containingExecutionEngine.isExecutionComplete() == false) {

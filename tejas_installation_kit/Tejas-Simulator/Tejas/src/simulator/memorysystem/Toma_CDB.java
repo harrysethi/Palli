@@ -57,49 +57,21 @@ public class Toma_CDB extends SimulationElement {
 			Instruction _ins = toma_RSentryentry.getInstruction();
 
 			if (toma_RSentryentry.getSourceOperand1_availability() == b) {
-				// Toma_RegisterFile toma_RF_source1 = executionEngine.getToma_RegisterFile(ins.getSourceOperand1());
-				// int register_source1 = (int) ins.getSourceOperand1().getValue();
-
-				// TODO: remove after testing
-				/*
-				 * if (toma_RF_source1.isBusy(register_source1)) { continue; }
-				 */
-
 				toma_RSentryentry.setSourceOperand1_value(result);
 				toma_RSentryentry.setSourceOperand1_availability(0);
 
 				if (SimulationConfig.debugMode) {
 					System.out.println("WriteResult | source1 now available : " + " \n " + _ins);
 				}
-
-				/*
-				 * if (ins.getOperationType() == OperationType.xchg) {
-				 * toma_RF_source1.setToma_ROBEntry(toma_RSentryentry.getInst_entryNumber_ROB(), register_source1); //
-				 * TODO: remove after testing // toma_RF_source1.setBusy(true, register_source1); //break; }
-				 */
 			}
 
 			if (toma_RSentryentry.getSourceOperand2_availability() == b) {
-				// Toma_RegisterFile toma_RF_source2 = executionEngine.getToma_RegisterFile(ins.getSourceOperand2());
-				// int register_source2 = (int) ins.getSourceOperand2().getValue();
-
-				// TODO: remove after testing
-				/*
-				 * if (toma_RF_source2.isBusy(register_source2)) { continue; }
-				 */
-
 				toma_RSentryentry.setSourceOperand2_value(result);
 				toma_RSentryentry.setSourceOperand2_availability(0);
 
 				if (SimulationConfig.debugMode) {
 					System.out.println("WriteResult | source2 now available : " + " \n " + _ins);
 				}
-
-				/*
-				 * if (ins.getOperationType() == OperationType.xchg) {
-				 * toma_RF_source2.setToma_ROBEntry(toma_RSentryentry.getInst_entryNumber_ROB(), register_source2); //
-				 * TODO: remove after testing // toma_RF_source2.setBusy(true, register_source2); break; }
-				 */
 			}
 		}
 

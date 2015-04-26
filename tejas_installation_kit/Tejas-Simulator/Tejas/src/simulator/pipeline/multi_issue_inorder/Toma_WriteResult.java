@@ -39,7 +39,7 @@ public class Toma_WriteResult {
 
 	public void performWriteResult() {
 		if (executionEngine.isToma_stall_branchMisprediction())
-		// || ROB.head == -1 /*ROB empty*/)//TODO: check if required
+		// || ROB.head == -1 /*ROB empty*/)//TODO:(IMP) check if required
 		{
 			return;
 		}
@@ -82,7 +82,7 @@ public class Toma_WriteResult {
 			}
 
 			rsFreeRobReady(toma_RSentry);
-			// TODO:-imp => ROB[h].value = RS[r].VK;...not required
+			// TO-DO:- => ROB[h].value = RS[r].VK;...not required
 
 		}
 	}
