@@ -9,6 +9,6 @@
 <stringAttribute key="org.eclipse.debug.ui.ATTR_CAPTURE_IN_FILE" value="/home/dell/Desktop/Dropbox/IITD_CurrentSem/CSL718/Workspace/Asgn3/Palli/Tejas_Output/Tejas_output_test1_SIT.txt"/>
 <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="main.Main"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="/home/dell/Dropbox/IITD_CurrentSem/CSL718/Workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/Tejas/src/simulator/config/config_SIT.xml /home/dell/Dropbox/IITD_CurrentSem/CSL718/Workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/outputs/test1_output /home/dell/Dropbox/IITD_CurrentSem/CSL718/Workspace/Asgn3/Palli/Test_inputs/mm"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="/home/dell/Dropbox/IITD_CurrentSem/CSL718/Workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/Tejas/src/simulator/config/config_SIT.xml /home/dell/Dropbox/IITD_CurrentSem/CSL718/Workspace/Asgn3/Palli/tejas_installation_kit/Tejas-Simulator/outputs/test1_output /home/dell/Dropbox/IITD_CurrentSem/CSL718/Workspace/Asgn3/Palli/Test_inputs/hp"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="Tejas"/>
 </launchConfiguration>

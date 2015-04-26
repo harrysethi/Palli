@@ -72,6 +72,11 @@ public class Toma_Execute {
 					boolean memReqIssued = executionEngine.multiIssueInorderCoreMemorySystem.issueRequestToL1Cache(
 							RequestType.Cache_Read, toma_LSQentry.getAddress());
 
+					if (SimulationConfig.debugMode) {
+						System.out.println("\n" + GlobalClock.getCurrentTime() + ": "
+								+ "Execute | Issued request to l1Cache : " + " \n " + ins);
+					}
+
 					if (memReqIssued == false) {
 						continue;
 					}

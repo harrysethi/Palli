@@ -132,6 +132,12 @@ public class Toma_LSQ {
 		}
 
 		toma_LSQentry.setOccupied(false);
+		toma_LSQentry.setAddress(-1);
+		toma_LSQentry.setStartedCalculatingAddress(false);
+		toma_LSQentry.setAddressCalculated(false);
+		toma_LSQentry.setTimeToCompleteAddressCalculation(0);
+		toma_LSQentry.setToma_robEntry(null);
+		toma_LSQentry.setToma_RSentry(null);
 
 		if (head == tail) {
 			head = -1;

@@ -79,7 +79,7 @@ public class Toma_WriteResult {
 
 			// store instruction
 			if (toma_RSentry.getSourceOperand2_availability() != 0) {
-				return;
+				continue;
 			}
 
 			rsFreeRobReady(toma_RSentry);
