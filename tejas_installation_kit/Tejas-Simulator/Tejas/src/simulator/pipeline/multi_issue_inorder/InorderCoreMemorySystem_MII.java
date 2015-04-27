@@ -23,13 +23,13 @@ public class InorderCoreMemorySystem_MII extends CoreMemorySystem {
 
 	// To issue the request directly to L1 cache
 	// missPenalty field has been added to accomodate the missPenalty incurred due to TLB miss
-	public boolean issueRequestToL1Cache(RequestType requestType, long address) {
+	public boolean issueRequestToL1Cache(RequestType requestType, long address, int indexInQ) {
 		MultiIssueInorderPipeline inorderPipeline = (MultiIssueInorderPipeline) core.getPipelineInterface();
 
-		int tlbMissPenalty = performDTLBLookup(address, inorderPipeline);
+		int tlbMissPenalty = performDTLBLookup(address, inorderPipeline, indexInQ);
 
 		AddressCarryingEvent addressEvent = new AddressCarryingEvent(getCore().getEventQueue(), tlbMissPenalty, this,
-				l1Cache, requestType, address);
+				l1Cache, requestType, address, indexInQ);
 
 		if (l1Cache.isBusy()) {
 			return false;
@@ -48,13 +48,13 @@ public class InorderCoreMemorySystem_MII extends CoreMemorySystem {
 	}
 
 	// To issue the request to instruction cache
-	public void issueRequestToInstrCache(long address) {
+	public void issueRequestToInstrCache(long address, int indexInQ) {
 		MultiIssueInorderPipeline inorderPipeline = (MultiIssueInorderPipeline) core.getPipelineInterface();
 
-		int tlbMissPenalty = performITLBLookup(address, inorderPipeline);
+		int tlbMissPenalty = performITLBLookup(address, inorderPipeline, indexInQ);
 
 		AddressCarryingEvent addressEvent = new AddressCarryingEvent(getCore().getEventQueue(), tlbMissPenalty, this,
-				iCache, RequestType.Cache_Read, address);
+				iCache, RequestType.Cache_Read, address, indexInQ);
 
 		// attempt issue to lower level cache
 		this.iCache.getPort().put(addressEvent);
@@ -77,8 +77,8 @@ public class InorderCoreMemorySystem_MII extends CoreMemorySystem {
 
 	// ------Toma Change End-------------
 
-	private int performITLBLookup(long address, MultiIssueInorderPipeline inorderPipeline) {
-		boolean tLBHit = iTLB.searchTLBForPhyAddr(address);
+	private int performITLBLookup(long address, MultiIssueInorderPipeline inorderPipeline, int indexInQ) {
+		boolean tLBHit = iTLB.searchTLBForPhyAddr(address, indexInQ);
 		int missPenalty = 0;
 		if (!tLBHit) {
 			missPenalty = iTLB.getMemoryPenalty();
@@ -86,8 +86,8 @@ public class InorderCoreMemorySystem_MII extends CoreMemorySystem {
 		return missPenalty;
 	}
 
-	private int performDTLBLookup(long address, MultiIssueInorderPipeline inorderPipeline) {
-		boolean tLBHit = dTLB.searchTLBForPhyAddr(address);
+	private int performDTLBLookup(long address, MultiIssueInorderPipeline inorderPipeline, int indexInQ) {
+		boolean tLBHit = dTLB.searchTLBForPhyAddr(address, indexInQ);
 		int missPenalty = 0;
 		if (!tLBHit) {
 			missPenalty = dTLB.getMemoryPenalty();
@@ -101,6 +101,7 @@ public class InorderCoreMemorySystem_MII extends CoreMemorySystem {
 		// handle memory response
 
 		AddressCarryingEvent memResponse = (AddressCarryingEvent) event;
+		int indexInQ = ((AddressCarryingEvent)event).indexInQ;
 		long address = memResponse.getAddress();
 
 		// Unified cache scenario
@@ -108,7 +109,7 @@ public class InorderCoreMemorySystem_MII extends CoreMemorySystem {
 			containingExecEngine.getFetchUnitIn().processCompletionOfMemRequest(address);
 			containingExecEngine.getMemUnitIn().processCompletionOfMemRequest(address);
 			// ------Toma Change Start-------------
-			toma_LSQ.handleMemoryResponse(address);
+			toma_LSQ.handleMemoryResponse(address, indexInQ);
 			// ------Toma Change End-------------
 		}
 
@@ -123,7 +124,7 @@ public class InorderCoreMemorySystem_MII extends CoreMemorySystem {
 			// L1MissStatusHoldingRegister.removeRequestsByAddress(memResponse);
 			containingExecEngine.getMemUnitIn().processCompletionOfMemRequest(address);
 			// ------Toma Change Start-------------
-			toma_LSQ.handleMemoryResponse(address);
+			toma_LSQ.handleMemoryResponse(address, indexInQ);
 			// ------Toma Change End-------------
 		}
 

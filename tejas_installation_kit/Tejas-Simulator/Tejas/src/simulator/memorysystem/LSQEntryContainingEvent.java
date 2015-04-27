@@ -10,9 +10,9 @@ public class LSQEntryContainingEvent extends AddressCarryingEvent
 	
 	public LSQEntryContainingEvent(EventQueue eventQ, long eventTime, SimulationElement requestingElement,
 			SimulationElement processingElement,
-			RequestType requestType, LSQEntry lsqEntry,int coreId) {
+			RequestType requestType, LSQEntry lsqEntry,int coreId, int indexInQ) {
 		super(eventQ, eventTime, requestingElement, processingElement,
-				requestType,lsqEntry.getAddr());
+				requestType,lsqEntry.getAddr(), indexInQ);
 		this.lsqEntry = lsqEntry;
 	}
 	

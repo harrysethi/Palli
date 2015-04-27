@@ -12,29 +12,34 @@ public class AddressCarryingEvent extends Event implements Cloneable
 	public int hopLength;
 	public int dn_status=-1; //-1=initial, 1=broadcast, 2=hit, 3=miss
 	public Event parentEvent=null;
+	public int indexInQ = -10;
+	
 	public AddressCarryingEvent(EventQueue eventQ, long eventTime,
 			SimulationElement requestingElement,
 			SimulationElement processingElement,
-			RequestType requestType, long address) {
+			RequestType requestType, long address, int indexInQ) {
 		super(eventQ, eventTime, requestingElement, processingElement,
 				requestType, -1);
 		this.address = address;
+		this.indexInQ = indexInQ;
 	}
 	
-	public AddressCarryingEvent()
+	public AddressCarryingEvent(int indexInQ)
 	{
 		super(null, -1, null, null, RequestType.Cache_Read, -1);
 		this.address = -1;
+		this.indexInQ = indexInQ;
 	}
 	
 	public AddressCarryingEvent(long eventId, EventQueue eventQ, long eventTime,
 			SimulationElement requestingElement,
 			SimulationElement processingElement,
-			RequestType requestType, long address,int coreId) {
+			RequestType requestType, long address,int coreId, int indexInQ) {
 		super(eventQ, eventTime, requestingElement, processingElement,
 				requestType, coreId);
 		this.event_id = eventId;
 		this.address = address;
+		this.indexInQ = indexInQ;
 	}
 	
 	public AddressCarryingEvent updateEvent(EventQueue eventQ, long eventTime, 

@@ -192,9 +192,9 @@ public abstract class CoreMemorySystem extends SimulationElement {
 		}
 	}
 
-	public abstract void issueRequestToInstrCache(long address);
+	public abstract void issueRequestToInstrCache(long address, int indexInQ);
 
-	public abstract boolean issueRequestToL1Cache(RequestType requestType, long address);
+	public abstract boolean issueRequestToL1Cache(RequestType requestType, long address, int indexInQ);
 
 	public LSQ getLsqueue() {
 		return lsqueue;

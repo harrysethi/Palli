@@ -117,7 +117,8 @@ public class Toma_ROB extends SimulationElement {
 			else if (operationType == OperationType.store) {
 
 				boolean memReqIssued = containingExecutionEngine.multiIssueInorderCoreMemorySystem
-						.issueRequestToL1Cache(RequestType.Cache_Write, firstRobEntry.getToma_lsqEntry().getAddress());
+						.issueRequestToL1Cache(RequestType.Cache_Write, firstRobEntry.getToma_lsqEntry().getAddress(),
+								firstRobEntry.getToma_lsqEntry().getIndexInQ());
 
 				if (memReqIssued == false) {
 					break;
@@ -222,7 +223,8 @@ public class Toma_ROB extends SimulationElement {
 
 		// debug print
 		if (SimulationConfig.debugMode) {
-			System.out.println("\n" + GlobalClock.getCurrentTime() + ": " + "COMMIT | committed : " + " \n " + firstInst);
+			System.out.println("\n" + GlobalClock.getCurrentTime() + ": " + "COMMIT | committed : " + " \n "
+					+ firstInst);
 		}
 
 		returnInstructionToPool(firstInst);

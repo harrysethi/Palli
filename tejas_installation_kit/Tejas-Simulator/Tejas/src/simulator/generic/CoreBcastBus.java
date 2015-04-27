@@ -22,6 +22,7 @@ public class CoreBcastBus extends SimulationElement{
 	public void handleEvent(EventQueue eventQ, Event event) {
 		if(event.getRequestType() == RequestType.TREE_BARRIER_RELEASE){
 			long barAddress = ((AddressCarryingEvent)event).getAddress();
+			int indexInQ = ((AddressCarryingEvent)event).indexInQ;
 			ArchitecturalComponent.cores.get(((AddressCarryingEvent)event).coreId).activatePipeline();
 			if(((AddressCarryingEvent)event).coreId * 2 < BarrierTable.barrierList.get(barAddress).numThreads){
 				this.getPort().put(new AddressCarryingEvent(
@@ -31,7 +32,7 @@ public class CoreBcastBus extends SimulationElement{
 						this, 
 						RequestType.TREE_BARRIER_RELEASE, 
 						barAddress,
-						((AddressCarryingEvent)event).coreId *2));
+						((AddressCarryingEvent)event).coreId *2, indexInQ));
 				this.getPort().put(new AddressCarryingEvent(
 						0,eventQ,
 						1,
@@ -39,13 +40,14 @@ public class CoreBcastBus extends SimulationElement{
 						this, 
 						RequestType.TREE_BARRIER_RELEASE, 
 						barAddress,
-						((AddressCarryingEvent)event).coreId *2 + 1));
+						((AddressCarryingEvent)event).coreId *2 + 1, indexInQ));
 			}
 		}
 		else if(event.getRequestType() == RequestType.TREE_BARRIER){
 
 			long barAddress = ((AddressCarryingEvent)event).getAddress();
 			int coreId = ((AddressCarryingEvent)event).coreId;
+			int indexInQ = ((AddressCarryingEvent)event).indexInQ;
 
 			Barrier bar = BarrierTable.barrierList.get(barAddress);
 			int numThreads = bar.getNumThreads();
@@ -58,7 +60,7 @@ public class CoreBcastBus extends SimulationElement{
 						this, 
 						RequestType.TREE_BARRIER,
 						barAddress,
-						(int)coreId/2));
+						(int)coreId/2, indexInQ));
 			}
 			else{
 				System.out.println("Core Id : " + coreId );
@@ -73,7 +75,7 @@ public class CoreBcastBus extends SimulationElement{
 								this, 
 								RequestType.TREE_BARRIER_RELEASE, 
 								barAddress,
-								1));
+								1, indexInQ));
 					}
 					else{
 						this.getPort().put(new AddressCarryingEvent(
@@ -83,7 +85,7 @@ public class CoreBcastBus extends SimulationElement{
 								this, 
 								RequestType.TREE_BARRIER, 
 								barAddress,
-								(int)coreId/2));
+								(int)coreId/2, indexInQ));
 					}
 				}
 			}

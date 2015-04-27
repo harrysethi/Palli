@@ -87,7 +87,7 @@ public class TLB extends SimulationElement
 		return pageID;
 	}
 	
-	public boolean searchTLBForPhyAddr(long virtualAddr) //Returns whether the address was already in the TLB or not
+	public boolean searchTLBForPhyAddr(long virtualAddr, int indexInQ) //Returns whether the address was already in the TLB or not
 	{
 		noOfAccesses++;
 		
@@ -103,7 +103,7 @@ public class TLB extends SimulationElement
 			tlbMisses++;
 			//Fetch the TLB entry from Main memory through the event TLBAddrSearchEvent
 			AddressCarryingEvent addressEvent = new AddressCarryingEvent(getCore().getEventQueue(), memoryPenalty, this, 
-					this, RequestType.Tlb_Miss_Response, pageID);
+					this, RequestType.Tlb_Miss_Response, pageID, indexInQ);
 			
 			
 			this.getPort().put(addressEvent);

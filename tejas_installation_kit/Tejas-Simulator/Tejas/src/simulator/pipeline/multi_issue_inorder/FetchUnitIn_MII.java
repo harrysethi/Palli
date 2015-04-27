@@ -99,7 +99,7 @@ public class FetchUnitIn_MII extends SimulationElement {
 				} else {
 					this.fetchBufferStatus[i] = false;
 					containingExecutionEngine.multiIssueInorderCoreMemorySystem.issueRequestToInstrCache(newInstruction
-							.getCISCProgramCounter());
+							.getCISCProgramCounter(), -1);
 				}
 			}
 		}
@@ -140,7 +140,7 @@ public class FetchUnitIn_MII extends SimulationElement {
 					ArchitecturalComponent.coreBroadcastBus.getPort().put(
 							new AddressCarryingEvent(0, this.core.eventQueue, this.core.barrier_latency,
 									ArchitecturalComponent.coreBroadcastBus, ArchitecturalComponent.coreBroadcastBus,
-									RequestType.TREE_BARRIER, barrierAddress, coreId));
+									RequestType.TREE_BARRIER, barrierAddress, coreId, -1));
 				} else {
 					if (bar.timeToCross()) {
 						sleepThePipeline();
@@ -164,7 +164,7 @@ public class FetchUnitIn_MII extends SimulationElement {
 						ArchitecturalComponent.coreBroadcastBus.getPort().put(
 								new AddressCarryingEvent(this.core.eventQueue, bar_lat,
 										ArchitecturalComponent.coreBroadcastBus,
-										ArchitecturalComponent.coreBroadcastBus, RequestType.PIPELINE_RESUME, 0));
+										ArchitecturalComponent.coreBroadcastBus, RequestType.PIPELINE_RESUME, 0, -1));
 
 					} else {
 						sleepThePipeline();

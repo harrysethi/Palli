@@ -156,8 +156,8 @@
 			<!-- Toma Change Start -->
 
 			<Toma_params>
-				<rs_buffersize>10</rs_buffersize>
-				<rob_buffersize>10</rob_buffersize>
+				<rs_buffersize>150</rs_buffersize>
+				<rob_buffersize>168</rob_buffersize>
 				<Toma_LSQSize>64</Toma_LSQSize>
 			</Toma_params>
 

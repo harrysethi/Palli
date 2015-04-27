@@ -55,6 +55,7 @@ public class DNucaBank extends NucaCache implements NucaInterface
 		AddressCarryingEvent newEvent = null;
 		for(Integer bankId : parent.bankSets.get(setId))
 		{
+			int indexInQ = event.indexInQ;
 			if(bankId == myId)
 				continue;//Dont send to itself
 			parent.hopCount++;
@@ -64,7 +65,7 @@ public class DNucaBank extends NucaCache implements NucaInterface
 					this,
 					destination,
 					requestType,
-					addr);
+					addr, indexInQ);
 			newEvent.dn_status = 1;
 			newEvent.parentEvent = event;
 			sendEvent(newEvent);
@@ -86,8 +87,10 @@ public class DNucaBank extends NucaCache implements NucaInterface
 		// IF HIT
 		if (cl != null) {
 			cacheHit(addr, requestType, cl, event);
-			if(mshr.isAddrInMSHR(addr))
-				processEventsInMSHR(addr);
+			if(mshr.isAddrInMSHR(addr)){
+				int indexInQ = ((AddressCarryingEvent)event).indexInQ;
+				processEventsInMSHR(addr, indexInQ);
+			}
 		} else { //Miss in nearest bank
 			mshr.addToMSHR(event);
 			broadcastRequest(addr, requestType, event);//FIX-ME: If there is only one bank in bankset
@@ -110,7 +113,7 @@ public class DNucaBank extends NucaCache implements NucaInterface
 		return (DNucaBank) parent.cacheBank.get(migrateIndex);
 	}
 	public void doMigration(long addr, RequestType requestType,
-			AddressCarryingEvent event, CacheLine cl) 
+			AddressCarryingEvent event, CacheLine cl, int indexInQ) 
 	{
 		parent.hopCount++;
 		parent.migrations++;
@@ -124,7 +127,7 @@ public class DNucaBank extends NucaCache implements NucaInterface
 				this,
 				migrateDestination,
 				RequestType.Migrate_Block,
-				addr);
+				addr, indexInQ);
 		sendEvent(migrateEvent);
 		
 		AddressCarryingEvent newEvent = new AddressCarryingEvent(this.getEventQueue(), 
@@ -132,7 +135,7 @@ public class DNucaBank extends NucaCache implements NucaInterface
 				this,
 				event.getRequestingElement(),
 				requestType,
-				addr);
+				addr, indexInQ);
 		newEvent.dn_status = 2;
 		newEvent.parentEvent = event.parentEvent;
 		sendEvent(newEvent);
@@ -146,15 +149,17 @@ public class DNucaBank extends NucaCache implements NucaInterface
 		CacheLine cl = this.accessAndMark(addr);
 
 		if (cl != null) {
-			doMigration(addr, requestType, event, cl);			
+			int indexInQ = event.indexInQ;
+			doMigration(addr, requestType, event, cl, indexInQ);			
 		}
 		else {
+			int indexInQ = event.indexInQ;
 			AddressCarryingEvent newEvent = new AddressCarryingEvent(this.getEventQueue(), 
 					0,
 					this,
 					event.getRequestingElement(),
 					requestType,
-					addr);
+					addr, indexInQ);
 			newEvent.dn_status = 3;
 			newEvent.parentEvent = event.parentEvent;
 			sendEvent(newEvent);
@@ -180,7 +185,8 @@ public class DNucaBank extends NucaCache implements NucaInterface
 				if(activeEventsInDNuca.get(event.parentEvent) == parent.bankSets.get(setId).size()-1)
 				{//Actual Miss -- Got miss from all the other banks in this bank set
 					activeEventsInDNuca.remove(event.parentEvent);
-					sendRequestToNextLevel(addr, RequestType.Cache_Read);
+					int indexInQ = event.indexInQ;
+					sendRequestToNextLevel(addr, RequestType.Cache_Read, indexInQ);
 				}
 			}//else means somebody has reported a hit. Leave this reply.
 		}
@@ -195,6 +201,7 @@ public class DNucaBank extends NucaCache implements NucaInterface
 		printCacheDebugMessage(event);
 		
 		long addr = ((AddressCarryingEvent) event).getAddress();
+		int indexInQ = ((AddressCarryingEvent)event).indexInQ;
 		RequestType requestType = event.getRequestType();
 
 		if(event.dn_status > 0){//within set
@@ -225,12 +232,12 @@ public class DNucaBank extends NucaCache implements NucaInterface
 			}
 	
 			case EvictCacheLine: {
-				updateStateOfCacheLine(addr, MESI.INVALID);
+				updateStateOfCacheLine(addr, MESI.INVALID, indexInQ);
 				break;
 			}
 			
 			case AckEvictCacheLine: {
-				processEventsInMSHR(addr);
+				processEventsInMSHR(addr, indexInQ);
 				break;
 			}
 			case Migrate_Block: {

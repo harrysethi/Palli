@@ -58,7 +58,7 @@ public class MemUnitIn_MII extends SimulationElement{
 					{		
 						boolean memReqIssued = containingExecutionEngine.multiIssueInorderCoreMemorySystem.issueRequestToL1Cache(
 								RequestType.Cache_Read,
-								ins.getSourceOperand1MemValue());
+								ins.getSourceOperand1MemValue(), -1);
 						
 						if(memReqIssued == false)
 						{
@@ -75,7 +75,7 @@ public class MemUnitIn_MII extends SimulationElement{
 					{
 						boolean memReqIssued = containingExecutionEngine.multiIssueInorderCoreMemorySystem.issueRequestToL1Cache(
 								RequestType.Cache_Write,
-								ins.getSourceOperand1MemValue());
+								ins.getSourceOperand1MemValue(), -1);
 						
 						if(memReqIssued == false)
 						{

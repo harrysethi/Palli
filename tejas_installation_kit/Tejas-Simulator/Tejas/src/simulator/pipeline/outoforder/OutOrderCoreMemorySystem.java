@@ -24,12 +24,12 @@ public class OutOrderCoreMemorySystem extends CoreMemorySystem {
 
 	
 	//To issue the request to instruction cache
-	public void issueRequestToInstrCache(long address)
+	public void issueRequestToInstrCache(long address, int indexInQ)
 	{
 		int tlbMissPenalty = performITLBLookup(address);
 		
 		AddressCarryingEvent addressEvent = new AddressCarryingEvent(getCore().getEventQueue(),
-			tlbMissPenalty, this, iCache, RequestType.Cache_Read, address);
+			tlbMissPenalty, this, iCache, RequestType.Cache_Read, address, indexInQ);
 
 		//attempt issue to lower level cache
 		this.iCache.getPort().put(addressEvent);
@@ -60,15 +60,15 @@ public class OutOrderCoreMemorySystem extends CoreMemorySystem {
 						lsqueue, 
 						RequestType.Tell_LSQ_Addr_Ready,
 						robEntry.getLsqEntry(),
-						this.coreID));
+						this.coreID, -1));
 	}
 	
 	//To issue the request directly to L1 cache
 	public boolean issueRequestToL1Cache(RequestType requestType, 
-											long address)
+											long address, int indexInQ)
 	{
 		AddressCarryingEvent addressEvent = new AddressCarryingEvent(getCore().getEventQueue(),
-			0, this, l1Cache, requestType, address);		
+			0, this, l1Cache, requestType, address, indexInQ);		
 		
 		if(l1Cache.isBusy()) {
 			return false;
@@ -90,12 +90,12 @@ public class OutOrderCoreMemorySystem extends CoreMemorySystem {
 						lsqueue, 
 						RequestType.LSQ_Commit, 
 						robEntry.getLsqEntry(),
-						this.coreID));
+						this.coreID, -1));
 	}
 	
 	private int performITLBLookup(long address)
 	{
-		boolean tLBHit = iTLB.searchTLBForPhyAddr(address);
+		boolean tLBHit = iTLB.searchTLBForPhyAddr(address, -1);
 		int missPenalty = 0;
 		if(!tLBHit){
 			missPenalty = iTLB.getMemoryPenalty();

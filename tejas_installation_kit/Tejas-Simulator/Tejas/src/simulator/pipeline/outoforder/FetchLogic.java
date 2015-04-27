@@ -100,7 +100,7 @@ public class FetchLogic extends SimulationElement {
 					int coreId = this.core.getCore_number();
 					ArchitecturalComponent.coreBroadcastBus.getPort().put(
 							new AddressCarryingEvent(0, this.core.eventQueue, 1, ArchitecturalComponent.coreBroadcastBus, ArchitecturalComponent.coreBroadcastBus,
-									RequestType.TREE_BARRIER, barrierAddress, coreId));
+									RequestType.TREE_BARRIER, barrierAddress, coreId, -1));
 				} else {
 					if (bar.timeToCross()) {
 						System.out.println("    Time to cross " + bar.getBarrierAddress());
@@ -110,7 +110,7 @@ public class FetchLogic extends SimulationElement {
 						}
 						ArchitecturalComponent.coreBroadcastBus.getPort().put(
 								new AddressCarryingEvent(this.core.eventQueue, 1, ArchitecturalComponent.coreBroadcastBus, ArchitecturalComponent.coreBroadcastBus,
-										RequestType.PIPELINE_RESUME, 0));
+										RequestType.PIPELINE_RESUME, 0, -1));
 
 					} else {
 						System.out.println("Total on bar " + bar.getBarrierAddress() + " is " + bar.getNumThreadsArrived());
@@ -144,7 +144,7 @@ public class FetchLogic extends SimulationElement {
 					// The first micro-operation of an instruction has a valid CISC IP. All the subsequent
 					// micro-ops will have IP = -1(meaning invalid). We must not forward this requests to iCache.
 					if (newInstruction.getCISCProgramCounter() != -1) {
-						execEngine.getCoreMemorySystem().issueRequestToInstrCache(newInstruction.getCISCProgramCounter());
+						execEngine.getCoreMemorySystem().issueRequestToInstrCache(newInstruction.getCISCProgramCounter(), -1);
 					}
 				}
 			} else {

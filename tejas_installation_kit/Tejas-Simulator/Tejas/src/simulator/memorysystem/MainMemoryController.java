@@ -28,9 +28,10 @@ public class MainMemoryController extends SimulationElement
 	{
 		if (event.getRequestType() == RequestType.Cache_Read)
 		{
+			int indexInQ = ((AddressCarryingEvent)event).indexInQ;
 			AddressCarryingEvent e = new AddressCarryingEvent(eventQ, 0,
 					this, event.getRequestingElement(),	RequestType.Mem_Response,
-					((AddressCarryingEvent)event).getAddress());
+					((AddressCarryingEvent)event).getAddress(), indexInQ);
 			
 			getComInterface().sendMessage(e);
 		}

@@ -98,31 +98,34 @@ public class Toma_LSQ {
 		return false;
 	}
 
-	public void handleMemoryResponse(long address) {
-		Toma_LSQentry toma_LSQentry = null;
+	public void handleMemoryResponse(long address, int indexInQ) {
 
-		int index = this.head;
-
-		for (int i = 0; i < this.current_Size; i++) {
-
-			toma_LSQentry = this.toma_lsqueue[index];
-
-			Toma_ReservationStationEntry toma_RSentry = toma_LSQentry.getToma_RSentry();
-
-			if (toma_LSQentry.getType() == Toma_LSQEntryType.LOAD && toma_RSentry.isStartedExecution()
-					&& !toma_RSentry.isCompletedExecution() && toma_LSQentry.isAddressCalculated()
-					&& toma_LSQentry.getAddress() == address && toma_LSQentry.isOccupied()) {
-				toma_RSentry.setCompletedExecution(true);
-				if (SimulationConfig.debugMode) {
-					System.out.println("\n" + GlobalClock.getCurrentTime() + ": "
-							+ "Execute (LSQ) | Completed Executing : " + " \n " + toma_RSentry.getInstruction());
-				}
-				return;
-			}
-
-			index = (index + 1) % lsq_Size;
+		Toma_LSQentry toma_LSQentry = this.toma_lsqueue[indexInQ];
+		Toma_ReservationStationEntry toma_RSentry = toma_LSQentry.getToma_RSentry();
+		toma_RSentry.setCompletedExecution(true);
+		if (SimulationConfig.debugMode) {
+			System.out.println("\n" + GlobalClock.getCurrentTime() + ": "
+					+ "Execute (LSQ) | Completed Executing (index- " + indexInQ + "): " + "\n "
+					+ toma_RSentry.getInstruction());
 		}
 
+		/*
+		 * int index = this.head;
+		 * 
+		 * for (int i = 0; i < this.current_Size; i++) {
+		 * 
+		 * toma_LSQentry = this.toma_lsqueue[index];
+		 * 
+		 * Toma_ReservationStationEntry toma_RSentry = toma_LSQentry.getToma_RSentry();
+		 * 
+		 * if (toma_LSQentry.getType() == Toma_LSQEntryType.LOAD && toma_RSentry.isStartedExecution() &&
+		 * !toma_RSentry.isCompletedExecution() && toma_LSQentry.isAddressCalculated() && toma_LSQentry.getAddress() ==
+		 * address && toma_LSQentry.isOccupied()) { toma_RSentry.setCompletedExecution(true); if
+		 * (SimulationConfig.debugMode) { System.out.println("\n" + GlobalClock.getCurrentTime() + ": " +
+		 * "Execute (LSQ) | Completed Executing : " + " " + toma_RSentry.getInstruction()); } return; }
+		 * 
+		 * index = (index + 1) % lsq_Size; }
+		 */
 	}
 
 	public void removeEntry(Toma_LSQentry toma_LSQentry) {

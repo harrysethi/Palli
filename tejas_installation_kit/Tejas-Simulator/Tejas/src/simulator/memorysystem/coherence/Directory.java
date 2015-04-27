@@ -39,38 +39,38 @@ public class Directory extends Cache implements Coherence {
 		MemorySystem.coherenceNameMappings.put(cacheName, this);
 	}
 
-	public void writeHit(long addr, Cache c) {
+	public void writeHit(long addr, Cache c, int indexInQ) {
 //		XX-X if(ArchitecturalComponent.getCore(0).getNoOfInstructionsExecuted()>3000000l) {
 //			System.out.println("Directory WriteHit t : " + GlobalClock.getCurrentTime() + " addr : " + addr + " cache : " + c);
 //		}
 		writeHitAccesses++;
-		sendAnEventFromCacheToDirectory(addr, c, RequestType.DirectoryWriteHit);
+		sendAnEventFromCacheToDirectory(addr, c, RequestType.DirectoryWriteHit, indexInQ);
 	}
 
-	public void readMiss(long addr, Cache c) {
+	public void readMiss(long addr, Cache c, int indexInQ) {
 //		XX-X if(ArchitecturalComponent.getCore(0).getNoOfInstructionsExecuted()>3000000l) {
 //			System.out.println("Directory ReadMiss t : " + GlobalClock.getCurrentTime() + " addr : " + addr + " cache : " + c);
 //		}
 		readMissAccesses++;
-		sendAnEventFromCacheToDirectory(addr, c, RequestType.DirectoryReadMiss);
+		sendAnEventFromCacheToDirectory(addr, c, RequestType.DirectoryReadMiss, indexInQ);
 	}
 
-	public void writeMiss(long addr, Cache c) {
+	public void writeMiss(long addr, Cache c, int indexInQ) {
 //		XX-X if(ArchitecturalComponent.getCore(0).getNoOfInstructionsExecuted()>3000000l) {
 //			System.out.println("Directory WriteMiss t : " + GlobalClock.getCurrentTime() + " addr : " + addr + " cache : " + c);
 //		}
 		writeMissAccesses++;
-		sendAnEventFromCacheToDirectory(addr, c, RequestType.DirectoryWriteMiss);
+		sendAnEventFromCacheToDirectory(addr, c, RequestType.DirectoryWriteMiss, indexInQ);
 	}
 
-	private AddressCarryingEvent sendAnEventFromCacheToDirectory(long addr, Cache c, RequestType request) {
+	private AddressCarryingEvent sendAnEventFromCacheToDirectory(long addr, Cache c, RequestType request, int indexInQ) {
 		
 		incrementHitMissInformation(addr);
 		
 		// Create an event
 		Directory directory = this;
 		AddressCarryingEvent event = new AddressCarryingEvent(
-				c.getEventQueue(), 0, c, directory, request, addr);
+				c.getEventQueue(), 0, c, directory, request, addr, indexInQ);
 
 		// 2. Send event to directory
 		c.sendEvent(event);
@@ -104,7 +104,8 @@ public class Directory extends Cache implements Coherence {
 				
 				for(Cache sharerCache : dirEntry.getSharers()) {
 					if(sharerCache!=c) {
-						sendAnEventFromMeToCache(addr, sharerCache, RequestType.EvictCacheLine);
+						int indexInQ = event.indexInQ;
+						sendAnEventFromMeToCache(addr, sharerCache, RequestType.EvictCacheLine, indexInQ);
 					}
 				}
 				
@@ -124,39 +125,41 @@ public class Directory extends Cache implements Coherence {
 			}
 		}
 		
-		sendAnEventFromMeToCache(addr, c, RequestType.AckDirectoryWriteHit);
+		int indexInQ = event.indexInQ;
+		sendAnEventFromMeToCache(addr, c, RequestType.AckDirectoryWriteHit, indexInQ);
 	}
 	
-	private void forceInvalidate(CacheLine dirEntry) {
+	private void forceInvalidate(CacheLine dirEntry, int indexInQ) {
 		misc.Error.showErrorAndExit("Force Invalidate !!");
 		// The directory is in an inconsistent state. 
 		// Force a consistent change by evicting the dirEntry.
 		for (Cache sharerCache : dirEntry.getSharers()) {
-			sharerCache.updateStateOfCacheLine(dirEntry.getAddress(), MESI.INVALID);
+			sharerCache.updateStateOfCacheLine(dirEntry.getAddress(), MESI.INVALID, indexInQ);
 		}
 		
 		dirEntry.clearAllSharers();
 		dirEntry.setState(MESI.INVALID);		
 	}
 
-	public AddressCarryingEvent evictedFromSharedCache(long addr, Cache c) {
+	public AddressCarryingEvent evictedFromSharedCache(long addr, Cache c, int indexInQ) {
 //		XX-X if(ArchitecturalComponent.getCore(0).getNoOfInstructionsExecuted()>3000000l) {
 //			System.out.println("Directory EvictShared t : " + GlobalClock.getCurrentTime() + " addr : " + addr + " cache : " + c);
 //		}
 		evictedFromSharedCacheAccesses++;
-		return sendAnEventFromCacheToDirectory(addr, c, RequestType.DirectoryEvictedFromSharedCache);
+		return sendAnEventFromCacheToDirectory(addr, c, RequestType.DirectoryEvictedFromSharedCache, indexInQ);
 	}
 	
-	public AddressCarryingEvent evictedFromCoherentCache(long addr, Cache c) {
+	public AddressCarryingEvent evictedFromCoherentCache(long addr, Cache c, int indexInQ) {
 //		XX-X if(ArchitecturalComponent.getCore(0).getNoOfInstructionsExecuted()>3000000l) {
 //			System.out.println("Directory EvictCoherent t : " + GlobalClock.getCurrentTime() + " addr : " + addr + " cache : " + c);
 //		}
 		evictedFromCoherentCacheAccesses++;
-		return sendAnEventFromCacheToDirectory(addr, c, RequestType.DirectoryEvictedFromCoherentCache);
+		return sendAnEventFromCacheToDirectory(addr, c, RequestType.DirectoryEvictedFromCoherentCache, indexInQ);
 	}
 	
 	public void handleEvent(EventQueue eventQ, Event e) {
 		AddressCarryingEvent event = (AddressCarryingEvent) e;
+		int indexInQ = ((AddressCarryingEvent)event).indexInQ;
 		long addr = event.getAddress();
 		long lineAddr = event.getAddress()>>blockSizeBits;
 		RequestType reqType = e.getRequestType();
@@ -175,7 +178,7 @@ public class Directory extends Cache implements Coherence {
 			
 			if(evictedEntry!=null && evictedEntry.isValid()) {
 //				System.out.println("Evicted line : " + (evictedEntry.getAddress()>>blockSizeBits) + "\n" + evictedEntry);
-				invalidateDirectoryEntry(evictedEntry);
+				invalidateDirectoryEntry(evictedEntry, indexInQ);
 			}
 		}
 		
@@ -188,28 +191,28 @@ public class Directory extends Cache implements Coherence {
 			}
 			
 			case DirectoryReadMiss: {
-				handleReadMiss(addr, senderCache);
+				handleReadMiss(addr, senderCache, indexInQ);
 				break;
 			}
 			
 			case DirectoryWriteMiss: {
-				handleWriteMiss(addr, senderCache);
+				handleWriteMiss(addr, senderCache, indexInQ);
 				break;
 			}
 			
 			case DirectoryEvictedFromSharedCache: {
-				handleEvictFromSharedCache(addr);
+				handleEvictFromSharedCache(addr, indexInQ);
 				break;
 			}
 			
 			case DirectoryEvictedFromCoherentCache: {
-				handleEvictedFromCoherentCache(addr, senderCache);
+				handleEvictedFromCoherentCache(addr, senderCache, indexInQ);
 				break;
 			}
 		}
 	}
 	
-	private void handleEvictedFromCoherentCache(long addr, Cache c) {
+	private void handleEvictedFromCoherentCache(long addr, Cache c, int indexInQ) {
 		CacheLine dirEntry = access(addr);
 		
 		if(dirEntry.isSharer(c)) {
@@ -218,7 +221,7 @@ public class Directory extends Cache implements Coherence {
 				dirEntry.setState(MESI.INVALID);
 			} else if(dirEntry.getSharers().size()==1) {
 				dirEntry.setState(MESI.EXCLUSIVE);
-				sendAnEventFromMeToCache(addr, dirEntry.getOwner(), RequestType.DirectorySharedToExclusive);
+				sendAnEventFromMeToCache(addr, dirEntry.getOwner(), RequestType.DirectorySharedToExclusive, indexInQ);
 			}
 		} else {
 			// Cache c1 holds an address x
@@ -227,16 +230,16 @@ public class Directory extends Cache implements Coherence {
 			noteInvalidState("Eviction from a non-sharer. Cache : " + c + ". Addr : " + addr);
 		}
 		
-		sendAnEventFromMeToCache(addr, c, RequestType.AckEvictCacheLine);
+		sendAnEventFromMeToCache(addr, c, RequestType.AckEvictCacheLine, indexInQ);
 	}
 
-	private void handleWriteMiss(long addr, Cache c) {
+	private void handleWriteMiss(long addr, Cache c, int indexInQ) {
 		CacheLine dirEntry = access(addr);
 		
-		handleReadMiss(addr, c);
+		handleReadMiss(addr, c, indexInQ);
 		for(Cache sharerCache : dirEntry.getSharers()) {
 			if(sharerCache!=c) {
-				sendAnEventFromMeToCache(addr, sharerCache, RequestType.EvictCacheLine);
+				sendAnEventFromMeToCache(addr, sharerCache, RequestType.EvictCacheLine, indexInQ);
 			}
 		}
 		
@@ -245,27 +248,27 @@ public class Directory extends Cache implements Coherence {
 		dirEntry.setState(MESI.MODIFIED);
 	}
 
-	private void handleEvictFromSharedCache(long addr) {
+	private void handleEvictFromSharedCache(long addr, int indexInQ) {
 		CacheLine cl = access(addr);
 		
 		if(cl==null || cl.isValid()==false) {
 			return;
 		} else {
-			invalidateDirectoryEntry(cl);			
+			invalidateDirectoryEntry(cl, indexInQ);			
 		}
 	}
 
-	private void invalidateDirectoryEntry(CacheLine cl) {
+	private void invalidateDirectoryEntry(CacheLine cl, int indexInQ) {
 		long addr = cl.getAddress();
 		for(Cache c : cl.getSharers()) {
-			sendAnEventFromMeToCache(addr, c, RequestType.EvictCacheLine);
+			sendAnEventFromMeToCache(addr, c, RequestType.EvictCacheLine, indexInQ);
 		}
 		
 		cl.clearAllSharers();
 		cl.setState(MESI.INVALID);		
 	}
 
-	private void handleReadMiss(long addr, Cache c) {
+	private void handleReadMiss(long addr, Cache c, int indexInQ) {
 		CacheLine dirEntry = access(addr);
 		
 		switch(dirEntry.getState()) {
@@ -281,10 +284,10 @@ public class Directory extends Cache implements Coherence {
 					// c1 processes invalidate from c2
 					// now, there is a read at c1. The c1 sends readMiss to directory. However, it is a sharer.
 					noteInvalidState("Miss from a sharer. Cache : " + c + ". Addr : " + addr);
-					sendAnEventFromMeToCache(addr, c, RequestType.Mem_Response);
+					sendAnEventFromMeToCache(addr, c, RequestType.Mem_Response, indexInQ);
 				} else {
 					Cache sharerCache = dirEntry.getFirstSharer();
-					sendCachelineForwardRequest(sharerCache, c, addr);
+					sendCachelineForwardRequest(sharerCache, c, addr, indexInQ);
 				}
 				
 				dirEntry.setState(MESI.SHARED);
@@ -301,18 +304,18 @@ public class Directory extends Cache implements Coherence {
 				// If the line is supposed to be fetched from the next level cache, 
 				// we will just send a cacheRead request to this cache
 				// Note that the directory is not coming into the picture. This is just a minor hack to maintain readability of the code
-				c.sendRequestToNextLevel(addr, RequestType.Cache_Read);
+				c.sendRequestToNextLevel(addr, RequestType.Cache_Read, indexInQ);
 				break;
 			}
 		}
 	}
 	
-	private void sendCachelineForwardRequest(Cache ownerCache, Cache destinationCache, long addr) {
+	private void sendCachelineForwardRequest(Cache ownerCache, Cache destinationCache, long addr, int indexInQ) {
 		EventQueue eventQueue = ownerCache.getEventQueue();
 		
 		AddressCarryingEvent event = new AddressCarryingEvent(eventQueue, 0, 
 			this, ownerCache, 
-			RequestType.DirectoryCachelineForwardRequest, addr);
+			RequestType.DirectoryCachelineForwardRequest, addr, indexInQ);
 		
 		event.payloadElement = destinationCache;
 		

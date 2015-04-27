@@ -215,6 +215,7 @@ public class Cache extends SimulationElement {
 		printCacheDebugMessage(event);
 
 		long addr = ((AddressCarryingEvent) event).getAddress();
+		int indexInQ = ((AddressCarryingEvent)event).indexInQ;
 		RequestType requestType = event.getRequestType();
 		
 		
@@ -237,22 +238,22 @@ public class Cache extends SimulationElement {
 			}
 	
 			case EvictCacheLine: {
-				updateStateOfCacheLine(addr, MESI.INVALID);
+				updateStateOfCacheLine(addr, MESI.INVALID, indexInQ);
 				break;
 			}
 			
 			case AckEvictCacheLine: {
-				processEventsInMSHR(addr);
+				processEventsInMSHR(addr, indexInQ);
 				break;
 			}
 	
 			case DirectoryCachelineForwardRequest: {
-				handleDirectoryCachelineForwardRequest(addr, (Cache) (((AddressCarryingEvent) event).getPayloadElement()));
+				handleDirectoryCachelineForwardRequest(addr, (Cache) (((AddressCarryingEvent) event).getPayloadElement()), indexInQ);
 				break;
 			}
 	
 			case DirectorySharedToExclusive: {
-				handleDirectorySharedToExclusive(addr);
+				handleDirectorySharedToExclusive(addr, indexInQ);
 				break;
 			}
 			
@@ -266,24 +267,25 @@ public class Cache extends SimulationElement {
 	protected void handleAckDirectoryWriteHit(AddressCarryingEvent event) {
 		//This function just ensures that the writeHit event gets a line
 		long addr = event.getAddress();
+		int indexInQ = ((AddressCarryingEvent)event).indexInQ;
 		CacheLine cl = accessValid(addr);
 		
 		if(cl==null) {
 			misc.Error.showErrorAndExit("Ack write hit expects cache line");
 			// writehit expects a line to be present
 			if(isThereAnUnlockedOrInvalidEntryInCacheSet(addr)) {
-				fillAndSatisfyRequests(addr);
+				fillAndSatisfyRequests(addr, indexInQ);
 				return;
 			} else {
 				event.setEventTime(event.getEventTime() + 1);
 				return;
 			}
 		} else {
-			processEventsInMSHR(addr);
+			processEventsInMSHR(addr, indexInQ);
 		}
 	}
 
-	protected void handleDirectorySharedToExclusive(long addr) {
+	protected void handleDirectorySharedToExclusive(long addr, int indexInQ) {
 		if(accessValid(addr)==null) {
 			// c1 and c2 both have address x
 			// both decide to evict at the same time
@@ -291,15 +293,15 @@ public class Cache extends SimulationElement {
 			// c1 however does not have the line
 			noteInvalidState("shared to exclusive for a line that does not exist. addr : " + addr + ". cache : " + this);
 		}
-		updateStateOfCacheLine(addr, MESI.EXCLUSIVE);
+		updateStateOfCacheLine(addr, MESI.EXCLUSIVE, indexInQ);
 	}
 
-	protected void handleDirectoryCachelineForwardRequest(long addr, Cache cache) {
+	protected void handleDirectoryCachelineForwardRequest(long addr, Cache cache, int indexInQ) {
 		AddressCarryingEvent event = new AddressCarryingEvent(
 				cache.getEventQueue(), 0, this, cache,
-				RequestType.Mem_Response, addr);
+				RequestType.Mem_Response, addr, indexInQ);
 		
-		updateStateOfCacheLine(addr, MESI.SHARED);
+		updateStateOfCacheLine(addr, MESI.SHARED, indexInQ);
 
 		this.sendEvent(event);
 	}
@@ -331,14 +333,15 @@ public class Cache extends SimulationElement {
 		if (cl != null) {
 			cacheHit(addr, requestType, cl, event);
 		} else {
+			int indexInQ = ((AddressCarryingEvent)event).indexInQ;
 			if (this.mycoherence != null) {
 				if (requestType == RequestType.Cache_Write) {
-					mycoherence.writeMiss(addr, this);
+					mycoherence.writeMiss(addr, this, indexInQ);
 				} else if (requestType == RequestType.Cache_Read) {
-					mycoherence.readMiss(addr, this);
+					mycoherence.readMiss(addr, this, indexInQ);
 				}
 			} else {
-				sendRequestToNextLevel(addr, RequestType.Cache_Read);
+				sendRequestToNextLevel(addr, RequestType.Cache_Read, indexInQ);
 			}
 			
 			mshr.addToMSHR(event);
@@ -355,7 +358,8 @@ public class Cache extends SimulationElement {
 			sendAcknowledgement(event);
 		} else if (requestType == RequestType.Cache_Write) {
 			if(this.writePolicy == WritePolicy.WRITE_THROUGH) {
-				sendRequestToNextLevel(addr, RequestType.Cache_Write);
+				int indexInQ = ((AddressCarryingEvent)event).indexInQ;
+				sendRequestToNextLevel(addr, RequestType.Cache_Write, indexInQ);
 			}
 			
 			if( (cl.getState() == MESI.SHARED || cl.getState() == MESI.EXCLUSIVE)  && 
@@ -372,14 +376,15 @@ public class Cache extends SimulationElement {
 		
 		if(isThereAnUnlockedOrInvalidEntryInCacheSet(addr)) {
 			noOfResponsesReceived++;
-			this.fillAndSatisfyRequests(addr);
+			int indexInQ = ((AddressCarryingEvent)memResponseEvent).indexInQ;
+			this.fillAndSatisfyRequests(addr, indexInQ);
 		} else {
 			memResponseEvent.setEventTime(GlobalClock.getCurrentTime()+1);
 			this.getEventQueue().addEvent(memResponseEvent);
 		}
 	}
 
-	public void sendRequestToNextLevel(long addr, RequestType requestType) {
+	public void sendRequestToNextLevel(long addr, RequestType requestType, int indexInQ) {
 		Cache c = this.nextLevel;
 		AddressCarryingEvent event = null;
 		if (c != null) {
@@ -389,14 +394,14 @@ public class Cache extends SimulationElement {
 				c = nuca.getBank(((NocInterface)this.getComInterface()).getId(),addr);
 			}
 			event = new AddressCarryingEvent(c.getEventQueue(), 0, this, c,
-					requestType, addr);
+					requestType, addr, indexInQ);
 			addEventAtLowerCache(event, c);
 		} else {
 			Core core0 = ArchitecturalComponent.getCores()[0];
 			MainMemoryController memController = getComInterface()
 					.getNearestMemoryController();
 			event = new AddressCarryingEvent(core0.getEventQueue(), 0, this,
-					memController, requestType, addr);
+					memController, requestType, addr, indexInQ);
 			sendEvent(event);
 		}		
 	}
@@ -446,18 +451,18 @@ public class Cache extends SimulationElement {
 		}
 	}
 
-	public void fillAndSatisfyRequests(long addr) {
+	public void fillAndSatisfyRequests(long addr, int indexInQ) {
 		int numPendingEvents = mshr.getNumPendingEventsForAddr(addr);
 		misses += numPendingEvents;
 		noOfRequests += numPendingEvents;
 		noOfAccesses += 1 + numPendingEvents;
 
 		CacheLine evictedLine = this.fill(addr, MESI.SHARED);
-		handleEvictedLine(evictedLine);
-		processEventsInMSHR(addr);		
+		handleEvictedLine(evictedLine, indexInQ);
+		processEventsInMSHR(addr, indexInQ);		
 	}
 
-	protected void processEventsInMSHR(long addr) {
+	protected void processEventsInMSHR(long addr, int indexInQ) {
 		LinkedList<AddressCarryingEvent> missList = mshr.removeEventsFromMSHR(addr);
 		AddressCarryingEvent writeEvent = null;
 				
@@ -472,7 +477,7 @@ public class Cache extends SimulationElement {
 					CacheLine cl = accessValid(addr);
 					
 					if(cl!=null) {
-						updateStateOfCacheLine(addr, MESI.MODIFIED);
+						updateStateOfCacheLine(addr, MESI.MODIFIED, event.indexInQ);
 						writeEvent = event;
 					} else {
 						misc.Error.showErrorAndExit("Cache write expects a line here : " + event);
@@ -483,7 +488,7 @@ public class Cache extends SimulationElement {
 				
 				case DirectoryEvictedFromCoherentCache:
 				case EvictCacheLine: {
-					updateStateOfCacheLine(addr, MESI.INVALID);
+					updateStateOfCacheLine(addr, MESI.INVALID, event.indexInQ);
 					addUnprocessedEventsToEventQueue(missList);
 					
 					processEventsInPendingList();
@@ -493,7 +498,7 @@ public class Cache extends SimulationElement {
 		}
 		
 		if(writeEvent!=null && writePolicy==WritePolicy.WRITE_THROUGH) {
-			sendRequestToNextLevel(addr, RequestType.Cache_Write);
+			sendRequestToNextLevel(addr, RequestType.Cache_Write, indexInQ);
 		}
 		
 		processEventsInPendingList();
@@ -506,26 +511,28 @@ public class Cache extends SimulationElement {
 		}
 	}
 
-	protected void handleEvictedLine(CacheLine evictedLine) {
+	protected void handleEvictedLine(CacheLine evictedLine, int indexInQ) {
 		if (evictedLine != null && evictedLine.getState() != MESI.INVALID) {
 			if(mshr.isAddrInMSHR(evictedLine.getAddress())) {
 				misc.Error.showErrorAndExit("evicting locked line : " + evictedLine + ". cache : " + this);
 			}
 			if (mycoherence != null) {
-				 AddressCarryingEvent evictEvent = mycoherence.evictedFromCoherentCache(evictedLine.getAddress(), this);
+				 AddressCarryingEvent evictEvent = mycoherence.evictedFromCoherentCache(evictedLine.getAddress(), this, indexInQ);
 				 mshr.addToMSHR(evictEvent);
 			} else if (evictedLine.isModified() && writePolicy == WritePolicy.WRITE_BACK) {
-				sendRequestToNextLevel(evictedLine.getAddress(), RequestType.Cache_Write);
+				sendRequestToNextLevel(evictedLine.getAddress(), RequestType.Cache_Write, indexInQ);
 			}
 		}
 	}
 
 	private void handleCleanToModified(long addr, AddressCarryingEvent event) {
 		if(mycoherence!=null) {
-			mycoherence.writeHit(addr, this);
+			int indexInQ = ((AddressCarryingEvent)event).indexInQ;
+			mycoherence.writeHit(addr, this, indexInQ);
 			mshr.addToMSHR(event);
 		} else {
-			sendRequestToNextLevel(addr, RequestType.Cache_Write);
+			int indexInQ = event.indexInQ;
+			sendRequestToNextLevel(addr, RequestType.Cache_Write, indexInQ);
 		}		
 	}
 
@@ -553,10 +560,11 @@ public class Cache extends SimulationElement {
 			misc.Error.showErrorAndExit("sendAcknowledgement is meant for cache read operation only : " + event);
 		}
 		
+		int indexInQ = event.indexInQ;
 		AddressCarryingEvent memResponseEvent = new AddressCarryingEvent(
 				event.getEventQ(), 0, event.getProcessingElement(),
 				event.getRequestingElement(), returnType,
-				event.getAddress());
+				event.getAddress(), indexInQ);
 		
 		sendEvent(memResponseEvent);
 		noOfResponsesSent++;
@@ -733,7 +741,7 @@ public class Cache extends SimulationElement {
 		return cachePower;
 	}
 
-	public void updateStateOfCacheLine(long addr, MESI newState) {
+	public void updateStateOfCacheLine(long addr, MESI newState, int indexInQ) {
 		CacheLine cl = this.access(addr);
 		
 		if (cl != null) {
@@ -747,10 +755,10 @@ public class Cache extends SimulationElement {
 			
 			if (newState == MESI.INVALID) {
 				if (isBelowCoherenceLevel()) {
-					getPrevLevelCoherence().evictedFromSharedCache(addr, this);
+					getPrevLevelCoherence().evictedFromSharedCache(addr, this, indexInQ);
 				} else {
 					for (Cache c : prevLevel) {
-						sendAnEventFromMeToCache(addr, c, RequestType.EvictCacheLine);
+						sendAnEventFromMeToCache(addr, c, RequestType.EvictCacheLine, indexInQ);
 					}
 				}
 			} else {
@@ -758,7 +766,7 @@ public class Cache extends SimulationElement {
 				// This ensures that the caches in the same core have the same MESI state
 				if(isBelowCoherenceLevel()==false && this.isTopLevelCache()==false) {
 					for(Cache c : prevLevel) {
-						c.updateStateOfCacheLine(addr, newState);
+						c.updateStateOfCacheLine(addr, newState, indexInQ);
 					}
 				}
 			}			
@@ -862,11 +870,11 @@ public class Cache extends SimulationElement {
 	}
 
 	protected AddressCarryingEvent sendAnEventFromMeToCache(long addr, Cache c,
-			RequestType request) {
+			RequestType request, int indexInQ) {
 		// Create an event
 
 		AddressCarryingEvent event = new AddressCarryingEvent(
-				c.getEventQueue(), 0, this, c, request, addr);
+				c.getEventQueue(), 0, this, c, request, addr, indexInQ);
 
 		// 2. Send event to cache
 		this.sendEvent(event);

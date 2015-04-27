@@ -198,7 +198,7 @@ public class LSQ extends SimulationElement {
 			if (entry.getType() == LSQEntry.LSQEntryType.STORE) {
 				this.containingMemSys.l1Cache.getPort().put(
 						new LSQEntryContainingEvent(eventQueue, this.containingMemSys.l1Cache.getLatencyDelay(), this, this.containingMemSys.l1Cache, RequestType.Cache_Write,
-								entry, this.containingMemSys.coreID));
+								entry, this.containingMemSys.coreID, -1));
 			}
 
 			if (head == tail) {
@@ -261,7 +261,7 @@ public class LSQ extends SimulationElement {
 		LSQEntry lsqEntry = ((LSQEntryContainingEvent) (event)).getLsqEntry();
 		long virtualAddr = lsqEntry.getAddr();
 
-		if (this.containingMemSys.dTLB.searchTLBForPhyAddr(virtualAddr)) {
+		if (this.containingMemSys.dTLB.searchTLBForPhyAddr(virtualAddr, -1)) {
 			this.handleAddrValidate(eventQ, event);
 		} else {
 			// Fetch the physical address from from Page table
@@ -298,7 +298,7 @@ public class LSQ extends SimulationElement {
 			return;
 		}
 
-		boolean requestIssued = this.containingMemSys.issueRequestToL1Cache(RequestType.Cache_Read, lsqEntry.getAddr());
+		boolean requestIssued = this.containingMemSys.issueRequestToL1Cache(RequestType.Cache_Read, lsqEntry.getAddr(), -1);
 
 		if (requestIssued == false) {
 			event.addEventTime(1);
@@ -361,7 +361,7 @@ public class LSQ extends SimulationElement {
 					misc.Error.showErrorAndExit("store not ready to be committed");
 				}
 
-				boolean requestIssued = containingMemSys.issueRequestToL1Cache(RequestType.Cache_Write, tmpEntry.getAddr());
+				boolean requestIssued = containingMemSys.issueRequestToL1Cache(RequestType.Cache_Write, tmpEntry.getAddr(), -1);
 
 				if (requestIssued == false) {
 					event.addEventTime(1);
