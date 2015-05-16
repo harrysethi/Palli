@@ -27,7 +27,7 @@
 		<IndexAddrModeEnable>0</IndexAddrModeEnable>
 		<EmuCores>0</EmuCores>
 		<JavaCores>1</JavaCores>
-		<DebugMode>true</DebugMode>
+		<DebugMode>false</DebugMode>
 		<DetachMemSysData>true</DetachMemSysData>
 		<DetachMemSysInsn>false</DetachMemSysInsn>
 		<PrintPowerStats>true</PrintPowerStats>
@@ -155,15 +155,15 @@
 			<!-- Toma Change Start -->
 
 			<Toma_params>
-				<rs_buffersize>3</rs_buffersize>
-				<rob_buffersize>3</rob_buffersize>
+				<rs_buffersize>100</rs_buffersize>
+				<rob_buffersize>120</rob_buffersize>
 				<Toma_LSQSize>64</Toma_LSQSize>
 			</Toma_params>
 
 			<Toma_CDB>
-				<Toma_CDBLatency>2</Toma_CDBLatency>
+				<Toma_CDBLatency>1</Toma_CDBLatency>
 				<Toma_CDBPortType>FCFS</Toma_CDBPortType>
-				<Toma_CDBAccessPorts>2</Toma_CDBAccessPorts>
+				<Toma_CDBAccessPorts>8</Toma_CDBAccessPorts>
 				<Toma_CDBPortOccupancy>1</Toma_CDBPortOccupancy>
 			</Toma_CDB>
 

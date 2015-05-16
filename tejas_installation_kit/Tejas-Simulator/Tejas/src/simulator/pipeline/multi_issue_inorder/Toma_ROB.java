@@ -145,7 +145,7 @@ public class Toma_ROB extends SimulationElement {
 		}
 
 		if (isAnyMispredictedBranch) {
-			System.out.println("\n" + GlobalClock.getCurrentTime() + ": " + "=====Mispredicted Branch===== :( :(");
+			//System.out.println("\n" + GlobalClock.getCurrentTime() + ": " + "=====Mispredicted Branch===== :( :(");
 			handleBranchMisprediction();
 		}
 
@@ -155,7 +155,7 @@ public class Toma_ROB extends SimulationElement {
 	public void handleEvent(EventQueue eventQ, Event event) {
 
 		if (event.getRequestType() == RequestType.MISPRED_PENALTY_COMPLETE) {
-			System.out.println("\n" + GlobalClock.getCurrentTime() + ": " + "=====Branch Penalty Complete===== :) :)");
+			//System.out.println("\n" + GlobalClock.getCurrentTime() + ": " + "=====Branch Penalty Complete===== :) :)");
 			completeMispredictionPenalty();
 		}
 

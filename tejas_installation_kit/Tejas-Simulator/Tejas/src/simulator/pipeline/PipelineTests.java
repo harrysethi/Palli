@@ -459,14 +459,18 @@ public class PipelineTests {
 	public static void toma_test_dependency_xchg_2() {
 		System.out.println("---------toma_test_dependency_xchg_2-------------");
 		Instruction ins = null;
+		
 		ins = Instruction.getIntALUInstruction(Operand.getIntegerRegister(0), Operand.getIntegerRegister(0),
 				Operand.getIntegerRegister(2));
 		inputToPipeline.enqueue(ins);
+		
 		ins = Instruction.getIntALUInstruction(Operand.getIntegerRegister(2), Operand.getIntegerRegister(0),
 				Operand.getIntegerRegister(5));
 		inputToPipeline.enqueue(ins);
+		
 		ins = Instruction.getExchangeInstruction(Operand.getIntegerRegister(0), Operand.getIntegerRegister(2));
 		inputToPipeline.enqueue(ins);
+		
 		ins = Instruction.getIntALUInstruction(Operand.getIntegerRegister(2), Operand.getIntegerRegister(1),
 				Operand.getIntegerRegister(5));
 		inputToPipeline.enqueue(ins);
@@ -535,10 +539,13 @@ public class PipelineTests {
 
 		ins = getStoreInstruction(0, 1, 1234);
 		inputToPipeline.enqueue(ins);
+		
 		ins = getLoadInstruction(2, 3, 1234);
 		inputToPipeline.enqueue(ins);
+		
 		ins = getStoreInstruction(4, 5, 1234);
 		inputToPipeline.enqueue(ins);
+		
 		ins = getStoreInstruction(6, 7, 1235);
 		inputToPipeline.enqueue(ins);
 
